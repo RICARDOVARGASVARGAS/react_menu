@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { FaUserCircle, FaCar, FaHistory, FaFileAlt, FaSignOutAlt, FaBars } from "react-icons/fa";
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState("Conductores");
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
@@ -31,36 +33,31 @@ const App = () => {
         <nav className="mt-6">
           <ul>
             {[
-              { name: "Conductores", icon: "user-circle" },
-              { name: "Vehículos", icon: "car" },
-              { name: "Historial", icon: "history" },
-              { name: "Papeletas", icon: "file-alt" },
+              { name: "Conductores", icon: <FaUserCircle /> },
+              { name: "Vehículos", icon: <FaCar /> },
+              { name: "Historial", icon: <FaHistory /> },
+              { name: "Papeletas", icon: <FaFileAlt /> },
             ].map((item, idx) => (
               <li key={idx} className="relative group">
                 <a
                   href="#"
-                  className="flex items-center py-3 px-4 hover:bg-blue-700 transition group"
+                  onClick={() => setActiveItem(item.name)}
+                  className={`flex items-center py-3 px-4 transition group ${
+                    activeItem === item.name
+                      ? "bg-blue-700 text-white"
+                      : "hover:bg-blue-700"
+                  }`}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-yellow-300 group-hover:text-white transition-transform transform group-hover:scale-110"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                  <span
+                    className={`text-lg ${
+                      activeItem === item.name
+                        ? "text-white"
+                        : "text-yellow-300 group-hover:text-white"
+                    }`}
                   >
-                    {/* Reemplaza este SVG según el ícono */}
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span className="ml-3 text-sm font-medium">{item.name}</span>
-                  <span className="absolute right-4 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">
-                    {Math.floor(Math.random() * 10)}{" "}
-                    {/* Badge de notificación */}
+                    {item.icon}
                   </span>
+                  <span className="ml-3 text-sm font-medium">{item.name}</span>
                 </a>
               </li>
             ))}
@@ -73,20 +70,7 @@ const App = () => {
             onClick={() => alert("Cerrar sesión")}
             className="flex items-center w-full py-3 px-4 text-left hover:bg-blue-700 transition"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-yellow-300 group-hover:text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m10 4v4m0-8V4"
-              />
-            </svg>
+            <FaSignOutAlt className="h-6 w-6 text-yellow-300 group-hover:text-white" />
             <span className="ml-3 text-sm font-medium">Cerrar Sesión</span>
           </button>
         </div>
@@ -95,27 +79,17 @@ const App = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Toolbar */}
-        <header className="bg-blue-600 text-white flex items-center h-16 px-4 shadow lg:hidden">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        <header className="bg-blue-600 text-white flex items-center justify-between h-16 px-4 shadow lg:hidden">
+          <div className="flex items-center">
+            <button
+              aria-label="Abrir menú lateral"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="text-white focus:outline-none"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-          <h1 className="ml-4 text-xl font-bold">SECoV</h1>
+              <FaBars className="h-6 w-6" />
+            </button>
+            <h1 className="ml-4 text-xl font-bold">SECoV</h1>
+          </div>
         </header>
 
         {/* Overlay for small screens */}
