@@ -1,14 +1,24 @@
 import React from "react";
-import { FaUserCircle, FaCar, FaHistory, FaFileAlt, FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { FaUserCircle, FaCar, FaHistory, FaFileAlt, FaSignOutAlt, FaTimes } from "react-icons/fa";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem, setActiveItem }) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
   return (
     <aside
       className={`fixed z-40 inset-y-0 left-0 transform ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static`}
+      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static lg:w-64`}
     >
+      {/* Cerrar botón para versión móvil */}
+      {isSidebarOpen && (
+        <button
+          className="lg:hidden absolute top-4 right-4 text-white text-2xl"
+          onClick={() => setIsSidebarOpen(false)}
+        >
+          <FaTimes />
+        </button>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-center h-16 border-b border-blue-700">
         <h1 className="text-2xl font-bold tracking-wide">SECoV</h1>
@@ -28,38 +38,54 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem, setActiveItem })
       {/* Navigation Options */}
       <nav className="mt-6">
         <ul>
-          {[
-            { name: "Drivers", icon: <FaUserCircle />, path: "/drivers" },
-            { name: "Vehicles", icon: <FaCar />, path: "/vehicles" },
-            { name: "History", icon: <FaHistory />, path: "/history" },
-            { name: "Tickets", icon: <FaFileAlt />, path: "/tickets" },
-          ].map((item, idx) => (
-            <li key={idx} className="relative group">
-              <Link
-                to={item.path}
-                onClick={() => {
-                  setActiveItem(item.name);
-                  setIsSidebarOpen(false); // Close sidebar on mobile
-                }}
-                className={`flex items-center py-3 px-4 transition group ${
-                  activeItem === item.name
-                    ? "bg-blue-700 text-white"
-                    : "hover:bg-blue-700"
-                }`}
-              >
-                <span
-                  className={`text-lg ${
-                    activeItem === item.name
-                      ? "text-white"
-                      : "text-yellow-300 group-hover:text-white"
-                  }`}
-                >
-                  {item.icon}
-                </span>
-                <span className="ml-3 text-sm font-medium">{item.name}</span>
-              </Link>
-            </li>
-          ))}
+          <li>
+            <Link
+              to="/drivers"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-4 transition ${
+                activeItem === "Drivers" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+              }`}
+            >
+              <FaUserCircle className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Drivers</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/vehicles"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-4 transition ${
+                activeItem === "Vehicles" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+              }`}
+            >
+              <FaCar className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Vehicles</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/history"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-4 transition ${
+                activeItem === "History" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+              }`}
+            >
+              <FaHistory className="text-lg" />
+              <span className="ml-3 text-sm font-medium">History</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/tickets"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-4 transition ${
+                activeItem === "Tickets" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+              }`}
+            >
+              <FaFileAlt className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Tickets</span>
+            </Link>
+          </li>
         </ul>
       </nav>
 
