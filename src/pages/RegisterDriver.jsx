@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import MobileToolbar from "../components/MobileToolbar";
 import Sidebar from "../components/Sidebar";
 
 const RegisterDriver = () => {
@@ -6,31 +7,21 @@ const RegisterDriver = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
       <div className="flex-1">
-        {/* Toolbar */}
-        <header className="bg-blue-600 text-white flex items-center h-16 px-4 shadow lg:hidden">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
-          <h1 className="ml-4 text-xl font-bold">Register Driver</h1>
-        </header>
+        <MobileToolbar
+          setIsSidebarOpen={setIsSidebarOpen}
+          title="REGISTER DRIVER"
+        />
 
         {/* Content */}
         <main className="p-4">
-          <h1 className="text-2xl font-bold text-blue-900 mb-4">Register a New Driver</h1>
+          <h1 className="text-2xl font-bold text-blue-900 mb-4">
+            Register a New Driver
+          </h1>
           <form>
             {/* Form Fields */}
             <div className="mb-4">
@@ -49,7 +40,9 @@ const RegisterDriver = () => {
                 placeholder="Enter email"
               />
             </div>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded">Submit</button>
+            <button className="bg-blue-600 text-white px-4 py-2 rounded">
+              Submit
+            </button>
           </form>
         </main>
       </div>

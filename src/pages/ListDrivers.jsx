@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
+import MobileToolbar from "../components/MobileToolbar";
 import { Link } from "react-router-dom";
 
 const ListDrivers = () => {
@@ -9,7 +10,12 @@ const ListDrivers = () => {
   const [drivers, setDrivers] = useState([
     { id: 1, name: "Juan Pérez", phone: "123456789", email: "juan@mail.com" },
     { id: 2, name: "María López", phone: "987654321", email: "maria@mail.com" },
-    { id: 3, name: "Carlos Ramírez", phone: "111222333", email: "carlos@mail.com" },
+    {
+      id: 3,
+      name: "Carlos Ramírez",
+      phone: "111222333",
+      email: "carlos@mail.com",
+    },
     { id: 4, name: "Ana Torres", phone: "555666777", email: "ana@mail.com" },
   ]);
 
@@ -47,30 +53,14 @@ const ListDrivers = () => {
       />
 
       <div className="flex-1">
-        {/* Toolbar para la versión móvil */}
-        <header className="bg-blue-600 text-white flex items-center h-16 px-4 shadow lg:hidden">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white focus:outline-none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
-          <h1 className="ml-4 text-xl font-bold">Drivers</h1>
-        </header>
+        <MobileToolbar setIsSidebarOpen={setIsSidebarOpen} title="Lista de conductores" />
 
         {/* Contenido principal */}
         <main className="p-4">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">List of Drivers</h1>
+            <h1 className="text-2xl font-bold text-blue-900">
+              List of Drivers
+            </h1>
             <Link
               to="/drivers/register"
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
