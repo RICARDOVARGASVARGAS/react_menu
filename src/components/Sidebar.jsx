@@ -40,7 +40,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
         <ul>
           <li>
             <Link
-              to="/drivers"
+              to="/list-drivers"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
                 activeItem === "Drivers" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
