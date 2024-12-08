@@ -110,7 +110,7 @@ const RegisterDriver = () => {
         }
       } else {
         toast.success("Conductor registrado con éxito.");
-        navigate("/drivers");
+        navigate("/edit-driver/" + data.id);
       }
     } catch (error) {
       console.error("Error al registrar el conductor:", error);
