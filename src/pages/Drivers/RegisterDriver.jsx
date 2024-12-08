@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MobileToolbar from "../../components/MobileToolbar";
 import Sidebar from "../../components/Sidebar";
 import Loading from "../../components/Loading";
-import { FaCheck, FaList, FaSearch } from "react-icons/fa";
+import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,7 +19,7 @@ const RegisterDriver = () => {
     email: "",
     phone_number: "",
     address: "",
-    gender: "masculino",
+    gender: "M",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ const RegisterDriver = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" }); // Limpiar el error del campo al escribir
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleSearch = async () => {
@@ -50,18 +50,17 @@ const RegisterDriver = () => {
       if (data.status) {
         toast.success(data.message);
 
-        // Actualizar los campos del formulario
         setFormData({
           ...formData,
           name: data.information.names || "",
           first_name: data.information.father_last_name || "",
           last_name: data.information.mother_last_name || "",
           birth_date: data.information.birthday || "",
-          gender: data.information.gender === "M" ? "masculino" : "femenino",
+          gender: data.information.gender,
         });
       } else {
         toast.error(data.message);
-        // Limpiar los campos si no se encuentra la persona
+
         setFormData({
           document_type: formData.document_type,
           document_number: formData.document_number,
@@ -72,7 +71,7 @@ const RegisterDriver = () => {
           email: "",
           phone_number: "",
           address: "",
-          gender: "masculino",
+          gender: "M",
         });
       }
     } catch (error) {
@@ -86,7 +85,7 @@ const RegisterDriver = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrors({}); // Limpiar errores previos
+    setErrors({});
 
     try {
       const response = await fetch(
@@ -132,27 +131,24 @@ const RegisterDriver = () => {
       email: "",
       phone_number: "",
       address: "",
-      gender: "masculino",
+      gender: "M",
     });
     setErrors({});
   };
 
   return (
     <div className="flex min-h-screen">
-      {/* Barra lateral */}
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
       <div className="flex-1 overflow-auto">
-        {/* Barra de herramientas móvil */}
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
-          title="REGISTER DRIVER"
+          title="REGISTRAR CONDUCTOR"
         />
 
-        {/* Contenido principal */}
         <main className="p-4 overflow-y-auto">
           <h1 className="text-2xl font-bold text-blue-900 mb-6">
             Registrar un Nuevo Conductor
@@ -161,7 +157,6 @@ const RegisterDriver = () => {
             onSubmit={handleSubmit}
             className="bg-white shadow-md rounded-lg p-6 space-y-4 mx-auto w-full"
           >
-            {/* Campos del formulario */}
             <div>
               <label className="block mb-2 text-gray-700 font-medium">
                 Tipo de Documento
@@ -218,33 +213,37 @@ const RegisterDriver = () => {
               )}
             </div>
 
-            {/* Resto de los campos */}
-            {["name", "first_name", "last_name", "birth_date", "email", "phone_number", "address"].map(
-              (key) => (
-                <div key={key}>
-                  <label className="block mb-2 text-gray-700 font-medium">
-                    {key.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
-                  </label>
-                  <input
-                    type={key === "birth_date" ? "date" : "text"}
-                    name={key}
-                    value={formData[key]}
-                    onChange={handleChange}
-                    className={`border ${
-                      errors[key] ? "border-red-500" : "border-gray-300"
-                    } rounded px-4 py-2 w-full`}
-                    placeholder={`Ingrese ${key.replace("_", " ")}`}
-                  />
-                  {errors[key] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors[key][0]}
-                    </p>
-                  )}
-                </div>
-              )
-            )}
+            {[
+              { name: "name", label: "Nombres" },
+              { name: "first_name", label: "Apellido Paterno" },
+              { name: "last_name", label: "Apellido Materno" },
+              { name: "birth_date", label: "Fecha de Nacimiento" },
+              { name: "email", label: "Correo Electrónico" },
+              { name: "phone_number", label: "Número de Teléfono" },
+              { name: "address", label: "Dirección" },
+            ].map(({ name, label }) => (
+              <div key={name}>
+                <label className="block mb-2 text-gray-700 font-medium">
+                  {label}
+                </label>
+                <input
+                  type={name === "birth_date" ? "date" : "text"}
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className={`border ${
+                    errors[name] ? "border-red-500" : "border-gray-300"
+                  } rounded px-4 py-2 w-full`}
+                  placeholder={`Ingrese ${label.toLowerCase()}`}
+                />
+                {errors[name] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[name][0]}
+                  </p>
+                )}
+              </div>
+            ))}
 
-            {/* Género */}
             <div>
               <label className="block mb-2 text-gray-700 font-medium">
                 Género
@@ -257,16 +256,15 @@ const RegisterDriver = () => {
                   errors.gender ? "border-red-500" : "border-gray-300"
                 } rounded px-4 py-2 w-full`}
               >
-                <option value="masculino">Masculino</option>
-                <option value="femenino">Femenino</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
               </select>
               {errors.gender && (
                 <p className="text-red-500 text-sm mt-1">{errors.gender[0]}</p>
               )}
             </div>
 
-            {/* Botones de acción */}
-            <div className="flex justify-between gap-4 mt-6">
+            <div className="flex justify-between gap-4 mt-6 overflow-x-auto">
               {isLoading ? (
                 <Loading />
               ) : (
@@ -275,21 +273,24 @@ const RegisterDriver = () => {
                     type="submit"
                     className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
                   >
-                    <FaCheck /> Registrar
+                    <FaCheck />
+                    Guardar
                   </button>
                   <button
                     type="button"
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-400"
-                    onClick={() => navigate("/list-drivers")}
+                    onClick={() => navigate("/drivers")}
                   >
-                    <FaList /> Volver a la Lista
+                    <FaList />
+                    Lista
                   </button>
                   <button
                     type="button"
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-700"
                     onClick={handleClear}
                   >
-                    Limpiar Campos
+                    <FaEraser />
+                    Limpiar
                   </button>
                 </>
               )}
