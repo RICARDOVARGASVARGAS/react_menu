@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ListDrivers from "./pages/Drivers/ListDrivers";
-// import ListDrivers from "./pages/ListDrivers";
-// import RegisterDriver from "./pages/RegisterDriver";
+import RegisterDriver from "./pages/Drivers/RegisterDriver";
+import { ToastContainer } from "react-toastify"; // Importar ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
 
 const App = () => {
   return (
@@ -10,10 +11,12 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/list-drivers" element={<ListDrivers />} />
-        {/* <Route path="/drivers" element={<ListDrivers />} />
-        <Route path="/drivers/register" element={<RegisterDriver />} /> */}
+        <Route path="/register-driver" element={<RegisterDriver />} />
         <Route path="*" element={<Home />} /> {/* Redirige rutas desconocidas */}
       </Routes>
+
+      {/* Agregar ToastContainer en el componente raíz */}
+      <ToastContainer />
     </Router>
   );
 };

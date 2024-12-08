@@ -7,7 +7,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
     <aside
       className={`fixed z-40 inset-y-0 left-0 transform ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static lg:w-64`}
+      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static lg:w-64 min-h-screen`}
     >
       {/* Cerrar botón para versión móvil */}
       {isSidebarOpen && (
@@ -47,7 +47,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               }`}
             >
               <FaUserCircle className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Drivers</span>
+              <span className="ml-3 text-sm font-medium">Conductores</span>
             </Link>
           </li>
           <li>

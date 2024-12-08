@@ -86,7 +86,7 @@ const ListDrivers = () => {
   ];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -105,7 +105,7 @@ const ListDrivers = () => {
               Lista de Conductores
             </h1>
             <button
-              onClick={() => navigate("/drivers/add")}
+              onClick={() => navigate("/register-driver")}
               className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
             >
               <FaPlus /> Agregar Conductor
@@ -148,7 +148,7 @@ const ListDrivers = () => {
                   "Operaciones",
                 ]}
                 data={drivers.map((driver, index) => ({
-                  id: index + 1,
+                  id: driver.id,
                   document_number: driver.document_number,
                   name: `${driver.name} ${driver.first_name} ${driver.last_name}`,
                   phone: driver.phone_number || "No disponible",
