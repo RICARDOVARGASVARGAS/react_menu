@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { FaUser, FaIdCard, FaCar } from "react-icons/fa";
+import { FaUser, FaIdCard, FaCar, FaTable } from "react-icons/fa";
 import Sidebar from "../../components/Sidebar";
 import MobileToolbar from "../../components/MobileToolbar";
 import DriverData from "./DriverData";
 import LicenseData from "./LicenseData";
 import CarData from "./CarData";
 import { useParams } from "react-router-dom";  // Importar useParams
+import { useNavigate } from "react-router-dom";
 
 const EditDriver = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("personalData");
   
@@ -48,9 +50,17 @@ const EditDriver = () => {
         {/* Page Content */}
         <main className="p-4 bg-gray-100">
           <div className="bg-white shadow-md rounded-lg p-4">
-            <h1 className="text-2xl font-bold text-blue-900 mb-6">
-              Editar Información del Conductor
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-blue-900">
+              Lista de Conductores
             </h1>
+            <button
+              onClick={() => navigate("/list-drivers")}
+              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+            >
+              <FaTable /> Lista de Conductores
+            </button>
+          </div>
 
             {/* Tabs Navigation */}
             <div className="flex justify-around mb-6 border-b">
