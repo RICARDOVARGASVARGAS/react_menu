@@ -3,14 +3,18 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
 import { FaPlus, FaEdit, FaImage, FaFilePdf } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import AddCar from "./AddCar"; // Formulario para agregar vehículos
 
 const CarData = ({ driverId }) => {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [modalType, setModalType] = useState(""); // 'image' o 'pdf'
+  const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false); // Estado para el modal de agregar vehículo
+
   const navigate = useNavigate(); // Para navegación entre páginas
 
+  // Obtener la lista de vehículos
   const fetchVehicles = async () => {
     try {
       setLoading(true);
@@ -36,14 +40,23 @@ const CarData = ({ driverId }) => {
     fetchVehicles();
   }, [driverId]);
 
+  // Abrir el modal de agregar vehículo
   const handleAddVehicle = () => {
-    navigate(`/add-car?driverId=${driverId}`);
+    setIsAddVehicleModalOpen(true);
   };
 
+  // Cerrar el modal de agregar vehículo
+  const closeAddVehicleModal = () => {
+    setIsAddVehicleModalOpen(false);
+    fetchVehicles(); // Recargar la lista de vehículos tras agregar uno nuevo
+  };
+
+  // Navegar a la página de editar vehículo
   const handleEditVehicle = (vehicleId) => {
     navigate(`/edit-car/${vehicleId}`);
   };
 
+  // Obtener el tipo de archivo basado en la extensión
   const getFileType = (url) => {
     if (url) {
       const ext = url.split(".").pop().toLowerCase();
@@ -54,12 +67,14 @@ const CarData = ({ driverId }) => {
     return null;
   };
 
+  // Abrir modal para visualizar archivo
   const handleOpenModal = (url) => {
     const type = getFileType(url);
     setModalData(url);
     setModalType(type);
   };
 
+  // Cerrar el modal de archivos
   const closeModal = () => {
     setModalData(null);
     setModalType("");
@@ -71,6 +86,7 @@ const CarData = ({ driverId }) => {
 
   return (
     <div>
+      {/* Cabecera */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -83,6 +99,7 @@ const CarData = ({ driverId }) => {
             <FaPlus /> Agregar Vehículo
           </button>
         </div>
+        {/* Tabla de vehículos */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 table-auto text-sm">
             <thead className="bg-gray-100">
@@ -108,7 +125,7 @@ const CarData = ({ driverId }) => {
                         <strong>Motor:</strong> {vehicle.motor}
                       </span>
                       <span>
-                        <strong>Chassis:</strong> {vehicle.chassis}
+                        <strong>Chasis:</strong> {vehicle.chassis}
                       </span>
                     </div>
                   </td>
@@ -158,46 +175,12 @@ const CarData = ({ driverId }) => {
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-center">
-                    {/* Botón Editar */}
                     <button
                       onClick={() => handleEditVehicle(vehicle.id)}
                       className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 flex items-center gap-1"
                     >
                       <FaEdit /> Editar
                     </button>
-                    {/* Condicional para el botón de Ver Foto */}
-                    {vehicle.file_car && vehicle.file_car !== "" ? (
-                      <button
-                        onClick={() => handleOpenModal(vehicle.file_car)}
-                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 flex items-center gap-1"
-                      >
-                        <FaImage /> Ver Foto
-                      </button>
-                    ) : null}{" "}
-                    {/* Si file_car está vacío, el botón no se renderiza */}
-                    {/* Condicional para el botón de Ver SOAT */}
-                    {vehicle.file_soat && vehicle.file_soat !== "" ? (
-                      <button
-                        onClick={() => handleOpenModal(vehicle.file_soat)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 flex items-center gap-1"
-                      >
-                        <FaFilePdf /> Ver SOAT
-                      </button>
-                    ) : null}{" "}
-                    {/* Si file_soat está vacío, el botón no se renderiza */}
-                    {/* Condicional para el botón de Ver Revisión Técnica */}
-                    {vehicle.file_technical_review &&
-                    vehicle.file_technical_review !== "" ? (
-                      <button
-                        onClick={() =>
-                          handleOpenModal(vehicle.file_technical_review)
-                        }
-                        className="bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 flex items-center gap-1"
-                      >
-                        <FaFilePdf /> Ver Revisión Técnica
-                      </button>
-                    ) : null}{" "}
-                    {/* Si file_technical_review está vacío, el botón no se renderiza */}
                   </td>
                 </tr>
               ))}
@@ -206,41 +189,11 @@ const CarData = ({ driverId }) => {
         </div>
       </div>
 
-      {modalData && (
+      {/* Modal de Agregar Vehículo */}
+      {isAddVehicleModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg relative max-w-3xl w-full mx-4 sm:mx-auto sm:max-w-lg md:max-w-3xl">
-            {/* Botón de cierre mejorado */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 text-2xl p-2 bg-gray-200 rounded-full shadow-md transition duration-200 ease-in-out"
-            >
-              <span className="font-semibold">×</span> {/* X en vez de texto */}
-            </button>
-
-            {/* Contenido del Modal */}
-            {modalType === "image" ? (
-              <div className="flex justify-center">
-                <img
-                  src={modalData}
-                  alt="Imagen del vehículo"
-                  className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
-                />
-              </div>
-            ) : modalType === "pdf" ? (
-              <div className="flex justify-center">
-                <embed
-                  src={modalData}
-                  type="application/pdf"
-                  width="100%"
-                  height="600px"
-                  className="rounded-lg"
-                />
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <p>No se puede visualizar el archivo en este formato.</p>
-              </div>
-            )}
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <AddCar onClose={closeAddVehicleModal} driverId={driverId} />
           </div>
         </div>
       )}
