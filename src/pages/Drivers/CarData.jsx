@@ -1,89 +1,145 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import Loading from "../../components/Loading"; // Componente de carga
+import { FaPlus, FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const CarData = () => {
-  const [vehicle, setVehicle] = useState({
-    vehiclePlate: "",
-    model: "",
-    year: "",
-  });
+const CarData = ({ driverId }) => {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Para navegación entre páginas
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setVehicle({ ...vehicle, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchVehicles = async () => {
     try {
-      const response = await fetch("http://secov_back.test/api/updateVehicle", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(vehicle),
-      });
-
+      setLoading(true);
+      const response = await fetch(
+        `http://secov_back.test/api/getCarsByDriver/${driverId}`
+      );
       const result = await response.json();
-      if (result.success) {
-        toast.success("Vehículo actualizado correctamente");
+
+      if (result.data) {
+        setVehicles(result.data);
       } else {
-        toast.error("Error al actualizar los datos del vehículo");
+        setVehicles([]);
+        toast.info("El conductor no tiene vehículos registrados.");
       }
     } catch (error) {
-      toast.error("Ocurrió un error al actualizar");
+      toast.error("Error al cargar los vehículos.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchVehicles();
+  }, [driverId]);
+
+  const handleAddVehicle = () => {
+    navigate(`/add-car?driverId=${driverId}`);
+  };
+
+  const handleEditVehicle = (vehicleId) => {
+    navigate(`/edit-car/${vehicleId}`);
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Editar Datos del Vehículo</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-2 text-gray-700">Placa del Vehículo</label>
-          <input
-            type="text"
-            name="vehiclePlate"
-            value={vehicle.vehiclePlate}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 text-gray-700">Modelo</label>
-          <input
-            type="text"
-            name="model"
-            value={vehicle.model}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2 text-gray-700">Año</label>
-          <input
-            type="text"
-            name="year"
-            value={vehicle.year}
-            onChange={handleChange}
-            className="border p-2 w-full"
-            required
-          />
-        </div>
-
-        <div className="flex justify-end gap-4 mt-6">
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="p-4 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-gray-800">
+            Vehículos del Conductor
+          </h2>
           <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={handleAddVehicle}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center gap-2"
           >
-            Guardar
+            <FaPlus /> Agregar Vehículo
           </button>
         </div>
-      </form>
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-gray-200 table-auto text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border px-2 py-1">Placa</th>
+                <th className="border px-2 py-1">Motor</th>
+                <th className="border px-2 py-1">Características</th>
+                <th className="border px-2 py-1">Tipo</th>
+                <th className="border px-2 py-1">Grupo</th>
+                <th className="border px-2 py-1">SOAT</th>
+                <th className="border px-2 py-1">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vehicles.map((vehicle) => (
+                <tr key={vehicle.id}>
+                  <td className="border px-2 py-1 text-center">{vehicle.plate}</td>
+                  <td className="border px-2 py-1">
+                    <div className="flex flex-col">
+                      <span>
+                        <strong>Motor:</strong> {vehicle.motor}
+                      </span>
+                      <span>
+                        <strong>Chassis:</strong> {vehicle.chassis}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="border px-2 py-1">
+                    <div className="flex flex-col">
+                      <span>
+                        <strong>Marca:</strong> {vehicle.brand?.name}
+                      </span>
+                      <span>
+                        <strong>Modelo:</strong> {vehicle.example.name}
+                      </span>
+                      <span>
+                        <strong>Año:</strong> {vehicle.year.name}
+                      </span>
+                      <span className="flex items-center">
+                        <strong>Color:</strong>
+                        <span
+                          className="ml-2 w-4 h-4 rounded-full"
+                          style={{
+                            backgroundColor: vehicle.color?.hex || "#fff",
+                          }}
+                        ></span>
+                        <span className="ml-1">{vehicle.color?.name}</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td className="border px-2 py-1 text-center">{vehicle.typeCar?.name}</td>
+                  <td className="border px-2 py-1 text-center">{vehicle.group?.name}</td>
+                  <td className="border px-2 py-1">
+                    <div>
+                      <span>{vehicle.number_soat}</span>
+                      <div className="flex flex-col">
+                        <span>
+                          <strong>F.Vig:</strong>  <br />{vehicle.date_soat_issue}
+                        </span>
+                        <span>
+                          <strong>F.Ven:</strong><br />
+                          {vehicle.date_soat_expiration}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="border px-2 py-1 text-center">
+                    <button
+                      onClick={() => handleEditVehicle(vehicle.id)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 flex items-center gap-1"
+                    >
+                      <FaEdit /> Editar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
