@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaEdit } from "react-icons/fa";
 import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -143,11 +143,9 @@ const DriverData = ({ driverId }) => {
         toast.success(message);
       } else {
         setErrors(errors);
-        console.log(errors);
         toast.error(message);
       }
     } catch (error) {
-      console.log(error);
       console.error("Error al actualizar el conductor:", error);
       toast.error("Ocurrió un error al actualizar el conductor.");
     } finally {
@@ -263,10 +261,11 @@ const DriverData = ({ driverId }) => {
 
       <button
         type="submit"
-        className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600"
+        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mx-auto flex items-center justify-center gap-2"
         disabled={isLoading}
       >
-        {isLoading ? <Loading size="small" /> : "Actualizar Conductor"}
+        {isLoading ? <Loading size="small" /> : "Actualizar Conductor"} 
+        <FaEdit />
       </button>
     </form>
   );
