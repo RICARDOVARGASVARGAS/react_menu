@@ -154,120 +154,125 @@ const DriverData = ({ driverId }) => {
   };
 
   return (
-    <form
-      className="bg-white shadow-md rounded-lg p-6 space-y-4 mx-auto w-full"
-      onSubmit={handleSubmit}
-    >
-      {isLoading && <Loading />}
+    <>
+      <h2 className="text-xl font-bold mb-4">Editar Datos del Conductor</h2>
+      <form
+        className="space-y-4"
+        onSubmit={handleSubmit}
+      >
+        {isLoading && <Loading />}
 
-      <div>
-        <label className="block mb-2 text-gray-700 font-medium">
-          Tipo de Documento
-        </label>
-        <select
-          name="document_type"
-          value={formData.document_type}
-          onChange={handleChange}
-          className={`border ${
-            errors.document_type ? "border-red-500" : "border-gray-300"
-          } rounded px-4 py-2 w-full`}
-        >
-          <option value="dni">DNI</option>
-          <option value="passport">Pasaporte</option>
-        </select>
-        {errors.document_type && (
-          <p className="text-red-500 text-sm mt-1">{errors.document_type[0]}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block mb-2 text-gray-700 font-medium">
-          Número de Documento
-        </label>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            name="document_number"
-            value={formData.document_number}
-            onChange={handleChange}
-            className={`border ${
-              errors.document_number ? "border-red-500" : "border-gray-300"
-            } rounded px-4 py-2 w-full`}
-            placeholder="Ingrese el número de documento"
-          />
-          <button
-            type="button"
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
-            onClick={handleSearch}
-            disabled={isSearching}
-          >
-            {isSearching ? <Loading size="small" /> : <FaSearch />}
-            Buscar
-          </button>
-        </div>
-        {errors.document_number && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.document_number[0]}
-          </p>
-        )}
-      </div>
-
-      {[
-        { name: "name", label: "Nombres" },
-        { name: "first_name", label: "Apellido Paterno" },
-        { name: "last_name", label: "Apellido Materno" },
-        { name: "birth_date", label: "Fecha de Nacimiento" },
-        { name: "email", label: "Correo Electrónico" },
-        { name: "phone_number", label: "Número de Teléfono" },
-        { name: "address", label: "Dirección" },
-      ].map(({ name, label }) => (
-        <div key={name}>
+        <div>
           <label className="block mb-2 text-gray-700 font-medium">
-            {label}
+            Tipo de Documento
           </label>
-          <input
-            type={name === "birth_date" ? "date" : "text"}
-            name={name}
-            value={formData[name]}
+          <select
+            name="document_type"
+            value={formData.document_type}
             onChange={handleChange}
             className={`border ${
-              errors[name] ? "border-red-500" : "border-gray-300"
+              errors.document_type ? "border-red-500" : "border-gray-300"
             } rounded px-4 py-2 w-full`}
-            placeholder={`Ingrese ${label.toLowerCase()}`}
-          />
-          {errors[name] && (
-            <p className="text-red-500 text-sm mt-1">{errors[name][0]}</p>
+          >
+            <option value="dni">DNI</option>
+            <option value="passport">Pasaporte</option>
+          </select>
+          {errors.document_type && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.document_type[0]}
+            </p>
           )}
         </div>
-      ))}
 
-      <div>
-        <label className="block mb-2 text-gray-700 font-medium">Género</label>
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className={`border ${
-            errors.gender ? "border-red-500" : "border-gray-300"
-          } rounded px-4 py-2 w-full`}
+        <div>
+          <label className="block mb-2 text-gray-700 font-medium">
+            Número de Documento
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              name="document_number"
+              value={formData.document_number}
+              onChange={handleChange}
+              className={`border ${
+                errors.document_number ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 w-full`}
+              placeholder="Ingrese el número de documento"
+            />
+            <button
+              type="button"
+              className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
+              onClick={handleSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? <Loading size="small" /> : <FaSearch />}
+              Buscar
+            </button>
+          </div>
+          {errors.document_number && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.document_number[0]}
+            </p>
+          )}
+        </div>
+
+        {[
+          { name: "name", label: "Nombres" },
+          { name: "first_name", label: "Apellido Paterno" },
+          { name: "last_name", label: "Apellido Materno" },
+          { name: "birth_date", label: "Fecha de Nacimiento" },
+          { name: "email", label: "Correo Electrónico" },
+          { name: "phone_number", label: "Número de Teléfono" },
+          { name: "address", label: "Dirección" },
+        ].map(({ name, label }) => (
+          <div key={name}>
+            <label className="block mb-2 text-gray-700 font-medium">
+              {label}
+            </label>
+            <input
+              type={name === "birth_date" ? "date" : "text"}
+              name={name}
+              value={formData[name]}
+              onChange={handleChange}
+              className={`border ${
+                errors[name] ? "border-red-500" : "border-gray-300"
+              } rounded px-4 py-2 w-full`}
+              placeholder={`Ingrese ${label.toLowerCase()}`}
+            />
+            {errors[name] && (
+              <p className="text-red-500 text-sm mt-1">{errors[name][0]}</p>
+            )}
+          </div>
+        ))}
+
+        <div>
+          <label className="block mb-2 text-gray-700 font-medium">Género</label>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className={`border ${
+              errors.gender ? "border-red-500" : "border-gray-300"
+            } rounded px-4 py-2 w-full`}
+          >
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+          </select>
+          {errors.gender && (
+            <p className="text-red-500 text-sm mt-1">{errors.gender[0]}</p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mx-auto flex items-center justify-center gap-2"
+          disabled={isLoading}
         >
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-        </select>
-        {errors.gender && (
-          <p className="text-red-500 text-sm mt-1">{errors.gender[0]}</p>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mx-auto flex items-center justify-center gap-2"
-        disabled={isLoading}
-      >
-        {isLoading ? <Loading size="small" /> : "Actualizar Conductor"} 
-        <FaEdit />
-      </button>
-    </form>
+          {isLoading ? <Loading size="small" /> : "Actualizar Conductor"}
+          <FaEdit />
+        </button>
+      </form>
+    </>
   );
 };
 

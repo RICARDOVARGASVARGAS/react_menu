@@ -52,7 +52,7 @@ const EditDriver = () => {
           <div className="bg-white shadow-md rounded-lg p-4">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
-              Lista de Conductores
+              EDITAR INFORMACIÓN
             </h1>
             <button
               onClick={() => navigate("/list-drivers")}
