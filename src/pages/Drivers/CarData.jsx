@@ -110,6 +110,7 @@ const CarData = ({ driverId }) => {
                 <th className="border px-2 py-1">Tipo</th>
                 <th className="border px-2 py-1">Grupo</th>
                 <th className="border px-2 py-1">SOAT</th>
+                <th className="border px-2 py-1">Archivos</th>
                 <th className="border px-2 py-1">Acciones</th>
               </tr>
             </thead>
@@ -174,6 +175,34 @@ const CarData = ({ driverId }) => {
                       </div>
                     </div>
                   </td>
+                  <td className="border px-2 py-1">
+                    <div className="flex gap-2 justify-center">
+                      {vehicle.file_technical_review && (
+                        <button
+                          onClick={() => handleOpenModal(vehicle.file_technical_review)}
+                          className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
+                        >
+                          <FaFilePdf /> Revisar Técnico
+                        </button>
+                      )}
+                      {vehicle.file_soat && (
+                        <button
+                          onClick={() => handleOpenModal(vehicle.file_soat)}
+                          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                        >
+                          <FaFilePdf /> Ver SOAT
+                        </button>
+                      )}
+                      {vehicle.file_car && (
+                        <button
+                          onClick={() => handleOpenModal(vehicle.file_car)}
+                          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                        >
+                          <FaImage /> Ver Imagen
+                        </button>
+                      )}
+                    </div>
+                  </td>
                   <td className="border px-2 py-1 text-center">
                     <button
                       onClick={() => handleEditVehicle(vehicle.id)}
@@ -194,6 +223,29 @@ const CarData = ({ driverId }) => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <AddCar onClose={closeAddVehicleModal} driverId={driverId} />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Archivos */}
+      {modalData && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            {modalType === "image" && (
+              <img src={modalData} alt="Archivo" className="w-full h-auto" />
+            )}
+            {modalType === "pdf" && (
+              <embed src={modalData} type="application/pdf" width="100%" height="500px" />
+            )}
+            {modalType === "other" && (
+              <p>Este tipo de archivo no es soportado para vista previa.</p>
+            )}
+            <button
+              onClick={closeModal}
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
