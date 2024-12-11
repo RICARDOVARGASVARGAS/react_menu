@@ -219,7 +219,7 @@ const AddCar = ({ onClose, driverId }) => {
           ))}
 
           {/* Campos select */}
-          {[
+          {[ 
             { name: "brand_id", options: brands, label: "Marca" },
             { name: "type_car_id", options: types, label: "Tipo de Vehículo" },
             { name: "group_id", options: groups, label: "Grupo" },
@@ -256,6 +256,45 @@ const AddCar = ({ onClose, driverId }) => {
               )}
             </div>
           ))}
+        </div>
+
+        {/* Campos de fecha */}
+        <div>
+          <label htmlFor="date_soat_issue" className="block text-sm font-semibold">
+            Fecha de Emisión del SOAT
+          </label>
+          <input
+            type="date"
+            id="date_soat_issue"
+            name="date_soat_issue"
+            value={carData.date_soat_issue}
+            onChange={handleChange}
+            className={`mt-1 p-2 w-full border rounded ${
+              errors.date_soat_issue ? "border-red-500" : ""
+            }`}
+          />
+          {errors.date_soat_issue && (
+            <p className="text-red-500 text-sm">{errors.date_soat_issue}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="date_soat_expiration" className="block text-sm font-semibold">
+            Fecha de Vencimiento del SOAT
+          </label>
+          <input
+            type="date"
+            id="date_soat_expiration"
+            name="date_soat_expiration"
+            value={carData.date_soat_expiration}
+            onChange={handleChange}
+            className={`mt-1 p-2 w-full border rounded ${
+              errors.date_soat_expiration ? "border-red-500" : ""
+            }`}
+          />
+          {errors.date_soat_expiration && (
+            <p className="text-red-500 text-sm">{errors.date_soat_expiration}</p>
+          )}
         </div>
 
         <div className="flex justify-end mt-6 gap-4">

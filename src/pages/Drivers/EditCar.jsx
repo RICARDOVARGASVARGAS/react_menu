@@ -5,10 +5,20 @@ import Loading from "../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 
-const EditCar = ({ onClose, vehicleId, driverId }) => {
+/**
+ * Componente para editar un vehículo
+ * @param {Function} onClose - Función para cerrar el modal
+ * @param {number} carId - ID del vehículo a editar
+ * @param {number} driverId - ID del conductor
+ */
+const EditCar = ({ onClose, carId, driverId }) => {
   const navigate = useNavigate();
 
+  // Estado para la carga del formulario
   const [loading, setLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // Estado para los datos del formulario
   const [carData, setCarData] = useState({
     plate: "",
     chassis: "",
@@ -25,7 +35,10 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
     date_soat_expiration: "",
   });
 
+  // Estado para errores
   const [errors, setErrors] = useState({});
+
+  // Estados para las opciones de los selects
   const [brands, setBrands] = useState([]);
   const [types, setTypes] = useState([]);
   const [groups, setGroups] = useState([]);
@@ -33,14 +46,15 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
   const [colors, setColors] = useState([]);
   const [examples, setExamples] = useState([]);
 
-  // Cargar las opciones para los selects
+  // Cargar las opciones para los selects al montar el componente
   useEffect(() => {
     const fetchOptions = async () => {
       try {
         setLoading(true);
+
         const headers = {
           "Content-Type": "application/json",
-          Authorization: "Bearer tu_token_aqui",
+          Authorization: "Bearer tu_token_aqui", // Reemplaza con tu token real
         };
 
         // Realizar todas las solicitudes simultáneamente
@@ -97,32 +111,44 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
     fetchOptions();
   }, []);
 
-  // Cargar los datos del vehículo para editar
+  // Cargar los datos del vehículo a editar
   useEffect(() => {
-    const fetchVehicleData = async () => {
+    const fetchCarData = async () => {
       try {
-        setLoading(true);
-        const response = await fetch(
-          `http://secov_back.test/api/getCarById/${vehicleId}`
-        );
-        const { data } = await response.json();
+        setIsLoadingData(true);
+
+        const response = await fetch(`http://secov_back.test/api/getCar/${carId}`);
+        const { data, message } = await response.json();
+        
         if (data) {
-          setCarData(data);
+          setCarData({
+            plate: data.plate || "",
+            chassis: data.chassis || "",
+            motor: data.motor || "",
+            file_car: data.file_car || "",
+            brand_id: data.brand_id || "",
+            type_car_id: data.type_car_id || "",
+            group_id: data.group_id || "",
+            year_id: data.year_id || "",
+            color_id: data.color_id || "",
+            example_id: data.example_id || "",
+            number_soat: data.number_soat || "",
+            date_soat_issue: data.date_soat_issue || "",
+            date_soat_expiration: data.date_soat_expiration || "",
+          });
         } else {
-          toast.error("No se pudo cargar el vehículo.");
+          toast.error(message || "No se pudieron cargar los datos del vehículo.");
         }
       } catch (error) {
-        console.error("Error al cargar el vehículo:", error);
-        toast.error("Error al cargar el vehículo.");
+        console.error("Error al cargar los datos del vehículo:", error);
+        toast.error("Error al cargar los datos del vehículo.");
       } finally {
-        setLoading(false);
+        setIsLoadingData(false);
       }
     };
 
-    if (vehicleId) {
-      fetchVehicleData();
-    }
-  }, [vehicleId]);
+    fetchCarData();
+  }, [carId]);
 
   // Manejar cambios en los campos del formulario
   const handleChange = (e) => {
@@ -133,43 +159,63 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
     }));
   };
 
+  // Reiniciar el formulario
+  const resetForm = () => {
+    setCarData({
+      plate: "",
+      chassis: "",
+      motor: "",
+      file_car: "",
+      brand_id: "",
+      type_car_id: "",
+      group_id: "",
+      year_id: "",
+      color_id: "",
+      example_id: "",
+      number_soat: "",
+      date_soat_issue: "",
+      date_soat_expiration: "",
+    });
+    setErrors({});
+  };
+
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({}); // Limpiar errores previos
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://secov_back.test/api/updateCar/${vehicleId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...carData,
-            driver_id: driverId,
-          }),
-        }
-      );
+
+      const response = await fetch(`http://secov_back.test/api/updateCar/${carId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...carData,
+          driver_id: driverId, // Se envía el driver_id pero no se actualiza
+        }),
+      });
 
       const { data, message, errors } = await response.json();
       if (data) {
         toast.success(message);
+        resetForm();
         onClose(); // Cierra el modal
       } else {
         setErrors(errors);
         toast.error(message);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Error al actualizar el vehículo.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading || isLoadingData) return <Loading />;
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
@@ -213,7 +259,7 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
           ))}
 
           {/* Campos select */}
-          {[
+          {[ 
             { name: "brand_id", options: brands, label: "Marca" },
             { name: "type_car_id", options: types, label: "Tipo de Vehículo" },
             { name: "group_id", options: groups, label: "Grupo" },
@@ -252,19 +298,58 @@ const EditCar = ({ onClose, vehicleId, driverId }) => {
           ))}
         </div>
 
+        {/* Campos de fecha */}
+        <div>
+          <label htmlFor="date_soat_issue" className="block text-sm font-semibold">
+            Fecha de Emisión del SOAT
+          </label>
+          <input
+            type="date"
+            id="date_soat_issue"
+            name="date_soat_issue"
+            value={carData.date_soat_issue}
+            onChange={handleChange}
+            className={`mt-1 p-2 w-full border rounded ${
+              errors.date_soat_issue ? "border-red-500" : ""
+            }`}
+          />
+          {errors.date_soat_issue && (
+            <p className="text-red-500 text-sm">{errors.date_soat_issue}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="date_soat_expiration" className="block text-sm font-semibold">
+            Fecha de Vencimiento del SOAT
+          </label>
+          <input
+            type="date"
+            id="date_soat_expiration"
+            name="date_soat_expiration"
+            value={carData.date_soat_expiration}
+            onChange={handleChange}
+            className={`mt-1 p-2 w-full border rounded ${
+              errors.date_soat_expiration ? "border-red-500" : ""
+            }`}
+          />
+          {errors.date_soat_expiration && (
+            <p className="text-red-500 text-sm">{errors.date_soat_expiration}</p>
+          )}
+        </div>
+
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
-            onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md"
+            onClick={resetForm}
+            className="bg-gray-600 text-white py-2 px-6 rounded"
           >
-            Cancelar
+            Limpiar Campos
           </button>
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+            className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
           >
-            <FaSave className="mr-2" /> Guardar
+            <FaSave /> Guardar Cambios
           </button>
         </div>
       </form>

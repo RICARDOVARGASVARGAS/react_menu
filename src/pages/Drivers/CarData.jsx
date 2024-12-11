@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
-import { FaPlus, FaEdit, FaImage, FaFilePdf } from "react-icons/fa";
+import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
-
+import EditCar from "./EditCar"; // Formulario para editar vehículos
 
 const CarData = ({ driverId }) => {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [modalType, setModalType] = useState(""); // 'image' o 'pdf'
+  const [modalType, setModalType] = useState(""); // 'edit' o 'image' o 'pdf'
   const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false); // Estado para el modal de agregar vehículo
+  const [isEditVehicleModalOpen, setIsEditVehicleModalOpen] = useState(false);
+  const [selectedCarId, setSelectedCarId] = useState(null);
 
   const navigate = useNavigate(); // Para navegación entre páginas
 
@@ -52,9 +54,17 @@ const CarData = ({ driverId }) => {
     fetchVehicles(); // Recargar la lista de vehículos tras agregar uno nuevo
   };
 
-  // Navegar a la página de editar vehículo
-  const handleEditVehicle = (vehicleId) => {
-    navigate(`/edit-car/${vehicleId}`);
+  // Abrir el modal de edición de vehículo
+  const handleEditVehicle = (carId) => {
+    setSelectedCarId(carId);
+    setIsEditVehicleModalOpen(true);
+  };
+
+  // Cerrar el modal de edición de vehículo
+  const closeEditVehicleModal = () => {
+    setSelectedCarId(null);
+    setIsEditVehicleModalOpen(false);
+    fetchVehicles(); // Recargar la lista de vehículo tras editar uno
   };
 
   // Obtener el tipo de archivo basado en la extensión
@@ -229,8 +239,21 @@ const CarData = ({ driverId }) => {
         </div>
       )}
 
+      {/* Modal de Editar Vehículo */}
+      {isEditVehicleModalOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <EditCar
+              onClose={closeEditVehicleModal}
+              carId={selectedCarId}
+              driverId={driverId}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Modal de Archivos */}
-      {modalData && (
+      {modalData && modalType !== "edit" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             {modalType === "image" && (
