@@ -5,6 +5,7 @@ import { FaPlus, FaEdit, FaImage, FaFilePdf } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
 
+
 const CarData = ({ driverId }) => {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,7 +111,6 @@ const CarData = ({ driverId }) => {
                 <th className="border px-2 py-1">Tipo</th>
                 <th className="border px-2 py-1">Grupo</th>
                 <th className="border px-2 py-1">SOAT</th>
-                <th className="border px-2 py-1">Archivos</th>
                 <th className="border px-2 py-1">Acciones</th>
               </tr>
             </thead>
@@ -175,41 +175,43 @@ const CarData = ({ driverId }) => {
                       </div>
                     </div>
                   </td>
-                  <td className="border px-2 py-1">
-                    <div className="flex gap-2 justify-center">
-                      {vehicle.file_technical_review && (
-                        <button
-                          onClick={() => handleOpenModal(vehicle.file_technical_review)}
-                          className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
-                        >
-                          <FaFilePdf /> Revisar Técnico
-                        </button>
-                      )}
-                      {vehicle.file_soat && (
-                        <button
-                          onClick={() => handleOpenModal(vehicle.file_soat)}
-                          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                        >
-                          <FaFilePdf /> Ver SOAT
-                        </button>
-                      )}
-                      {vehicle.file_car && (
-                        <button
-                          onClick={() => handleOpenModal(vehicle.file_car)}
-                          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                        >
-                          <FaImage /> Ver Imagen
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                  <td className="border px-2 py-1 text-center">
+                  <td className="border px-2 py-1 text-center space-x-2 space-y-1">
                     <button
                       onClick={() => handleEditVehicle(vehicle.id)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 flex items-center gap-1"
+                      className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                     >
-                      <FaEdit /> Editar
+                      <FaEdit className="inline-block mr-1" /> Editar
                     </button>
+
+                    {vehicle.file_technical_review && (
+                      <button
+                        onClick={() =>
+                          handleOpenModal(vehicle.file_technical_review)
+                        }
+                        className="bg-gray-600 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaFilePdf className="inline-block mr-1" /> Revisar
+                        Técnico
+                      </button>
+                    )}
+
+                    {vehicle.file_soat && (
+                      <button
+                        onClick={() => handleOpenModal(vehicle.file_soat)}
+                        className="bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaFilePdf className="inline-block mr-1" /> Ver SOAT
+                      </button>
+                    )}
+
+                    {vehicle.file_car && (
+                      <button
+                        onClick={() => handleOpenModal(vehicle.file_car)}
+                        className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaImage className="inline-block mr-1" /> Ver Imagen
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -235,7 +237,12 @@ const CarData = ({ driverId }) => {
               <img src={modalData} alt="Archivo" className="w-full h-auto" />
             )}
             {modalType === "pdf" && (
-              <embed src={modalData} type="application/pdf" width="100%" height="500px" />
+              <embed
+                src={modalData}
+                type="application/pdf"
+                width="100%"
+                height="500px"
+              />
             )}
             {modalType === "other" && (
               <p>Este tipo de archivo no es soportado para vista previa.</p>
