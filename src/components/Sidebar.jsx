@@ -52,14 +52,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
           </li>
           <li>
             <Link
-              to="/vehicles"
+              to="/list-cars"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
                 activeItem === "Vehicles" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
               }`}
             >
               <FaCar className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Vehicles</span>
+              <span className="ml-3 text-sm font-medium">Vehículos</span>
             </Link>
           </li>
           <li>

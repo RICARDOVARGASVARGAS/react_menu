@@ -4,6 +4,8 @@ import ListDrivers from "./pages/Drivers/ListDrivers";
 import RegisterDriver from "./pages/Drivers/RegisterDriver";
 import EditDriver from "./pages/Drivers/EditDriver";
 import DetailDriver from "./pages/Drivers/DetailDriver";
+import ListCars from "./pages/Cars/ListCars";
+import DetailCar from "./pages/Cars/DetailCar";
 import { ToastContainer } from "react-toastify"; // Importar ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
 
@@ -16,7 +18,11 @@ const App = () => {
         <Route path="/register-driver" element={<RegisterDriver />} />
         <Route path="/edit-driver/:driverId" element={<EditDriver />} />
         <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
-        <Route path="*" element={<Home />} /> {/* Redirige rutas desconocidas */}
+        {/* VEHICULOS */}
+        <Route path="/list-cars" element={<ListCars />} />
+        <Route path="/cars/:carId/view" element={<DetailCar />} />
+        <Route path="*" element={<Home />} />{" "}
+        {/* Redirige rutas desconocidas */}
       </Routes>
 
       {/* Agregar ToastContainer en el componente raíz */}
