@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading"; // Indicador de carga
-import { FaSave } from "react-icons/fa";
+import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 
 /**
@@ -17,6 +17,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
   // Estado para la carga del formulario
   const [loading, setLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Estado para los datos del formulario
   const [carData, setCarData] = useState({
@@ -117,9 +118,11 @@ const EditCar = ({ onClose, carId, driverId }) => {
       try {
         setIsLoadingData(true);
 
-        const response = await fetch(`http://secov_back.test/api/getCar/${carId}`);
+        const response = await fetch(
+          `http://secov_back.test/api/getCar/${carId}`
+        );
         const { data, message } = await response.json();
-        
+
         if (data) {
           setCarData({
             plate: data.plate || "",
@@ -137,7 +140,9 @@ const EditCar = ({ onClose, carId, driverId }) => {
             date_soat_expiration: data.date_soat_expiration || "",
           });
         } else {
-          toast.error(message || "No se pudieron cargar los datos del vehículo.");
+          toast.error(
+            message || "No se pudieron cargar los datos del vehículo."
+          );
         }
       } catch (error) {
         console.error("Error al cargar los datos del vehículo:", error);
@@ -159,25 +164,25 @@ const EditCar = ({ onClose, carId, driverId }) => {
     }));
   };
 
-  // Reiniciar el formulario
-  const resetForm = () => {
-    setCarData({
-      plate: "",
-      chassis: "",
-      motor: "",
-      file_car: "",
-      brand_id: "",
-      type_car_id: "",
-      group_id: "",
-      year_id: "",
-      color_id: "",
-      example_id: "",
-      number_soat: "",
-      date_soat_issue: "",
-      date_soat_expiration: "",
-    });
-    setErrors({});
-  };
+  // // Reiniciar el formulario
+  // const resetForm = () => {
+  //   setCarData({
+  //     plate: "",
+  //     chassis: "",
+  //     motor: "",
+  //     file_car: "",
+  //     brand_id: "",
+  //     type_car_id: "",
+  //     group_id: "",
+  //     year_id: "",
+  //     color_id: "",
+  //     example_id: "",
+  //     number_soat: "",
+  //     date_soat_issue: "",
+  //     date_soat_expiration: "",
+  //   });
+  //   setErrors({});
+  // };
 
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
@@ -186,17 +191,20 @@ const EditCar = ({ onClose, carId, driverId }) => {
     try {
       setLoading(true);
 
-      const response = await fetch(`http://secov_back.test/api/updateCar/${carId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...carData,
-          driver_id: driverId, // Se envía el driver_id pero no se actualiza
-        }),
-      });
+      const response = await fetch(
+        `http://secov_back.test/api/updateCar/${carId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            ...carData,
+            driver_id: driverId, // Se envía el driver_id pero no se actualiza
+          }),
+        }
+      );
 
       const { data, message, errors } = await response.json();
       if (data) {
@@ -210,6 +218,28 @@ const EditCar = ({ onClose, carId, driverId }) => {
     } catch (error) {
       console.log(error);
       toast.error("Error al actualizar el vehículo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `http://secov_back.test/api/deleteCar/${carId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const { message } = await response.json();
+      toast.success(message || "Vehículo eliminado.");
+      onClose();
+    } catch (error) {
+      console.error("Error al eliminar el vehículo:", error);
+      toast.error("No se pudo eliminar el vehículo.");
     } finally {
       setLoading(false);
     }
@@ -259,7 +289,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
           ))}
 
           {/* Campos select */}
-          {[ 
+          {[
             { name: "brand_id", options: brands, label: "Marca" },
             { name: "type_car_id", options: types, label: "Tipo de Vehículo" },
             { name: "group_id", options: groups, label: "Grupo" },
@@ -300,7 +330,10 @@ const EditCar = ({ onClose, carId, driverId }) => {
 
         {/* Campos de fecha */}
         <div>
-          <label htmlFor="date_soat_issue" className="block text-sm font-semibold">
+          <label
+            htmlFor="date_soat_issue"
+            className="block text-sm font-semibold"
+          >
             Fecha de Emisión del SOAT
           </label>
           <input
@@ -319,7 +352,10 @@ const EditCar = ({ onClose, carId, driverId }) => {
         </div>
 
         <div>
-          <label htmlFor="date_soat_expiration" className="block text-sm font-semibold">
+          <label
+            htmlFor="date_soat_expiration"
+            className="block text-sm font-semibold"
+          >
             Fecha de Vencimiento del SOAT
           </label>
           <input
@@ -333,26 +369,52 @@ const EditCar = ({ onClose, carId, driverId }) => {
             }`}
           />
           {errors.date_soat_expiration && (
-            <p className="text-red-500 text-sm">{errors.date_soat_expiration}</p>
+            <p className="text-red-500 text-sm">
+              {errors.date_soat_expiration}
+            </p>
           )}
         </div>
 
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
-            onClick={resetForm}
-            className="bg-gray-600 text-white py-2 px-6 rounded"
+            onClick={() => setShowDeleteModal(true)}
+            className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
           >
-            Limpiar Campos
+            <FaTrash />
+            Eliminar
           </button>
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded flex items-center gap-2"
           >
-            <FaSave /> Guardar Cambios
+            <FaSave /> Actualizar
           </button>
         </div>
       </form>
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-1/3">
+            <h3 className="text-lg font-semibold mb-4">
+              ¿Estás seguro de que deseas eliminar este vehículo?
+            </h3>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

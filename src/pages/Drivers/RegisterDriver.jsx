@@ -279,7 +279,7 @@ const RegisterDriver = () => {
                   <button
                     type="button"
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-400"
-                    onClick={() => navigate("/drivers")}
+                    onClick={() => navigate("/list-drivers")}
                   >
                     <FaList />
                     Lista
