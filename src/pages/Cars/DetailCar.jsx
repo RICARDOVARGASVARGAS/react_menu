@@ -4,6 +4,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import MobileToolbar from "../../components/MobileToolbar";
 import Loading from "../../components/Loading";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 const DetailCar = () => {
   const { carId } = useParams();
@@ -59,28 +60,28 @@ const DetailCar = () => {
             <div className="bg-white p-4 rounded shadow">
               <h2 className="text-lg font-semibold mb-2">Información Básica</h2>
               <p>
-                <strong>Placa:</strong> {car.plate}
+                <strong>Placa:</strong> {car.plate || "No disponible"}
               </p>
               <p>
-                <strong>Chasis:</strong> {car.chassis}
+                <strong>Chasis:</strong> {car.chassis || "No disponible"}
               </p>
               <p>
-                <strong>Motor:</strong> {car.motor}
+                <strong>Motor:</strong> {car.motor || "No disponible"}
               </p>
               <p>
-                <strong>Año:</strong> {car.year.name}
+                <strong>Año:</strong> {car.year.name || "No disponible"}
               </p>
               <p>
-                <strong>Color:</strong> {car.color.name}
+                <strong>Color:</strong> {car.color.name || "No disponible"}
               </p>
               <p>
-                <strong>Modelo:</strong> {car.example.name}
+                <strong>Modelo:</strong> {car.example.name || "No disponible"}
               </p>
               <p>
-                <strong>Marca:</strong> {car.brand.name}
+                <strong>Marca:</strong> {car.brand.name || "No disponible"}
               </p>
               <p>
-                <strong>Asociado a:</strong> {car.group.name}
+                <strong>Asociado a:</strong> {car.group.name || "No disponible"}
               </p>
             </div>
 
@@ -89,13 +90,13 @@ const DetailCar = () => {
                 Información del SOAT
               </h2>
               <p>
-                <strong>Número SOAT:</strong> {car.number_soat}
+                <strong>Número SOAT:</strong> {car.number_soat || "No disponible"}
               </p>
               <p>
-                <strong>Fecha de Emisión:</strong> {car.date_soat_issue}
+                <strong>Fecha de Emisión:</strong> {car.date_soat_issue || "No disponible"}
               </p>
               <p>
-                <strong>Fecha de Expiración:</strong> {car.date_soat_expiration}
+                <strong>Fecha de Expiración:</strong> {car.date_soat_expiration || "No disponible"}
               </p>
               <img
                 src={car.file_soat}
@@ -125,21 +126,21 @@ const DetailCar = () => {
                 Información del Conductor
               </h2>
               <p>
-                <strong>Nombre:</strong> {car.driver.name}{" "}
+                <strong>Nombre:</strong> {car.driver.name || "No disponible"}{" "}
                 {car.driver.first_name} {car.driver.last_name}
               </p>
               <p>
-                <strong>Documento:</strong> {car.driver.document_type} -{" "}
-                {car.driver.document_number}
+                <strong>Documento:</strong> {car.driver.document_type || "No disponible"} -{" "}
+                {car.driver.document_number || "No disponible"}
               </p>
               <p>
-                <strong>Teléfono:</strong> {car.driver.phone_number}
+                <strong>Teléfono:</strong> {car.driver.phone_number || "No disponible"}
               </p>
               <p>
-                <strong>Email:</strong> {car.driver.email}
+                <strong>Email:</strong> {car.driver.email || "No disponible"}
               </p>
               <p>
-                <strong>Dirección:</strong> {car.driver.address}
+                <strong>Dirección:</strong> {car.driver.address || "No disponible"}
               </p>
               <img
                 src={car.driver.image}

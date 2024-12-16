@@ -134,41 +134,41 @@ const CarData = ({ driverId }) => {
                   <td className="border px-2 py-1">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Motor:</strong> {vehicle.motor}
+                        <strong>Motor:</strong> {vehicle.motor || "No disponible"}
                       </span>
                       <span>
-                        <strong>Chasis:</strong> {vehicle.chassis}
+                        <strong>Chasis:</strong> {vehicle.chassis || "No disponible"}
                       </span>
                     </div>
                   </td>
                   <td className="border px-2 py-1">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Marca:</strong> {vehicle.brand?.name}
+                        <strong>Marca:</strong> {vehicle.brand?.name || "No disponible"}
                       </span>
                       <span>
-                        <strong>Modelo:</strong> {vehicle.example.name}
+                        <strong>Modelo:</strong> {vehicle.example.name || "No disponible"}
                       </span>
                       <span>
-                        <strong>Año:</strong> {vehicle.year.name}
+                        <strong>Año:</strong> {vehicle.year.name || "No disponible"}
                       </span>
                       <span className="flex items-center">
                         <strong>Color:</strong>
                         <span
                           className="ml-2 w-4 h-4 rounded-full"
                           style={{
-                            backgroundColor: vehicle.color?.hex || "#fff",
+                            backgroundColor: vehicle.color?.hex || "No disponible",
                           }}
                         ></span>
-                        <span className="ml-1">{vehicle.color?.name}</span>
+                        <span className="ml-1">{vehicle.color?.name || "No disponible"}</span>
                       </span>
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-center">
-                    {vehicle.typeCar?.name}
+                    {vehicle.typeCar?.name || "No disponible"}
                   </td>
                   <td className="border px-2 py-1 text-center">
-                    {vehicle.group?.name}
+                    {vehicle.group?.name || "No disponible"}
                   </td>
                   <td className="border px-2 py-1">
                     <div>
@@ -176,12 +176,12 @@ const CarData = ({ driverId }) => {
                       <div className="flex flex-col">
                         <span>
                           <strong>F.Vig:</strong> <br />
-                          {vehicle.date_soat_issue}
+                          {vehicle.date_soat_issue || "No disponible"}
                         </span>
                         <span>
                           <strong>F.Ven:</strong>
                           <br />
-                          {vehicle.date_soat_expiration}
+                          {vehicle.date_soat_expiration || "No disponible"}
                         </span>
                       </div>
                     </div>
@@ -201,8 +201,8 @@ const CarData = ({ driverId }) => {
                         }
                         className="bg-gray-600 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
-                        <FaFilePdf className="inline-block mr-1" /> Revisar
-                        Técnico
+                        <FaFilePdf className="inline-block mr-1" /> Revisión
+                        Técnica
                       </button>
                     )}
 

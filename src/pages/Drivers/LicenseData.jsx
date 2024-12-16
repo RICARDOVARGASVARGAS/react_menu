@@ -110,7 +110,7 @@ const LicenseData = ({ driverId }) => {
           <input
             type="text"
             name="licenseNumber"
-            value={license.licenseNumber}
+            value={license.licenseNumber || ""}
             onChange={handleChange}
             className="border p-2 w-full"
             required
@@ -122,7 +122,7 @@ const LicenseData = ({ driverId }) => {
           <input
             type="date"
             name="issueDate"
-            value={license.issueDate}
+            value={license.issueDate || ""}
             onChange={handleChange}
             className="border p-2 w-full"
             required
@@ -136,7 +136,7 @@ const LicenseData = ({ driverId }) => {
           <input
             type="date"
             name="expirationDate"
-            value={license.expirationDate}
+            value={license.expirationDate || ""}
             onChange={handleChange}
             className="border p-2 w-full"
             required
@@ -148,7 +148,7 @@ const LicenseData = ({ driverId }) => {
           <input
             type="text"
             name="licenseClass"
-            value={license.licenseClass}
+            value={license.licenseClass || ""}
             onChange={handleChange}
             className="border p-2 w-full"
           />
@@ -161,7 +161,7 @@ const LicenseData = ({ driverId }) => {
           <input
             type="text"
             name="licenseCategory"
-            value={license.licenseCategory}
+            value={license.licenseCategory || ""}
             onChange={handleChange}
             className="border p-2 w-full"
           />

@@ -233,7 +233,7 @@ const DriverData = ({ driverId }) => {
             <input
               type={name === "birth_date" ? "date" : "text"}
               name={name}
-              value={formData[name]}
+              value={formData[name] || ""}
               onChange={handleChange}
               className={`border ${
                 errors[name] ? "border-red-500" : "border-gray-300"
