@@ -15,7 +15,7 @@ const DetailCar = () => {
     const fetchCar = async () => {
       try {
         const response = await axios.get(
-          `http://secov_back.test/api/getCar/${carId}?included=driver,brand,typeCar,group,year,color,example`
+          `${API_BASE_URL}/getCar/${carId}?included=driver,brand,typeCar,group,year,color,example`
         );
         setCar(response.data.data);
       } catch (error) {

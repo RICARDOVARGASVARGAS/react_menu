@@ -3,6 +3,7 @@ import { FaSearch, FaEdit } from "react-icons/fa";
 import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 const DriverData = ({ driverId }) => {
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ const DriverData = ({ driverId }) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://secov_back.test/api/getDriver/${driverId}`
+        `${API_BASE_URL}/getDriver/${driverId}`
       );
       const data = await response.json();
 
@@ -126,7 +127,7 @@ const DriverData = ({ driverId }) => {
 
     try {
       const response = await fetch(
-        `http://secov_back.test/api/updateDriver/${driverId}`,
+        `${API_BASE_URL}/updateDriver/${driverId}`,
         {
           method: "PUT",
           headers: {

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading"; // Indicador de carga
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 /**
  * Componente para editar un vehículo
@@ -67,30 +68,24 @@ const EditCar = ({ onClose, carId, driverId }) => {
           colorsRes,
           examplesRes,
         ] = await Promise.all([
-          fetch(
-            "http://secov_back.test/api/getBrands?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
-          fetch(
-            "http://secov_back.test/api/getTypeCars?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
-          fetch(
-            "http://secov_back.test/api/getGroups?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
-          fetch(
-            "http://secov_back.test/api/getYears?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
-          fetch(
-            "http://secov_back.test/api/getColors?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
-          fetch(
-            "http://secov_back.test/api/getExamples?page=1&perPage=all&sort=asc",
-            { headers }
-          ),
+          fetch(`${API_BASE_URL}/getBrands?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getTypeCars?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getGroups?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getYears?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getColors?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getExamples?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
         ]);
 
         setBrands((await brandsRes.json()).data || []);
@@ -118,9 +113,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
       try {
         setIsLoadingData(true);
 
-        const response = await fetch(
-          `http://secov_back.test/api/getCar/${carId}`
-        );
+        const response = await fetch(`${API_BASE_URL}/getCar/${carId}`);
         const { data, message } = await response.json();
 
         if (data) {
@@ -191,20 +184,17 @@ const EditCar = ({ onClose, carId, driverId }) => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `http://secov_back.test/api/updateCar/${carId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...carData,
-            driver_id: driverId, // Se envía el driver_id pero no se actualiza
-          }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/updateCar/${carId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...carData,
+          driver_id: driverId, // Se envía el driver_id pero no se actualiza
+        }),
+      });
 
       const { data, message, errors } = await response.json();
       if (data) {
@@ -227,12 +217,9 @@ const EditCar = ({ onClose, carId, driverId }) => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `http://secov_back.test/api/deleteCar/${carId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/deleteCar/${carId}`, {
+        method: "DELETE",
+      });
 
       const { message } = await response.json();
       toast.success(message || "Vehículo eliminado.");

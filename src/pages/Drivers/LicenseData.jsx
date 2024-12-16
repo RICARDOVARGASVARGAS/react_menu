@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Importar el componente de carga
-import {  FaEdit } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 const LicenseData = ({ driverId }) => {
   const [license, setLicense] = useState({
@@ -19,9 +20,7 @@ const LicenseData = ({ driverId }) => {
     const fetchDriverData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `http://secov_back.test/api/getDriver/${driverId}`
-        );
+        const response = await fetch(`${API_BASE_URL}/getDriver/${driverId}`);
         const result = await response.json();
 
         if (result.data) {
@@ -74,17 +73,14 @@ const LicenseData = ({ driverId }) => {
         license_category: license.licenseCategory,
       };
 
-      const response = await fetch(
-        `http://secov_back.test/api/updateDriver/${driverId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/updateDriver/${driverId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
 
       const { data, message, errors } = await response.json();
 
@@ -174,7 +170,7 @@ const LicenseData = ({ driverId }) => {
         <div className="flex justify-end gap-4 mt-6">
           <button
             type="submit"
-             className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mx-auto flex items-center justify-center gap-2"
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mx-auto flex items-center justify-center gap-2"
             disabled={loading}
           >
             {loading ? "Actualizando..." : "Actualizar Licencia"}

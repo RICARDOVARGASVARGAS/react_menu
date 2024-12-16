@@ -24,7 +24,7 @@ const ListCars = () => {
         setIsLoading(true);
         try {
             const response = await axios.get(
-                "http://secov_back.test/api/getCars?included=brand,typeCar,group,year,color,example",
+                `${API_BASE_URL}/getCars?included=brand,typeCar,group,year,color,example`,
                 {
                     params: {
                         page: currentPage,

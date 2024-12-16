@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 /**
  * Componente para agregar un nuevo vehículo
@@ -64,27 +65,27 @@ const AddCar = ({ onClose, driverId }) => {
           examplesRes,
         ] = await Promise.all([
           fetch(
-            "http://secov_back.test/api/getBrands?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getBrands?page=1&perPage=all&sort=asc`,
             { headers }
           ),
           fetch(
-            "http://secov_back.test/api/getTypeCars?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getTypeCars?page=1&perPage=all&sort=asc`,
             { headers }
           ),
           fetch(
-            "http://secov_back.test/api/getGroups?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getGroups?page=1&perPage=all&sort=asc`,
             { headers }
           ),
           fetch(
-            "http://secov_back.test/api/getYears?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getYears?page=1&perPage=all&sort=asc`,
             { headers }
           ),
           fetch(
-            "http://secov_back.test/api/getColors?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getColors?page=1&perPage=all&sort=asc`,
             { headers }
           ),
           fetch(
-            "http://secov_back.test/api/getExamples?page=1&perPage=all&sort=asc",
+            `${API_BASE_URL}/getExamples?page=1&perPage=all&sort=asc`,
             { headers }
           ),
         ]);
@@ -144,7 +145,7 @@ const AddCar = ({ onClose, driverId }) => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://secov_back.test/api/registerCar", {
+      const response = await fetch(`${API_BASE_URL}/registerCar`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
