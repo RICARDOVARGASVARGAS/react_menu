@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaUserCircle, FaCar, FaHistory, FaFileAlt, FaSignOutAlt, FaTimes } from "react-icons/fa";
+import { 
+  FaUserCircle, 
+  FaCar, 
+  FaHistory, 
+  FaFileAlt, 
+  FaSignOutAlt, 
+  FaTimes, 
+  FaCog, 
+  FaChevronDown, 
+  FaChevronUp, 
+  FaTrademark, 
+  FaCubes, 
+  FaCalendarAlt, 
+  FaUsers 
+} from "react-icons/fa";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
+  const [isConfigOpen, setIsConfigOpen] = useState(false); // Estado para controlar el desplegable de Configuración
+
   return (
     <aside
       className={`fixed z-40 inset-y-0 left-0 transform ${
@@ -85,6 +101,66 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <FaFileAlt className="text-lg" />
               <span className="ml-3 text-sm font-medium">Tickets</span>
             </Link>
+          </li>
+          {/* Configuración */}
+          <li>
+            <button
+              onClick={() => setIsConfigOpen(!isConfigOpen)}
+              className="flex items-center py-3 px-4 w-full transition hover:bg-blue-700"
+            >
+              <FaCog className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Configuración</span>
+              {isConfigOpen ? (
+                <FaChevronUp className="ml-auto text-sm" />
+              ) : (
+                <FaChevronDown className="ml-auto text-sm" />
+              )}
+            </button>
+            {/* Submenú */}
+            {isConfigOpen && (
+              <ul className="ml-8">
+                <li>
+                  <Link
+                    to="/brands"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaTrademark className="text-lg" />
+                    <span className="ml-3">Marcas</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/models"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaCubes className="text-lg" />
+                    <span className="ml-3">Modelos</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/years"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaCalendarAlt className="text-lg" />
+                    <span className="ml-3">Años</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/associations"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaUsers className="text-lg" />
+                    <span className="ml-3">Asociaciones</span>
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
         </ul>
       </nav>
