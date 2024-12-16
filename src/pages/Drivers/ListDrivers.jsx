@@ -7,6 +7,7 @@ import Table from "../../components/Table";
 import Loading from "../../components/Loading"; // Importa el componente Loading
 import axios from "axios";
 import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
+import API_BASE_URL from "../../config/config/apiConfig";
 
 const ListDrivers = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,7 +25,7 @@ const ListDrivers = () => {
     setIsLoading(true); // Activa el estado de carga
     try {
       const response = await axios.get(
-        `http://secov_back.test/api/getDrivers`,
+        `${API_BASE_URL}/getDrivers`,
         {
           params: {
             page: currentPage,
