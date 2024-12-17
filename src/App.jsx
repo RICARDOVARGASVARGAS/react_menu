@@ -12,6 +12,7 @@ import ListExamples from "./pages/Settings/Example/ListExample";
 import ListBrands from "./pages/Settings/Brand/ListBrands";
 import ListYears from "./pages/Settings/Year/ListYears";
 import ListGroups from "./pages/Settings/Group/ListGroups";
+import ListTypeCars from "./pages/Settings/TypeCar/ListTypeCars";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/settings/list-brands" element={<ListBrands />} />
         <Route path="/settings/list-years" element={<ListYears />} />
         <Route path="/settings/list-groups" element={<ListGroups />} />
+        <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
         {/* Redirige rutas desconocidas */}
       </Routes>
 

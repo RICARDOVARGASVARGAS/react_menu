@@ -164,6 +164,16 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                 </li>
                 <li>
                   <Link
+                    to="/settings/list-type-cars"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaCar className="text-lg" />
+                    <span className="ml-3">Tipos</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/settings/list-groups"
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
