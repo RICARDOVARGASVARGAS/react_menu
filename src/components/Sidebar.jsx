@@ -14,6 +14,7 @@ import {
   FaCubes,
   FaCalendarAlt,
   FaUsers,
+  FaPalette,
 } from "react-icons/fa";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
@@ -96,7 +97,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <span className="ml-3 text-sm font-medium">History</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/tickets"
               onClick={() => setIsSidebarOpen(false)}
@@ -109,7 +110,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <FaFileAlt className="text-lg" />
               <span className="ml-3 text-sm font-medium">Tickets</span>
             </Link>
-          </li>
+          </li> */}
           {/* Configuración */}
           <li>
             <button
@@ -180,6 +181,16 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   >
                     <FaUsers className="text-lg" />
                     <span className="ml-3">Asociaciones</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/settings/list-colors"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                  >
+                    <FaPalette className="text-lg" />
+                    <span className="ml-3">Colores</span>
                   </Link>
                 </li>
               </ul>
