@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/Sidebar";
@@ -9,6 +8,7 @@ import Loading from "../../../components/Loading"; // Importa el componente Load
 import axios from "axios";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import API_BASE_URL from "../../../config/config/apiConfig";
+import RegisterExample from "./RegisterExample";
 
 const ListExamples = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,24 +18,33 @@ const ListExamples = () => {
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga
+  const [AddForm, setAddForm] = useState(false); // Estado para el modal de agregar
 
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  const fetchDrivers = async () => {
+  // Abrir el modal de agregar vehículo
+  const handleAddForm = () => {
+    setAddForm(true);
+  };
+
+  // Cerrar el modal de agregar vehículo
+  const closeAddForm = () => {
+    setAddForm(false);
+    fetchItems(); // Recargar la lista de vehículos tras agregar uno nuevo
+  };
+
+  const fetchItems = async () => {
     setIsLoading(true); // Activa el estado de carga
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/getExamples`,
-        {
-          params: {
-            page: currentPage,
-            perPage: itemsPerPage,
-            sort: "desc",
-            search: searchQuery,
-          },
-        }
-      );
+      const response = await axios.get(`${API_BASE_URL}/getExamples`, {
+        params: {
+          page: currentPage,
+          perPage: itemsPerPage,
+          sort: "desc",
+          search: searchQuery,
+        },
+      });
 
       const { data, meta } = response.data;
       setData(data);
@@ -48,7 +57,7 @@ const ListExamples = () => {
   };
 
   useEffect(() => {
-    fetchDrivers();
+    fetchItems();
   }, [currentPage, searchQuery]);
 
   const handleSearch = () => {
@@ -102,7 +111,7 @@ const ListExamples = () => {
               Lista de Modelos
             </h1>
             <button
-              onClick={() => navigate("/register-example")}
+              onClick={handleAddForm}
               className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
             >
               <FaPlus /> Agregar
@@ -137,11 +146,7 @@ const ListExamples = () => {
           ) : (
             <>
               <Table
-                headers={[
-                  "N°",
-                  "Nombre",
-                  "Operaciones",
-                ]}
+                headers={["N°", "Nombre", "Operaciones"]}
                 data={data.map((item, index) => ({
                   id: item.id,
                   name: item.name,
@@ -157,6 +162,14 @@ const ListExamples = () => {
           )}
         </main>
       </div>
+      {/* Modal de Agregar */}
+      {AddForm && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <RegisterExample onClose={closeAddForm} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
