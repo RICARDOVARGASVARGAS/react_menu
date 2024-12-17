@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify"; // Importar ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
 import ListExamples from "./pages/Settings/Example/ListExample";
 import ListBrands from "./pages/Settings/Brand/ListBrands";
+import ListYears from "./pages/Settings/Year/ListYears";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         {/* Settings */}
         <Route path="/settings/list-examples" element={<ListExamples />} />
         <Route path="/settings/list-brands" element={<ListBrands />} />
+        <Route path="/settings/list-years" element={<ListYears />} />
         {/* Redirige rutas desconocidas */}
       </Routes>
 

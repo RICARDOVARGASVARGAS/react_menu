@@ -154,7 +154,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                 </li>
                 <li>
                   <Link
-                    to="/years"
+                    to="/settings/list-years"
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
                   >
