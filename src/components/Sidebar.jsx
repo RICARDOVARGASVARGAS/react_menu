@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  FaUserCircle, 
-  FaCar, 
-  FaHistory, 
-  FaFileAlt, 
-  FaSignOutAlt, 
-  FaTimes, 
-  FaCog, 
-  FaChevronDown, 
-  FaChevronUp, 
-  FaTrademark, 
-  FaCubes, 
-  FaCalendarAlt, 
-  FaUsers 
+import {
+  FaUserCircle,
+  FaCar,
+  FaHistory,
+  FaFileAlt,
+  FaSignOutAlt,
+  FaTimes,
+  FaCog,
+  FaChevronDown,
+  FaChevronUp,
+  FaTrademark,
+  FaCubes,
+  FaCalendarAlt,
+  FaUsers,
 } from "react-icons/fa";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
@@ -59,7 +59,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/list-drivers"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Drivers" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+                activeItem === "Drivers"
+                  ? "bg-blue-700 text-white"
+                  : "hover:bg-blue-700"
               }`}
             >
               <FaUserCircle className="text-lg" />
@@ -71,7 +73,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/list-cars"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Vehicles" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+                activeItem === "Vehicles"
+                  ? "bg-blue-700 text-white"
+                  : "hover:bg-blue-700"
               }`}
             >
               <FaCar className="text-lg" />
@@ -83,7 +87,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/history"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "History" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+                activeItem === "History"
+                  ? "bg-blue-700 text-white"
+                  : "hover:bg-blue-700"
               }`}
             >
               <FaHistory className="text-lg" />
@@ -95,7 +101,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/tickets"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Tickets" ? "bg-blue-700 text-white" : "hover:bg-blue-700"
+                activeItem === "Tickets"
+                  ? "bg-blue-700 text-white"
+                  : "hover:bg-blue-700"
               }`}
             >
               <FaFileAlt className="text-lg" />
@@ -131,9 +139,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                 </li>
                 <li>
                   <Link
-                    to="/models"
+                    to="/settings/list-examples"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    // className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-3 px-4 transition ${
+                      activeItem === "Examples"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaCubes className="text-lg" />
                     <span className="ml-3">Modelos</span>

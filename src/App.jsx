@@ -8,6 +8,7 @@ import ListCars from "./pages/Cars/ListCars";
 import DetailCar from "./pages/Cars/DetailCar";
 import { ToastContainer } from "react-toastify"; // Importar ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
+import ListExamples from "./pages/Settings/Example/ListExample";
 
 const App = () => {
   return (
@@ -21,7 +22,11 @@ const App = () => {
         {/* VEHICULOS */}
         <Route path="/list-cars" element={<ListCars />} />
         <Route path="/cars/:carId/view" element={<DetailCar />} />
-        <Route path="*" element={<Home />} />{" "}
+        <Route path="*" element={<Home />} />
+
+        {/* Settings */}
+        <Route path="/settings/list-examples" element={<ListExamples />} />
+
         {/* Redirige rutas desconocidas */}
       </Routes>
 
