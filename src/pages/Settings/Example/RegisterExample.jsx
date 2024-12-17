@@ -100,6 +100,7 @@ const RegisterExample = ({ onClose }) => {
               id="name"
               name="name"
               value={itemData.name || ""}
+              autoComplete="off"
               onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.name ? "border-red-500" : ""

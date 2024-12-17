@@ -9,6 +9,7 @@ import axios from "axios";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import API_BASE_URL from "../../../config/config/apiConfig";
 import RegisterExample from "./RegisterExample";
+import EditExample from "./EditExample";
 
 const ListExamples = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -18,20 +19,35 @@ const ListExamples = () => {
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga
-  const [AddForm, setAddForm] = useState(false); // Estado para el modal de agregar
+  const [addForm, setAddForm] = useState(false); // Estado para el modal de agregar
+  const [editForm, setEditForm] = useState(false); // Estado para el modal de editar
+  const [selectItemId, setSelectItemId] = useState(null); // ID del item seleccionado para editar
 
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  // Abrir el modal de agregar vehículo
+  // Abrir el modal de agregar
   const handleAddForm = () => {
     setAddForm(true);
   };
 
-  // Cerrar el modal de agregar vehículo
+  // Cerrar el modal de agregar
   const closeAddForm = () => {
     setAddForm(false);
-    fetchItems(); // Recargar la lista de vehículos tras agregar uno nuevo
+    fetchItems(); // Recargar la lista de tras agregar uno nuevo
+  };
+
+  // Abrir el modal de edición
+  const handleEditForm = (itemId) => {
+    setSelectItemId(itemId);
+    setEditForm(true);
+  };
+
+  // Cerrar el modal de edición de
+  const closeEditForm = () => {
+    setSelectItemId(null);
+    setEditForm(false);
+    fetchItems();
   };
 
   const fetchItems = async () => {
@@ -87,7 +103,7 @@ const ListExamples = () => {
     {
       label: <FaEdit />,
       className: "bg-blue-500 text-white hover:bg-blue-600",
-      onClick: (driver) => navigate(`/edit-driver/${driver.id}`),
+      onClick: (item) => handleEditForm(item.id),
     },
   ];
 
@@ -163,10 +179,19 @@ const ListExamples = () => {
         </main>
       </div>
       {/* Modal de Agregar */}
-      {AddForm && (
+      {addForm && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <RegisterExample onClose={closeAddForm} />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Editar */}
+      {editForm && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <EditExample onClose={closeEditForm} itemId={selectItemId} />
           </div>
         </div>
       )}
