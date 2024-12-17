@@ -282,7 +282,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
             { name: "group_id", options: groups, label: "Grupo" },
             { name: "year_id", options: years, label: "Año" },
             { name: "color_id", options: colors, label: "Color" },
-            { name: "example_id", options: examples, label: "Ejemplo" },
+            { name: "example_id", options: examples, label: "Modelo" },
           ].map(({ name, options, label }) => (
             <div key={name}>
               <label htmlFor={name} className="block text-sm font-semibold">

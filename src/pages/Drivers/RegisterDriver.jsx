@@ -89,20 +89,16 @@ const RegisterDriver = () => {
     setErrors({});
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/registerDriver`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/registerDriver`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      const data = await response.json();
-
+      const {data} = await response.json();
       if (!response.ok) {
         if (data.errors) {
           setErrors(data.errors);
@@ -238,9 +234,7 @@ const RegisterDriver = () => {
                   placeholder={`Ingrese ${label.toLowerCase()}`}
                 />
                 {errors[name] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[name][0]}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors[name][0]}</p>
                 )}
               </div>
             ))}
