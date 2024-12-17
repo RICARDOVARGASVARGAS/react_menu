@@ -129,7 +129,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <ul className="ml-8">
                 <li>
                   <Link
-                    to="/brands"
+                    to="/settings/list-brands"
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
                   >
