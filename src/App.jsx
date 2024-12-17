@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
 import ListExamples from "./pages/Settings/Example/ListExample";
 import ListBrands from "./pages/Settings/Brand/ListBrands";
 import ListYears from "./pages/Settings/Year/ListYears";
+import ListGroups from "./pages/Settings/Group/ListGroups";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/settings/list-examples" element={<ListExamples />} />
         <Route path="/settings/list-brands" element={<ListBrands />} />
         <Route path="/settings/list-years" element={<ListYears />} />
+        <Route path="/settings/list-groups" element={<ListGroups />} />
         {/* Redirige rutas desconocidas */}
       </Routes>
 
