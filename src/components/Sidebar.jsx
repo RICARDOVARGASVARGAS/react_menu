@@ -24,7 +24,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
     <aside
       className={`fixed z-40 inset-y-0 left-0 transform ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static lg:w-64 min-h-screen`}
+      } w-64 bg-gradient-to-b from-blue-900 to-blue-600 text-white transition-transform lg:translate-x-0 lg:static lg:w-64 max-h-screen overflow-y-auto`}
     >
       {/* Cerrar botón para versión móvil */}
       {isSidebarOpen && (
@@ -97,7 +97,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <span className="ml-3 text-sm font-medium">History</span>
             </Link>
           </li>
-          {/* <li>
+          <li>
             <Link
               to="/tickets"
               onClick={() => setIsSidebarOpen(false)}
@@ -110,7 +110,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <FaFileAlt className="text-lg" />
               <span className="ml-3 text-sm font-medium">Tickets</span>
             </Link>
-          </li> */}
+          </li>
           {/* Configuración */}
           <li>
             <button
@@ -200,7 +200,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
       </nav>
 
       {/* Logout Button */}
-      <div className="absolute bottom-0 w-full border-t border-blue-700">
+      <div className="relative bottom-0 w-full border-t border-blue-700">
         <button
           onClick={() => alert("Cerrar sesión")}
           className="flex items-center w-full py-3 px-4 text-left hover:bg-blue-700 transition"

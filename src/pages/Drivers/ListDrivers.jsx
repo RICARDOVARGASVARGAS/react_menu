@@ -24,17 +24,14 @@ const ListDrivers = () => {
   const fetchDrivers = async () => {
     setIsLoading(true); // Activa el estado de carga
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/getDrivers`,
-        {
-          params: {
-            page: currentPage,
-            perPage: itemsPerPage,
-            sort: "desc",
-            search: searchQuery,
-          },
-        }
-      );
+      const response = await axios.get(`${API_BASE_URL}/getDrivers`, {
+        params: {
+          page: currentPage,
+          perPage: itemsPerPage,
+          sort: "desc",
+          search: searchQuery,
+        },
+      });
 
       const { data, meta } = response.data;
       setDrivers(data);
@@ -87,14 +84,14 @@ const ListDrivers = () => {
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex max-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Drivers"
+        activeItem="Examples"
       />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
           title="Lista de conductores"

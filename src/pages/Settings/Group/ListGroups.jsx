@@ -108,14 +108,14 @@ const ListGroups = () => {
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex max-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
         activeItem="Examples"
       />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
           title="Lista de Asociaciones"
