@@ -38,14 +38,14 @@ const DetailCar = () => {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex max-h-screen md:min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
         activeItem="Cars"
       />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
           title={`Detalles del Auto - ${car.plate}`}

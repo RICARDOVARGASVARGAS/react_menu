@@ -6,14 +6,14 @@ import DriverData from "./DriverData";
 import LicenseData from "./LicenseData";
 import CarData from "./CarData";
 import API_BASE_URL from "../../config/config/apiConfig";
-import { useParams } from "react-router-dom";  // Importar useParams
+import { useParams } from "react-router-dom"; // Importar useParams
 import { useNavigate } from "react-router-dom";
 
 const EditDriver = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("personalData");
-  
+
   // Obtener el driverId desde la URL (si lo tienes en la ruta)
   const { driverId } = useParams();
 
@@ -32,16 +32,14 @@ const EditDriver = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
+    <div className="flex max-h-screen md:min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Edit Driver"
+        activeItem="Detail Driver"
       />
 
-      {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         {/* Mobile Toolbar */}
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
@@ -51,17 +49,17 @@ const EditDriver = () => {
         {/* Page Content */}
         <main className="p-4 bg-gray-100">
           <div className="bg-white shadow-md rounded-lg p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">
-              EDITAR INFORMACIÓN
-            </h1>
-            <button
-              onClick={() => navigate("/list-drivers")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaTable /> Lista de Conductores
-            </button>
-          </div>
+            <div className="flex justify-between items-center mb-4">
+              <h1 className="text-2xl font-bold text-blue-900">
+                EDITAR INFORMACIÓN
+              </h1>
+              <button
+                onClick={() => navigate("/list-drivers")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaTable /> Lista de Conductores
+              </button>
+            </div>
 
             {/* Tabs Navigation */}
             <div className="flex justify-around mb-6 border-b">

@@ -9,7 +9,9 @@ const defaultImage = "https://via.placeholder.com/640x480.png?text=No+Image";
 const VehicleCard = ({ car }) => (
   <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
     <div className="p-4">
-      <h3 className="text-lg font-bold text-blue-800 mb-3">Detalles del Vehículo</h3>
+      <h3 className="text-lg font-bold text-blue-800 mb-3">
+        Detalles del Vehículo
+      </h3>
       <p>
         <strong>Placa:</strong> {car.plate || "No disponible"}
       </p>
@@ -23,10 +25,12 @@ const VehicleCard = ({ car }) => (
         <strong>SOAT:</strong> {car.number_soat || "No disponible"}
       </p>
       <p>
-        <strong>Fecha de Emisión SOAT:</strong> {car.date_soat_issue || "No disponible"}
+        <strong>Fecha de Emisión SOAT:</strong>{" "}
+        {car.date_soat_issue || "No disponible"}
       </p>
       <p>
-        <strong>Fecha de Expiración SOAT:</strong> {car.date_soat_expiration || "No disponible"}
+        <strong>Fecha de Expiración SOAT:</strong>{" "}
+        {car.date_soat_expiration || "No disponible"}
       </p>
       <p>
         <strong>Marca:</strong> {car.brand?.name || "No disponible"}
@@ -117,14 +121,14 @@ const DetailDriver = () => {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex max-h-screen md:min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
         activeItem="Detail Driver"
       />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
           title="Detalle del Conductor"
@@ -133,7 +137,9 @@ const DetailDriver = () => {
         <main className="p-4 bg-gray-100">
           <div className="bg-white shadow-md rounded-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-blue-900">Detalle del Conductor</h1>
+              <h1 className="text-2xl font-bold text-blue-900">
+                Detalle del Conductor
+              </h1>
               <button
                 onClick={() => window.history.back()}
                 className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
@@ -144,22 +150,60 @@ const DetailDriver = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
               <div className="p-4 bg-gray-50 rounded-lg shadow">
-                <h2 className="text-lg font-bold text-gray-700 mb-4">Información Personal</h2>
-                <p><strong>Nombre:</strong> {driverData.name || "No disponible"}</p>
-                <p><strong>Documento:</strong> {driverData.document_type} {driverData.document_number}</p>
-                <p><strong>Teléfono:</strong> {driverData.phone_number || "No disponible"}</p>
-                <p><strong>Email:</strong> {driverData.email || "No disponible"}</p>
-                <p><strong>Dirección:</strong> {driverData.address || "No disponible"}</p>
-                <p><strong>Fecha de Nacimiento:</strong> {driverData.birth_date || "No disponible"}</p>
-                <p><strong>Género:</strong> {driverData.gender || "No disponible"}</p>
+                <h2 className="text-lg font-bold text-gray-700 mb-4">
+                  Información Personal
+                </h2>
+                <p>
+                  <strong>Nombre:</strong> {driverData.name || "No disponible"}
+                </p>
+                <p>
+                  <strong>Documento:</strong> {driverData.document_type}{" "}
+                  {driverData.document_number}
+                </p>
+                <p>
+                  <strong>Teléfono:</strong>{" "}
+                  {driverData.phone_number || "No disponible"}
+                </p>
+                <p>
+                  <strong>Email:</strong> {driverData.email || "No disponible"}
+                </p>
+                <p>
+                  <strong>Dirección:</strong>{" "}
+                  {driverData.address || "No disponible"}
+                </p>
+                <p>
+                  <strong>Fecha de Nacimiento:</strong>{" "}
+                  {driverData.birth_date || "No disponible"}
+                </p>
+                <p>
+                  <strong>Género:</strong>{" "}
+                  {driverData.gender || "No disponible"}
+                </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg shadow">
-                <h2 className="text-lg font-bold text-gray-700 mb-4">Licencia</h2>
-                <p><strong>Número:</strong> {driverData.license_number || "No disponible"}</p>
-                <p><strong>Fecha de Emisión:</strong> {driverData.license_issue_date || "No disponible"}</p>
-                <p><strong>Fecha de Expiración:</strong> {driverData.license_expiration_date || "No disponible"}</p>
-                <p><strong>Clase:</strong> {driverData.license_class || "No disponible"}</p>
-                <p><strong>Categoría:</strong> {driverData.license_category || "No disponible"}</p>
+                <h2 className="text-lg font-bold text-gray-700 mb-4">
+                  Licencia
+                </h2>
+                <p>
+                  <strong>Número:</strong>{" "}
+                  {driverData.license_number || "No disponible"}
+                </p>
+                <p>
+                  <strong>Fecha de Emisión:</strong>{" "}
+                  {driverData.license_issue_date || "No disponible"}
+                </p>
+                <p>
+                  <strong>Fecha de Expiración:</strong>{" "}
+                  {driverData.license_expiration_date || "No disponible"}
+                </p>
+                <p>
+                  <strong>Clase:</strong>{" "}
+                  {driverData.license_class || "No disponible"}
+                </p>
+                <p>
+                  <strong>Categoría:</strong>{" "}
+                  {driverData.license_category || "No disponible"}
+                </p>
                 <img
                   src={driverData.image_license || defaultImage}
                   alt="Licencia"
@@ -170,9 +214,13 @@ const DetailDriver = () => {
             </div>
 
             <div className="mt-8">
-              <h2 className="text-xl font-bold text-gray-700 mb-4">Vehículos Asociados</h2>
+              <h2 className="text-xl font-bold text-gray-700 mb-4">
+                Vehículos Asociados
+              </h2>
               {driverData.cars && driverData.cars.length > 0 ? (
-                driverData.cars.map((car) => <VehicleCard key={car.id} car={car} />)
+                driverData.cars.map((car) => (
+                  <VehicleCard key={car.id} car={car} />
+                ))
               ) : (
                 <p className="text-gray-600">No hay vehículos asociados.</p>
               )}

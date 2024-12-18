@@ -108,14 +108,14 @@ const ListYears = () => {
   ];
 
   return (
-    <div className="flex max-h-screen">
-    <Sidebar
-      isSidebarOpen={isSidebarOpen}
-      setIsSidebarOpen={setIsSidebarOpen}
-      activeItem="Examples"
-    />
+    <div className="flex max-h-screen md:min-h-screen">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        activeItem="Detail Driver"
+      />
 
-    <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-auto">
         <MobileToolbar
           setIsSidebarOpen={setIsSidebarOpen}
           title="Lista de Años"

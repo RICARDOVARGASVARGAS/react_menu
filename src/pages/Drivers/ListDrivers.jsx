@@ -84,7 +84,7 @@ const ListDrivers = () => {
   ];
 
   return (
-    <div className="flex max-h-screen">
+    <div className="flex max-h-screen md:min-h-screen">
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
