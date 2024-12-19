@@ -44,24 +44,12 @@ const RegisterDriver = () => {
 
     try {
       const response = await fetch(
-        `https://data-people.codepro-peru.com/api/getPerson/${formData.document_number}`
+        `http://data_people.test/api/getPerson/${formData.document_number}`
       );
-      const data = await response.json();
+      const { status, message, information } = await response.json();
+      // console.log(information);
 
-      if (data.status) {
-        toast.success(data.message);
-
-        setFormData({
-          ...formData,
-          name: data.information.names || "",
-          first_name: data.information.father_last_name || "",
-          last_name: data.information.mother_last_name || "",
-          birth_date: data.information.birthday || "",
-          gender: data.information.gender,
-        });
-      } else {
-        toast.error(data.message);
-
+      if (!status) {
         setFormData({
           document_type: formData.document_type,
           document_number: formData.document_number,
@@ -73,6 +61,16 @@ const RegisterDriver = () => {
           phone_number: "",
           address: "",
           gender: "M",
+        });
+        toast.error(message);
+        return;
+      } else {
+        setFormData({
+          ...formData,
+          name: information.names,
+          first_name: information.father_last_name,
+          last_name: information.mother_last_name,
+          birth_date: information.birthday,
         });
       }
     } catch (error) {
@@ -98,16 +96,15 @@ const RegisterDriver = () => {
         body: JSON.stringify(formData),
       });
 
-      const {data} = await response.json();
-      if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          toast.error("Error inesperado: " + data.message);
-        }
-      } else {
-        toast.success("Conductor registrado con éxito.");
+      const { data, message, errors } = await response.json();
+
+      if (data) {
+        toast.success(message);
         navigate("/edit-driver/" + data.id);
+      } else {
+        console.log(errors);
+        toast.error(message);
+        setErrors(errors);
       }
     } catch (error) {
       console.error("Error al registrar el conductor:", error);
