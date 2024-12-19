@@ -44,7 +44,7 @@ const RegisterDriver = () => {
 
     try {
       const response = await fetch(
-        `http://data_people.test/api/getPerson/${formData.document_number}`
+        `https://data-people.codepro-peru.com/api/getPerson/${formData.document_number}`
       );
       const { status, message, information } = await response.json();
       // console.log(information);
