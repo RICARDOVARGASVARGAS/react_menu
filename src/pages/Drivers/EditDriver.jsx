@@ -8,6 +8,7 @@ import CarData from "./CarData";
 import API_BASE_URL from "../../config/config/apiConfig";
 import { useParams } from "react-router-dom"; // Importar useParams
 import { useNavigate } from "react-router-dom";
+import ListLicenses from "../Licenses/ListLicenses";
 
 const EditDriver = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const EditDriver = () => {
       case "personalData":
         return <DriverData driverId={driverId} />; // Pasar driverId
       case "license":
-        return <LicenseData driverId={driverId} />; // Pasar driverId si es necesario
+        return <ListLicenses driverId={driverId} />; // Pasar driverId si es necesario
       case "vehicles":
         return <CarData driverId={driverId} />; // Pasar driverId si es necesario
       default:
