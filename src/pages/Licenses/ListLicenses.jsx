@@ -109,9 +109,6 @@ const ListLicenses = ({ driverId }) => {
       setLoading(false);
       return;
     }
-    // console.log(file);
-    // console.log(licenseItem);
-    console.log("ID", licenseItem.id);
 
     const formFile = new FormData();
     formFile.append("file", file);
@@ -133,7 +130,6 @@ const ListLicenses = ({ driverId }) => {
 
       if (file) {
         licenseItem.file = file.url;
-        console.log(licenseItem);
         updateLicense(licenseItem);
       } else {
         toast.error(message || "Ocurrió un error al subir el archivo.");
@@ -147,36 +143,29 @@ const ListLicenses = ({ driverId }) => {
   };
 
   // Eliminar la imagen del conductor
-  // const handleDeleteImage = async () => {
-  //   setIsLoading(true);
-  //   // Verificar si el conductor tiene una imagen
-  //   if (formItem.image) {
-  //     const encodedUrl = btoa(formItem.image);
-  //     const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Accept: "application/json",
-  //         Authorization: TOKEN_API_STORAGE,
-  //       },
-  //       body: JSON.stringify({}),
-  //     });
+  const deleteLicenseFile = async (licenseItem) => {
+    setLoading(true);
+    const encodedUrl = btoa(licenseItem.file);
+    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: TOKEN_API_STORAGE,
+      },
+      body: JSON.stringify({}),
+    });
 
-  //     const { file, message, errors } = await response.json();
-  //     if (file) {
-  //       setImageStatus(true);
-  //       // toast.success(message);
-  //       setFormItem({
-  //         ...formItem,
-  //         image: "",
-  //       });
-  //     } else {
-  //       toast.error(message);
-  //     }
+    const { file, message, errors } = await response.json();
+    if (file) {
+      licenseItem.file = null;
+      updateLicense(licenseItem);
+    } else {
+      toast.error(message);
+    }
 
-  //     setIsLoading(false);
-  //   }
-  // };
+    setLoading(false);
+  };
 
   // if (loading) {
   //   return <Loading />;
@@ -247,7 +236,7 @@ const ListLicenses = ({ driverId }) => {
               {licenses.map((license) => (
                 <tr key={license.id}>
                   <td className="border px-2 py-1 text-center">
-                    {license.number} - {license.id}
+                    {license.number}
                   </td>
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
@@ -272,7 +261,6 @@ const ListLicenses = ({ driverId }) => {
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-center">
-                    {license.id}
                     {license.status === "active" ? (
                       <span className="px-2 py-1 rounded-full text-white font-semibold bg-green-500">
                         Activo
@@ -317,14 +305,13 @@ const ListLicenses = ({ driverId }) => {
                             className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                           >
                             <FaFilePdf className="md:mr-1" />
-                            <p className="hidden md:block">Ver Licencia</p>
+                            <p className="hidden md:block">Ver</p>
                           </a>
 
                           {/* Botón para eliminar la licencia */}
                           <button
                             onClick={() => {
-                              setSelectedLicenseId(license.id);
-                              showModal("edit");
+                              deleteLicenseFile(license);
                             }}
                             className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                           >

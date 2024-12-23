@@ -182,7 +182,7 @@ const DriverData = ({ driverId }) => {
 
     const formFile = new FormData();
     formFile.append("file", file);
-    formFile.append("location", "drivers/".concat(driverId));
+    formFile.append("location", `drivers/${driverId}/profile`);
 
     setIsLoading(true);
     setErrors({});
