@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Importar el componente de carga
 import { FaEdit } from "react-icons/fa";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 
 const LicenseData = ({ driverId }) => {
   const [license, setLicense] = useState({

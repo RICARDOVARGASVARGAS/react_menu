@@ -4,7 +4,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import MobileToolbar from "../../components/MobileToolbar";
 import Loading from "../../components/Loading";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 
 const DetailCar = () => {
   const { carId } = useParams();

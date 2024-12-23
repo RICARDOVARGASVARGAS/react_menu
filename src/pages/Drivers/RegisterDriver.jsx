@@ -6,7 +6,7 @@ import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 
 const RegisterDriver = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -183,6 +183,7 @@ const RegisterDriver = () => {
                   name="document_number"
                   value={formData.document_number}
                   onChange={handleChange}
+                  autoComplete="off"
                   className={`border ${
                     errors.document_number
                       ? "border-red-500"

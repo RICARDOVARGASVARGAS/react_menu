@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 
 const RegisterLicense = ({ onClose, driverId }) => {
   const navigate = useNavigate();

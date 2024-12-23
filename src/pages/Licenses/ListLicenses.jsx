@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
 import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 import RegisterLicense from "./RegisterLicense";
 
 const ListLicenses = ({ driverId }) => {

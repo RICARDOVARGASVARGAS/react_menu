@@ -5,7 +5,7 @@ import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
 import EditCar from "./EditCar"; // Formulario para editar vehículos
-import API_BASE_URL from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/config/apiConfig";
 
 const CarData = ({ driverId }) => {
   const [vehicles, setVehicles] = useState([]);

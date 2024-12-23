@@ -7,7 +7,7 @@ import Table from "../../../components/Table";
 import Loading from "../../../components/Loading"; // Importa el componente Loading
 import axios from "axios";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
-import API_BASE_URL from "../../../config/config/apiConfig";
+import {API_BASE_URL} from "../../../config/config/apiConfig";
 import RegisterBrand from "./RegisterBrand";
 import EditBrand from "./EditBrand";
 

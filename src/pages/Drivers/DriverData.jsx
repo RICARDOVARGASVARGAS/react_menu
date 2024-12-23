@@ -3,7 +3,12 @@ import { FaSearch, FaEdit, FaUpload, FaTrashAlt } from "react-icons/fa";
 import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import API_BASE_URL from "../../config/config/apiConfig";
+import {
+  API_BASE_URL,
+  API_DATA_PEOPLE_URL,
+  API_STORAGE_URL,
+  TOKEN_API_STORAGE,
+} from "../../config/config/apiConfig";
 
 const DriverData = ({ driverId }) => {
   const [formItem, setFormItem] = useState({
@@ -83,7 +88,7 @@ const DriverData = ({ driverId }) => {
 
     try {
       const response = await fetch(
-        `https://data-people.codepro-peru.com/api/getPerson/${formItem.document_number}`
+        `${API_DATA_PEOPLE_URL}/${formItem.document_number}`
       );
       const data = await response.json();
 
@@ -182,16 +187,13 @@ const DriverData = ({ driverId }) => {
     setIsLoading(true);
     setErrors({});
     try {
-      const response = await fetch(
-        `http://storage_sync.test/api/files/upload`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: "064b448c-059a-4c3b-8507-312bfa1219ad", // Agrega el token aquí
-          },
-          body: formFile,
-        }
-      );
+      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: TOKEN_API_STORAGE,
+        },
+        body: formFile,
+      });
 
       const { message, errors, file } = await response.json();
 
@@ -221,18 +223,15 @@ const DriverData = ({ driverId }) => {
     // Verificar si el conductor tiene una imagen
     if (formItem.image) {
       const encodedUrl = btoa(formItem.image);
-      const response = await fetch(
-        `http://storage_sync.test/api/files/${encodedUrl}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: "064b448c-059a-4c3b-8507-312bfa1219ad",
-          },
-          body: JSON.stringify({}),
-        }
-      );
+      const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: TOKEN_API_STORAGE,
+        },
+        body: JSON.stringify({}),
+      });
 
       const { file, message, errors } = await response.json();
       if (file) {
