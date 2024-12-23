@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
-import { FaSave, FaTrash } from "react-icons/fa";
+import { FaSave, FaTrash, FaTimes } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { API_BASE_URL } from "../../config/config/apiConfig";
 
@@ -32,7 +32,9 @@ const EditLicense = ({ onClose, licenseId }) => {
       try {
         setLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/getDriverLicense/${licenseId}`);
+        const response = await fetch(
+          `${API_BASE_URL}/getDriverLicense/${licenseId}`
+        );
         const { data, message } = await response.json();
 
         if (data) {
@@ -111,7 +113,7 @@ const EditLicense = ({ onClose, licenseId }) => {
       setLoading(true);
 
       const response = await fetch(
-        `${API_BASE_URL}/deleteLicense/${licenseId}`,
+        `${API_BASE_URL}/deleteDriverLicense/${licenseId}`,
         {
           method: "DELETE",
         }
@@ -239,14 +241,21 @@ const EditLicense = ({ onClose, licenseId }) => {
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
-            onClick={onClose}
-            className="bg-gray-600 text-white py-2 px-6 rounded"
+            onClick={() => setShowDeleteModal(true)}
+            className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
           >
-            Cerrar
+            <FaTrash /> Eliminar
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded flex items-center gap-2"
+          >
+            <FaTimes /> Cerrar
           </button>
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded flex items-center gap-2"
           >
             <FaSave /> Guardar
           </button>
