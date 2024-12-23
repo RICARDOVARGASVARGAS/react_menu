@@ -3,8 +3,9 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
 import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/config/apiConfig";
 import RegisterLicense from "./RegisterLicense";
+import EditLicense from "./EditLicense";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -124,7 +125,13 @@ const ListLicenses = ({ driverId }) => {
                     )}
                   </td>
                   <td className="border px-2 py-1 text-center space-x-2 space-y-1">
-                    <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out">
+                    <button
+                      onClick={() => {
+                        setSelectedLicenseId(license.id);
+                        showModal("edit");
+                      }}
+                      className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                    >
                       <FaEdit className="inline-block mr-1" /> Editar
                     </button>
                   </td>
@@ -139,6 +146,14 @@ const ListLicenses = ({ driverId }) => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <RegisterLicense onClose={closeModal} driverId={driverId} />
+          </div>
+        </div>
+      )}
+      {/* Modal de Editar Vehículo */}
+      {modal && typeModal === "edit" && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <EditLicense onClose={closeModal} licenseId={selectedLicenseId} />
           </div>
         </div>
       )}
