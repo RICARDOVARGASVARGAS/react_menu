@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
-import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
+import {
+  FaPlus,
+  FaEdit,
+  FaFilePdf,
+  FaImage,
+  FaTrash,
+  FaUpload,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../config/config/apiConfig";
+import {
+  API_BASE_URL,
+  API_STORAGE_URL,
+  TOKEN_API_STORAGE,
+} from "../../config/config/apiConfig";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 
@@ -55,12 +66,159 @@ const ListLicenses = ({ driverId }) => {
     fetchLicenses();
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  // Licencias
+  // useEffect(() => {
+  //   // Subir la imagen del conductor
+  //   if (formItem.image && imageStatus) {
+  //     handleSubmit();
+  //     setImageStatus(false);
+  //   }
+  //   // Eliminar la imagen del conductor
+  //   if (!formItem.image && imageStatus) {
+  //     handleSubmit();
+  //     setImageStatus(false);
+  //   }
+  // }, [formItem.image]);
+
+  // Subir la imagen del conductor
+  const uploadLicenseFile = async (e, licenseItem) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const file = e.target.files[0];
+
+    if (!file) {
+      toast.error("Por favor, seleccione un archivo.");
+      setLoading(false);
+      return;
+    }
+
+    // Validar tipo de archivo
+    if (file.type !== "application/pdf") {
+      toast.error("Solo se permiten archivos PDF.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+
+    // Validar tamaño del archivo (máximo 3 MB)
+    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
+    if (file.size > maxSize) {
+      toast.error("El archivo excede el tamaño máximo de 3 MB.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+    // console.log(file);
+    // console.log(licenseItem);
+    console.log("ID", licenseItem.id);
+
+    const formFile = new FormData();
+    formFile.append("file", file);
+    formFile.append(
+      "location",
+      `drivers/${driverId}/licenses/${licenseItem.id}`
+    );
+
+    try {
+      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: TOKEN_API_STORAGE,
+        },
+        body: formFile,
+      });
+
+      const { message, errors, file } = await response.json();
+
+      if (file) {
+        licenseItem.file = file.url;
+        console.log(licenseItem);
+        updateLicense(licenseItem);
+      } else {
+        toast.error(message || "Ocurrió un error al subir el archivo.");
+      }
+    } catch (err) {
+      toast.error("Ocurrió un error al subir el archivo.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Eliminar la imagen del conductor
+  // const handleDeleteImage = async () => {
+  //   setIsLoading(true);
+  //   // Verificar si el conductor tiene una imagen
+  //   if (formItem.image) {
+  //     const encodedUrl = btoa(formItem.image);
+  //     const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //         Authorization: TOKEN_API_STORAGE,
+  //       },
+  //       body: JSON.stringify({}),
+  //     });
+
+  //     const { file, message, errors } = await response.json();
+  //     if (file) {
+  //       setImageStatus(true);
+  //       // toast.success(message);
+  //       setFormItem({
+  //         ...formItem,
+  //         image: "",
+  //       });
+  //     } else {
+  //       toast.error(message);
+  //     }
+
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // if (loading) {
+  //   return <Loading />;
+  // }
+
+  const updateLicense = async (licenseData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_BASE_URL}/updateDriverLicense/${licenseData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            ...licenseData,
+          }),
+        }
+      );
+
+      const { data, message, errors } = await response.json();
+      if (data) {
+        console.log(data);
+        console.log(data.id);
+        toast.success(message);
+        await fetchLicenses();
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al actualizar el Licencia.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
+      {loading && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -89,7 +247,7 @@ const ListLicenses = ({ driverId }) => {
               {licenses.map((license) => (
                 <tr key={license.id}>
                   <td className="border px-2 py-1 text-center">
-                    {license.number}
+                    {license.number} - {license.id}
                   </td>
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
@@ -114,6 +272,7 @@ const ListLicenses = ({ driverId }) => {
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-center">
+                    {license.id}
                     {license.status === "active" ? (
                       <span className="px-2 py-1 rounded-full text-white font-semibold bg-green-500">
                         Activo
@@ -124,16 +283,68 @@ const ListLicenses = ({ driverId }) => {
                       </span>
                     )}
                   </td>
-                  <td className="border px-2 py-1 text-center space-x-2 space-y-1">
-                    <button
-                      onClick={() => {
-                        setSelectedLicenseId(license.id);
-                        showModal("edit");
-                      }}
-                      className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                    >
-                      <FaEdit className="inline-block mr-1" /> Editar
-                    </button>
+                  <td className="border px-2 py-1 text-center">
+                    <div className="flex justify-center items-center gap-4">
+                      <input
+                        type="file"
+                        id={`licenseInput-${license.id}`} // ID único basado en el ID de la licencia
+                        className="hidden"
+                        accept="application/pdf"
+                        onChange={(e) => uploadLicenseFile(e, { ...license })}
+                        disabled={loading}
+                      />
+                      {!license.file ? (
+                        <label
+                          htmlFor={`licenseInput-${license.id}`} // Ajuste en el for del label
+                          className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                        >
+                          {loading ? (
+                            "Subiendo..."
+                          ) : (
+                            <>
+                              <FaUpload className="md:mr-1" />
+                              <p className="hidden md:block">Subir Licencia</p>
+                            </>
+                          )}
+                        </label>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          {/* Botón para ver la licencia */}
+                          <a
+                            href={license.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                          >
+                            <FaFilePdf className="md:mr-1" />
+                            <p className="hidden md:block">Ver Licencia</p>
+                          </a>
+
+                          {/* Botón para eliminar la licencia */}
+                          <button
+                            onClick={() => {
+                              setSelectedLicenseId(license.id);
+                              showModal("edit");
+                            }}
+                            className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                          >
+                            <FaTrash className="md:mr-1" />
+                            <p className="hidden md:block">Eliminar</p>
+                          </button>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setSelectedLicenseId(license.id);
+                          showModal("edit");
+                        }}
+                        className="inline-flex items-center justify-center bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaEdit className="md:mr-1" />
+                        <p className="hidden md:block">Editar</p>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
