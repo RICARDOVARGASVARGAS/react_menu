@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/config/apiConfig";
 
 /**
  * Componente para agregar un nuevo vehículo
@@ -21,16 +21,14 @@ const AddCar = ({ onClose, driverId }) => {
     plate: "",
     chassis: "",
     motor: "",
-    file_car: "",
     brand_id: "",
     type_car_id: "",
     group_id: "",
     year_id: "",
     color_id: "",
     example_id: "",
-    number_soat: "",
-    date_soat_issue: "",
-    date_soat_expiration: "",
+    group_number: "",
+    number_of_seats: "",
   });
 
   // Estado para errores
@@ -43,6 +41,7 @@ const AddCar = ({ onClose, driverId }) => {
   const [years, setYears] = useState([]);
   const [colors, setColors] = useState([]);
   const [examples, setExamples] = useState([]);
+  const [typeCars, setTypeCars] = useState([]);
 
   // Cargar las opciones para los selects al montar el componente
   useEffect(() => {
@@ -63,31 +62,29 @@ const AddCar = ({ onClose, driverId }) => {
           yearsRes,
           colorsRes,
           examplesRes,
+          typeCarsRes,
         ] = await Promise.all([
-          fetch(
-            `${API_BASE_URL}/getBrands?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
-          fetch(
-            `${API_BASE_URL}/getTypeCars?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
-          fetch(
-            `${API_BASE_URL}/getGroups?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
-          fetch(
-            `${API_BASE_URL}/getYears?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
-          fetch(
-            `${API_BASE_URL}/getColors?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
-          fetch(
-            `${API_BASE_URL}/getExamples?page=1&perPage=all&sort=asc`,
-            { headers }
-          ),
+          fetch(`${API_BASE_URL}/getBrands?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getTypeCars?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getGroups?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getYears?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getColors?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getExamples?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
+          fetch(`${API_BASE_URL}/getTypeCars?page=1&perPage=all&sort=asc`, {
+            headers,
+          }),
         ]);
 
         setBrands((await brandsRes.json()).data || []);
@@ -96,6 +93,7 @@ const AddCar = ({ onClose, driverId }) => {
         setYears((await yearsRes.json()).data || []);
         setColors((await colorsRes.json()).data || []);
         setExamples((await examplesRes.json()).data || []);
+        setTypeCars((await typeCarsRes.json()).data || []);
 
         toast.success("Opciones cargadas correctamente.");
       } catch (error) {
@@ -124,16 +122,14 @@ const AddCar = ({ onClose, driverId }) => {
       plate: "",
       chassis: "",
       motor: "",
-      file_car: "",
       brand_id: "",
       type_car_id: "",
       group_id: "",
       year_id: "",
       color_id: "",
       example_id: "",
-      number_soat: "",
-      date_soat_issue: "",
-      date_soat_expiration: "",
+      group_number: "",
+      number_of_seats: "",
     });
     setErrors({});
   };
@@ -144,7 +140,6 @@ const AddCar = ({ onClose, driverId }) => {
     setErrors({}); // Limpiar errores previos
     try {
       setLoading(true);
-
       const response = await fetch(`${API_BASE_URL}/registerCar`, {
         method: "POST",
         headers: {
@@ -158,7 +153,7 @@ const AddCar = ({ onClose, driverId }) => {
       });
 
       const { data, message, errors } = await response.json();
-      console.log(data, message, errors);
+      // console.log(data, message, errors);
       if (data) {
         toast.success(message);
         resetForm();
@@ -191,111 +186,226 @@ const AddCar = ({ onClose, driverId }) => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Campos de texto */}
-          {["plate", "chassis", "motor", "number_soat"].map((field) => (
-            <div key={field}>
-              <label htmlFor={field} className="block text-sm font-semibold">
-                {field === "plate"
-                  ? "Placa"
-                  : field === "chassis"
-                  ? "Chasis"
-                  : field === "motor"
-                  ? "Motor"
-                  : "Número de SOAT"}
-              </label>
-              <input
-                type="text"
-                id={field}
-                name={field}
-                value={carData[field]}
-                onChange={handleChange}
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors[field] ? "border-red-500" : ""
-                }`}
-              />
-              {errors[field] && (
-                <p className="text-red-500 text-sm">{errors[field]}</p>
-              )}
-            </div>
-          ))}
+          <div>
+            <label className="block text-sm font-semibold">Placa</label>
+            <input
+              type="text"
+              id="plate"
+              name="plate"
+              value={carData.plate || ""}
+              autoComplete="off"
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.plate ? "border-red-500" : ""
+              }`}
+            />
+            {errors.plate && (
+              <p className="text-red-500 text-sm">{errors.plate}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">N° Motor</label>
+            <input
+              type="text"
+              id="motor"
+              name="motor"
+              value={carData.motor || ""}
+              autoComplete="off"
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.motor ? "border-red-500" : ""
+              }`}
+            />
+            {errors.motor && (
+              <p className="text-red-500 text-sm">{errors.motor}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">N° Chasis</label>
+            <input
+              type="text"
+              id="chassis"
+              name="chassis"
+              value={carData.chassis || ""}
+              autoComplete="off"
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.chassis ? "border-red-500" : ""
+              }`}
+            />
+            {errors.chassis && (
+              <p className="text-red-500 text-sm">{errors.chassis}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">N° Asientos</label>
+            <input
+              type="number"
+              id="number_of_seats"
+              name="number_of_seats"
+              value={carData.number_of_seats || ""}
+              autoComplete="off"
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.number_of_seats ? "border-red-500" : ""
+              }`}
+            />
+            {errors.number_of_seats && (
+              <p className="text-red-500 text-sm">{errors.number_of_seats}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Marca</label>
+            <select
+              id="brand_id"
+              name="brand_id"
+              value={carData.brand_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.brand_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+            {errors.brand_id && (
+              <p className="text-red-500 text-sm">{errors.brand_id}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Modelo/Clase</label>
+            <select
+              id="example_id"
+              name="example_id"
+              value={carData.example_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.example_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {examples.map((example) => (
+                <option key={example.id} value={example.id}>
+                  {example.name}
+                </option>
+              ))}
+            </select>
+            {errors.example_id && (
+              <p className="text-red-500 text-sm">{errors.example_id}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Tipo</label>
+            <select
+              id="type_car_id"
+              name="type_car_id"
+              value={carData.type_car_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.type_car_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {typeCars.map((typeCar) => (
+                <option key={typeCar.id} value={typeCar.id}>
+                  {typeCar.name}
+                </option>
+              ))}
+            </select>
+            {errors.type_car_id && (
+              <p className="text-red-500 text-sm">{errors.type_car_id}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Año</label>
+            <select
+              id="year_id"
+              name="year_id"
+              value={carData.year_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.year_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {years.map((year) => (
+                <option key={year.id} value={year.id}>
+                  {year.name}
+                </option>
+              ))}
+            </select>
+            {errors.year_id && (
+              <p className="text-red-500 text-sm">{errors.year_id}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Asociación</label>
+            <select
+              id="group_id"
+              name="group_id"
+              value={carData.group_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.group_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+            {errors.group_id && (
+              <p className="text-red-500 text-sm">{errors.group_id}</p>
+            )}
+          </div>
 
-          {/* Campos select */}
-          {[ 
-            { name: "brand_id", options: brands, label: "Marca" },
-            { name: "type_car_id", options: types, label: "Tipo de Vehículo" },
-            { name: "group_id", options: groups, label: "Grupo" },
-            { name: "year_id", options: years, label: "Año" },
-            { name: "color_id", options: colors, label: "Color" },
-            { name: "example_id", options: examples, label: "Modelo" },
-          ].map(({ name, options, label }) => (
-            <div key={name}>
-              <label htmlFor={name} className="block text-sm font-semibold">
-                {label}
-              </label>
-              <select
-                id={name}
-                name={name}
-                value={carData[name]}
-                onChange={handleChange}
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors[name] ? "border-red-500" : ""
-                }`}
-              >
-                <option value="">Seleccione una opción</option>
-                {options.length === 0 ? (
-                  <option value="">No hay datos disponibles</option>
-                ) : (
-                  options.map((opt) => (
-                    <option key={opt.id} value={opt.id}>
-                      {opt.name}
-                    </option>
-                  ))
-                )}
-              </select>
-              {errors[name] && (
-                <p className="text-red-500 text-sm">{errors[name]}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Campos de fecha */}
-        <div>
-          <label htmlFor="date_soat_issue" className="block text-sm font-semibold">
-            Fecha de Emisión del SOAT
-          </label>
-          <input
-            type="date"
-            id="date_soat_issue"
-            name="date_soat_issue"
-            value={carData.date_soat_issue}
-            onChange={handleChange}
-            className={`mt-1 p-2 w-full border rounded ${
-              errors.date_soat_issue ? "border-red-500" : ""
-            }`}
-          />
-          {errors.date_soat_issue && (
-            <p className="text-red-500 text-sm">{errors.date_soat_issue}</p>
-          )}
-        </div>
-
-        <div>
-          <label htmlFor="date_soat_expiration" className="block text-sm font-semibold">
-            Fecha de Vencimiento del SOAT
-          </label>
-          <input
-            type="date"
-            id="date_soat_expiration"
-            name="date_soat_expiration"
-            value={carData.date_soat_expiration}
-            onChange={handleChange}
-            className={`mt-1 p-2 w-full border rounded ${
-              errors.date_soat_expiration ? "border-red-500" : ""
-            }`}
-          />
-          {errors.date_soat_expiration && (
-            <p className="text-red-500 text-sm">{errors.date_soat_expiration}</p>
-          )}
+          <div>
+            <label className="block text-sm font-semibold">
+              N° Asociación <span className="text-gray-400">(Opcional)</span>
+            </label>
+            <input
+              type="text"
+              id="group_number"
+              name="group_number"
+              value={carData.group_number || ""}
+              autoComplete="off"
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.group_number ? "border-red-500" : ""
+              }`}
+            />
+            {errors.group_number && (
+              <p className="text-red-500 text-sm">{errors.group_number}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold">Color</label>
+            <select
+              id="color_id"
+              name="color_id"
+              value={carData.color_id}
+              onChange={handleChange}
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.color_id ? "border-red-500" : ""
+              }`}
+            >
+              <option value="">Seleccione una opción</option>
+              {colors.map((color) => (
+                <option key={color.id} value={color.id}>
+                  {color.name}
+                </option>
+              ))}
+            </select>
+            {errors.color_id && (
+              <p className="text-red-500 text-sm">{errors.color_id}</p>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-end mt-6 gap-4">

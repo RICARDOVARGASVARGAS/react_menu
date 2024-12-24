@@ -190,8 +190,6 @@ const ListLicenses = ({ driverId }) => {
 
       const { data, message, errors } = await response.json();
       if (data) {
-        console.log(data);
-        console.log(data.id);
         toast.success(message);
         await fetchLicenses();
       } else {

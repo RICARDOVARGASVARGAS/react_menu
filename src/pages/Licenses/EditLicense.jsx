@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { FaSave, FaTrash, FaTimes } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import { API_BASE_URL } from "../../config/config/apiConfig";
+import {
+  API_BASE_URL,
+  API_STORAGE_URL,
+  TOKEN_API_STORAGE,
+} from "../../config/config/apiConfig";
 
 const EditLicense = ({ onClose, licenseId }) => {
   const navigate = useNavigate();
@@ -119,9 +123,33 @@ const EditLicense = ({ onClose, licenseId }) => {
         }
       );
 
-      const { message } = await response.json();
-      toast.success(message || "Licencia eliminada.");
-      onClose();
+      const { message, data } = await response.json();
+      if (data.file) {
+        setLoading(true);
+        const encodedUrl = btoa(data.file);
+        const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: TOKEN_API_STORAGE,
+          },
+          body: JSON.stringify({}),
+        });
+
+        const { file, message, errors } = await response.json();
+        if (file) {
+          toast.success(message || "Licencia eliminada.");
+          onClose();
+        } else {
+          toast.error(message);
+        }
+
+        setLoading(false);
+      } else {
+        toast.success(message || "Licencia eliminada.");
+        onClose();
+      }
     } catch (error) {
       console.error("Error al eliminar la Licencia:", error);
       toast.error("No se pudo eliminar la Licencia.");
