@@ -264,9 +264,27 @@ const CarData = ({ driverId }) => {
                       </span>
                     </div>
                   </td>
-                  <td className="border px-2 py-1 text-center">SOAT</td>
-                  <td className="border px-2 py-1">CIRCULACION</td>
-                  <td className="border px-2 py-1">INSPECCION</td>
+                  <td className="border px-2 py-1">
+                    F.Inicio: 13-12-2022 <br />
+                    F.Fin: 13-12-2022
+                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+                      Documentos
+                    </button>
+                  </td>
+                  <td className="border px-2 py-1">
+                    F.Inicio: 13-12-2022 <br />
+                    F.Fin: 13-12-2022
+                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+                      Documentos
+                    </button>
+                  </td>
+                  <td className="border px-2 py-1">
+                    F.Inicio: 13-12-2022 <br />
+                    F.Fin: 13-12-2022
+                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+                      Documentos
+                    </button>
+                  </td>
                   <td className="border px-2 py-1 text-center">
                     <div className="flex justify-center items-center gap-4">
                       {/* Botón para editar */}
