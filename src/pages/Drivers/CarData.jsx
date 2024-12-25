@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
-import { FaPlus, FaEdit, FaFilePdf, FaImage } from "react-icons/fa";
+import { FaPlus, FaEdit, FaFilePdf, FaUpload, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
 import EditCar from "./EditCar"; // Formulario para editar vehículos
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import {
+  API_BASE_URL,
+  API_STORAGE_URL,
+  TOKEN_API_STORAGE,
+} from "../../config/config/apiConfig";
 
 const CarData = ({ driverId }) => {
-  const [vehicles, setVehicles] = useState([]);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [modalType, setModalType] = useState(""); // 'edit' o 'image' o 'pdf'
@@ -19,7 +23,7 @@ const CarData = ({ driverId }) => {
   const navigate = useNavigate(); // Para navegación entre páginas
 
   // Obtener la lista de vehículos
-  const fetchVehicles = async () => {
+  const fetchCars = async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -28,9 +32,9 @@ const CarData = ({ driverId }) => {
       const result = await response.json();
 
       if (result.data) {
-        setVehicles(result.data);
+        setCars(result.data);
       } else {
-        setVehicles([]);
+        setCars([]);
         toast.info("El conductor no tiene vehículos registrados.");
       }
     } catch (error) {
@@ -41,7 +45,7 @@ const CarData = ({ driverId }) => {
   };
 
   useEffect(() => {
-    fetchVehicles();
+    fetchCars();
   }, [driverId]);
 
   // Abrir el modal de agregar vehículo
@@ -52,7 +56,7 @@ const CarData = ({ driverId }) => {
   // Cerrar el modal de agregar vehículo
   const closeAddVehicleModal = () => {
     setIsAddVehicleModalOpen(false);
-    fetchVehicles(); // Recargar la lista de vehículos tras agregar uno nuevo
+    fetchCars(); // Recargar la lista de vehículos tras agregar uno nuevo
   };
 
   // Abrir el modal de edición de vehículo
@@ -65,7 +69,7 @@ const CarData = ({ driverId }) => {
   const closeEditVehicleModal = () => {
     setSelectedCarId(null);
     setIsEditVehicleModalOpen(false);
-    fetchVehicles(); // Recargar la lista de vehículo tras editar uno
+    fetchCars(); // Recargar la lista de vehículo tras editar uno
   };
 
   // Obtener el tipo de archivo basado en la extensión
@@ -79,17 +83,92 @@ const CarData = ({ driverId }) => {
     return null;
   };
 
-  // Abrir modal para visualizar archivo
-  const handleOpenModal = (url) => {
-    const type = getFileType(url);
-    setModalData(url);
-    setModalType(type);
+  // Subir la documento del Vehículo
+  const uploadCarFile = async (e, carItem) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const file = e.target.files[0];
+
+    if (!file) {
+      toast.error("Por favor, seleccione un archivo.");
+      setLoading(false);
+      return;
+    }
+
+    // Validar tipo de archivo
+    if (file.type !== "application/pdf") {
+      toast.error("Solo se permiten archivos PDF.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+
+    // Validar tamaño del archivo (máximo 3 MB)
+    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
+    if (file.size > maxSize) {
+      toast.error("El archivo excede el tamaño máximo de 3 MB.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+
+    const formFile = new FormData();
+    formFile.append("file", file);
+    formFile.append("location", `drivers/${driverId}/car/${carItem.id}`);
+
+    try {
+      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: TOKEN_API_STORAGE,
+        },
+        body: formFile,
+      });
+
+      const { message, errors, file } = await response.json();
+
+      if (file) {
+        carItem.file_car = file.url;
+        updateCar(carItem);
+      } else {
+        toast.error(message || "Ocurrió un error al subir el archivo.");
+      }
+    } catch (err) {
+      toast.error("Ocurrió un error al subir el archivo.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Cerrar el modal de archivos
-  const closeModal = () => {
-    setModalData(null);
-    setModalType("");
+  const updateCar = async (carItem) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/updateCar/${carItem.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...carItem,
+        }),
+      });
+
+      const { data, message, errors } = await response.json();
+      if (data) {
+        toast.success(message);
+        await fetchCars();
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al actualizar el Licencia.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -117,112 +196,123 @@ const CarData = ({ driverId }) => {
             <thead className="bg-gray-100">
               <tr>
                 <th className="border px-2 py-1">Placa</th>
-                <th className="border px-2 py-1">Motor</th>
-                <th className="border px-2 py-1">Características</th>
-                <th className="border px-2 py-1">Tipo</th>
-                <th className="border px-2 py-1">Grupo</th>
+                <th className="border px-2 py-1">Detalles</th>
+                <th className="border px-2 py-1">Asociación</th>
                 <th className="border px-2 py-1">SOAT</th>
-                <th className="border px-2 py-1">Acciones</th>
+                <th className="border px-2 py-1">CIRCULACIÓN</th>
+                <th className="border px-2 py-1">INSPECCIÓN</th>
+                <th className="border px-2 py-1"></th>
               </tr>
             </thead>
             <tbody>
-              {vehicles.map((vehicle) => (
-                <tr key={vehicle.id}>
-                  <td className="border px-2 py-1 text-center">
-                    {vehicle.plate}
-                  </td>
-                  <td className="border px-2 py-1">
+              {cars.map((car) => (
+                <tr key={car.id}>
+                  <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Motor:</strong> {vehicle.motor || "No disponible"}
+                        <strong>Motor:</strong> {car.plate || "No disponible"}
                       </span>
                       <span>
-                        <strong>Chasis:</strong> {vehicle.chassis || "No disponible"}
+                        <strong>Motor:</strong> {car.motor || "No disponible"}
+                      </span>
+                      <span>
+                        <strong>Chasis:</strong>{" "}
+                        {car.chassis || "No disponible"}
                       </span>
                     </div>
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Marca:</strong> {vehicle.brand?.name || "No disponible"}
+                        <strong>Marca:</strong>{" "}
+                        {car.brand?.name || "No disponible"}
                       </span>
                       <span>
-                        <strong>Modelo:</strong> {vehicle.example.name || "No disponible"}
+                        <strong>Modelo:</strong>{" "}
+                        {car.example.name || "No disponible"}
                       </span>
                       <span>
-                        <strong>Año:</strong> {vehicle.year.name || "No disponible"}
+                        <strong>Año:</strong> {car.year.name || "No disponible"}
                       </span>
                       <span className="flex items-center">
                         <strong>Color:</strong>
                         <span
                           className="ml-2 w-4 h-4 rounded-full"
                           style={{
-                            backgroundColor: vehicle.color?.hex || "No disponible",
+                            backgroundColor: car.color?.hex || "No disponible",
                           }}
                         ></span>
-                        <span className="ml-1">{vehicle.color?.name || "No disponible"}</span>
+                        <span className="ml-1">
+                          {car.color?.name || "No disponible"}
+                        </span>
                       </span>
                     </div>
                   </td>
-                  <td className="border px-2 py-1 text-center">
-                    {vehicle.typeCar?.name || "No disponible"}
-                  </td>
-                  <td className="border px-2 py-1 text-center">
-                    {vehicle.group?.name || "No disponible"}
-                  </td>
-                  <td className="border px-2 py-1">
-                    <div>
-                      <span>{vehicle.number_soat}</span>
-                      <div className="flex flex-col">
-                        <span>
-                          <strong>F.Vig:</strong> <br />
-                          {vehicle.date_soat_issue || "No disponible"}
-                        </span>
-                        <span>
-                          <strong>F.Ven:</strong>
-                          <br />
-                          {vehicle.date_soat_expiration || "No disponible"}
-                        </span>
-                      </div>
+                  <td className="border px-2 py-1 text-left">
+                    <div className="flex flex-col">
+                      <span>
+                        <strong>Asociación:</strong>{" "}
+                        {car.group?.name || "No disponible"}
+                      </span>
+                      <span>
+                        <strong>Tipo:</strong>{" "}
+                        {car.typeCar.name || "No disponible"}
+                      </span>
+                      <span>
+                        <strong>N° Asientos:</strong>{" "}
+                        {car.number_of_seats || "No disponible"}
+                      </span>
                     </div>
                   </td>
-                  <td className="border px-2 py-1 text-center space-x-2 space-y-1">
-                    <button
-                      onClick={() => handleEditVehicle(vehicle.id)}
-                      className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                    >
-                      <FaEdit className="inline-block mr-1" /> Editar
-                    </button>
-
-                    {vehicle.file_technical_review && (
+                  <td className="border px-2 py-1 text-center">SOAT</td>
+                  <td className="border px-2 py-1">CIRCULACION</td>
+                  <td className="border px-2 py-1">INSPECCION</td>
+                  <td className="border px-2 py-1 text-center">
+                    <div className="flex justify-center items-center gap-4">
+                      {/* Botón para editar */}
                       <button
-                        onClick={() =>
-                          handleOpenModal(vehicle.file_technical_review)
-                        }
-                        className="bg-gray-600 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                        onClick={() => handleEditVehicle(car.id)}
+                        className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
-                        <FaFilePdf className="inline-block mr-1" /> Revisión
-                        Técnica
+                        <FaEdit className="inline-block mr-1" /> Editar
                       </button>
-                    )}
-
-                    {vehicle.file_soat && (
-                      <button
-                        onClick={() => handleOpenModal(vehicle.file_soat)}
-                        className="bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                      >
-                        <FaFilePdf className="inline-block mr-1" /> Ver SOAT
-                      </button>
-                    )}
-
-                    {vehicle.file_car && (
-                      <button
-                        onClick={() => handleOpenModal(vehicle.file_car)}
-                        className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                      >
-                        <FaImage className="inline-block mr-1" /> Ver Imagen
-                      </button>
-                    )}
+                      {/* Botón para subir archivo */}
+                      <input
+                        type="file"
+                        id={`carFileInput-${car.id}`}
+                        className="hidden"
+                        accept="application/pdf"
+                        onChange={(e) => uploadCarFile(e, { ...car })}
+                        disabled={loading}
+                      />
+                      {!car.file_car ? (
+                        <label
+                          htmlFor={`carFileInput-${car.id}`}
+                          className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                        >
+                          {loading ? (
+                            "Subiendo..."
+                          ) : (
+                            <>
+                              <FaUpload className="md:mr-1" />
+                              <p className="hidden md:block">Subir Documento</p>
+                            </>
+                          )}
+                        </label>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <a
+                            href={car.file_car}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                          >
+                            <FaFilePdf className="md:mr-1" />
+                            <p className="hidden md:block">Ver Documento</p>
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -243,40 +333,12 @@ const CarData = ({ driverId }) => {
       {/* Modal de Editar Vehículo */}
       {isEditVehicleModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+          <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
             <EditCar
               onClose={closeEditVehicleModal}
               carId={selectedCarId}
               driverId={driverId}
             />
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Archivos */}
-      {modalData && modalType !== "edit" && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            {modalType === "image" && (
-              <img src={modalData} alt="Archivo" className="w-full h-auto" />
-            )}
-            {modalType === "pdf" && (
-              <embed
-                src={modalData}
-                type="application/pdf"
-                width="100%"
-                height="500px"
-              />
-            )}
-            {modalType === "other" && (
-              <p>Este tipo de archivo no es soportado para vista previa.</p>
-            )}
-            <button
-              onClick={closeModal}
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       )}

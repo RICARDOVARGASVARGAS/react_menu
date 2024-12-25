@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading"; // Indicador de carga
-import { FaSave, FaTrash } from "react-icons/fa";
+import { FaFileAlt, FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import {
   API_BASE_URL,
@@ -30,6 +30,8 @@ const EditCar = ({ onClose, carId, driverId }) => {
     example_id: "",
     group_number: "",
     number_of_seats: "",
+    image_car: null,
+    file_car: null,
   });
 
   // Estado para errores
@@ -130,6 +132,8 @@ const EditCar = ({ onClose, carId, driverId }) => {
             example_id: data.example_id || "",
             group_number: data.group_number || "",
             number_of_seats: data.number_of_seats || "",
+            image_car: data.image_car || null,
+            file_car: data.file_car || null,
           });
         } else {
           toast.error(
@@ -205,6 +209,62 @@ const EditCar = ({ onClose, carId, driverId }) => {
     } catch (error) {
       console.error("Error al eliminar el vehículo:", error);
       toast.error("No se pudo eliminar el vehículo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteCarFile = async () => {
+    setLoading(true);
+    const encodedUrl = btoa(carData.file_car);
+    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: TOKEN_API_STORAGE,
+      },
+      body: JSON.stringify({}),
+    });
+
+    const { file, message, errors } = await response.json();
+    if (file) {
+      carData.file_car = null;
+      updateCar();
+    } else {
+      // console.log(errors);
+      toast.error(message);
+    }
+
+    setLoading(false);
+  };
+
+  const updateCar = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/updateCar/${carId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...carData,
+          driver_id: driverId,
+        }),
+      });
+
+      const { data, message, errors } = await response.json();
+      if (data) {
+        toast.success(message);
+        // await fetchCars();
+      } else {
+        console.log(errors);
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al actualizar el Licencia.");
     } finally {
       setLoading(false);
     }
@@ -448,6 +508,16 @@ const EditCar = ({ onClose, carId, driverId }) => {
         </div>
 
         <div className="flex justify-end mt-6 gap-4">
+          {carData.file_car && (
+            <button
+              type="button"
+              onClick={() => deleteCarFile()}
+              className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
+            >
+              <FaFileAlt />
+              Eliminar Documento
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
