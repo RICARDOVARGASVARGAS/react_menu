@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
-import { FaPlus, FaEdit, FaFilePdf, FaUpload, FaTrash, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import {
+  FaPlus,
+  FaEdit,
+  FaFilePdf,
+  FaUpload,
+  FaTrash,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
 import EditCar from "./EditCar"; // Formulario para editar vehículos
@@ -14,8 +22,7 @@ import {
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false); // Estado para el modal de agregar vehículo
-  const [isEditVehicleModalOpen, setIsEditVehicleModalOpen] = useState(false);
+  const [modalShow, setModalShow] = useState(null);
   const [selectedCarId, setSelectedCarId] = useState(null);
 
   const navigate = useNavigate(); // Para navegación entre páginas
@@ -46,29 +53,43 @@ const CarData = ({ driverId }) => {
     fetchCars();
   }, [driverId]);
 
-  // Abrir el modal de agregar vehículo
-  const handleAddVehicle = () => {
-    setIsAddVehicleModalOpen(true);
+  // Abrir modal
+  const openModal = (type, carId = null) => {
+    console.log(type, carId);
+    setModalShow(type);
+    setSelectedCarId(carId);
   };
 
-  // Cerrar el modal de agregar vehículo
-  const closeAddVehicleModal = () => {
-    setIsAddVehicleModalOpen(false);
+  // Cerrar modal
+  const closeModal = () => {
+    setModalShow(null);
+    setSelectedCarId(null);
     fetchCars(); // Recargar la lista de vehículos tras agregar uno nuevo
   };
 
-  // Abrir el modal de edición de vehículo
-  const handleEditVehicle = (carId) => {
-    setSelectedCarId(carId);
-    setIsEditVehicleModalOpen(true);
-  };
+  // Abrir el modal de agregar vehículo
+  // const handleAddVehicle = () => {
+  //   setModal(true);
+  // };
 
-  // Cerrar el modal de edición de vehículo
-  const closeEditVehicleModal = () => {
-    setSelectedCarId(null);
-    setIsEditVehicleModalOpen(false);
-    fetchCars(); // Recargar la lista de vehículo tras editar uno
-  };
+  // // Cerrar el modal de agregar vehículo
+  // const closeAddVehicleModal = () => {
+  //   setModal(false);
+  //   fetchCars(); // Recargar la lista de vehículos tras agregar uno nuevo
+  // };
+
+  // // Abrir el modal de edición de vehículo
+  // const handleEditVehicle = (carId) => {
+  //   setSelectedCarId(carId);
+  //   setModal(true);
+  // };
+
+  // // Cerrar el modal de edición de vehículo
+  // const closeEditVehicleModal = () => {
+  //   setSelectedCarId(null);
+  //   setModal(false);
+  //   fetchCars(); // Recargar la lista de vehículo tras editar uno
+  // };
 
   // Obtener el tipo de archivo basado en la extensión
   const getFileType = (url) => {
@@ -182,7 +203,7 @@ const CarData = ({ driverId }) => {
             Vehículos del Conductor
           </h2>
           <button
-            onClick={handleAddVehicle}
+            onClick={() => openModal("addCar")}
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center gap-2"
           >
             <FaPlus /> Agregar Vehículo
@@ -208,57 +229,50 @@ const CarData = ({ driverId }) => {
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Motor:</strong> {car.plate || "No disponible"}
+                        <strong>Motor:</strong> {car.plate || "N/A"}
                       </span>
                       <span>
-                        <strong>Motor:</strong> {car.motor || "No disponible"}
+                        <strong>Motor:</strong> {car.motor || "N/A"}
                       </span>
                       <span>
-                        <strong>Chasis:</strong>{" "}
-                        {car.chassis || "No disponible"}
+                        <strong>Chasis:</strong> {car.chassis || "N/A"}
                       </span>
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Marca:</strong>{" "}
-                        {car.brand?.name || "No disponible"}
+                        <strong>Marca:</strong> {car.brand?.name || "N/A"}
                       </span>
                       <span>
-                        <strong>Modelo:</strong>{" "}
-                        {car.example.name || "No disponible"}
+                        <strong>Modelo:</strong> {car.example.name || "N/A"}
                       </span>
                       <span>
-                        <strong>Año:</strong> {car.year.name || "No disponible"}
+                        <strong>Año:</strong> {car.year.name || "N/A"}
                       </span>
                       <span className="flex items-center">
                         <strong>Color:</strong>
                         <span
                           className="ml-2 w-4 h-4 rounded-full"
                           style={{
-                            backgroundColor: car.color?.hex || "No disponible",
+                            backgroundColor: car.color?.hex || "N/A",
                           }}
                         ></span>
-                        <span className="ml-1">
-                          {car.color?.name || "No disponible"}
-                        </span>
+                        <span className="ml-1">{car.color?.name || "N/A"}</span>
                       </span>
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Asociación:</strong>{" "}
-                        {car.group?.name || "No disponible"}
+                        <strong>Asociación:</strong> {car.group?.name || "N/A"}
                       </span>
                       <span>
-                        <strong>Tipo:</strong>{" "}
-                        {car.typeCar.name || "No disponible"}
+                        <strong>Tipo:</strong> {car.typeCar.name || "N/A"}
                       </span>
                       <span>
                         <strong>N° Asientos:</strong>{" "}
-                        {car.number_of_seats || "No disponible"}
+                        {car.number_of_seats || "N/A"}
                       </span>
                     </div>
                   </td>
@@ -289,28 +303,28 @@ const CarData = ({ driverId }) => {
                       )}
                     </div>
                     <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos
+                      Documentos 1
                     </button>
                   </td>
                   <td className="border px-2 py-1">
                     F.Inicio: 13-12-2022 <br />
                     F.Fin: 13-12-2022
                     <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos
+                      Documentos 2
                     </button>
                   </td>
                   <td className="border px-2 py-1">
                     F.Inicio: 13-12-2022 <br />
                     F.Fin: 13-12-2022
                     <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos
+                      Documentos 3
                     </button>
                   </td>
                   <td className="border px-2 py-1 text-center">
                     <div className="flex justify-center items-center gap-4">
                       {/* Botón para editar */}
                       <button
-                        onClick={() => handleEditVehicle(car.id)}
+                        onClick={() => openModal("editCar", car.id)}
                         className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
                         <FaEdit className="inline-block mr-1" /> Editar
@@ -361,20 +375,20 @@ const CarData = ({ driverId }) => {
       </div>
 
       {/* Modal de Agregar Vehículo */}
-      {isAddVehicleModalOpen && (
+      {modalShow === "addCar" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <AddCar onClose={closeAddVehicleModal} driverId={driverId} />
+            <AddCar onClose={closeModal} driverId={driverId} />
           </div>
         </div>
       )}
 
       {/* Modal de Editar Vehículo */}
-      {isEditVehicleModalOpen && (
+      {modalShow === "editCar" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
             <EditCar
-              onClose={closeEditVehicleModal}
+              onClose={closeModal}
               carId={selectedCarId}
               driverId={driverId}
             />
