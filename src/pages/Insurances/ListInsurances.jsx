@@ -14,8 +14,9 @@ import {
   API_STORAGE_URL,
   TOKEN_API_STORAGE,
 } from "../../config/config/apiConfig";
+import { AiOutlineClose } from "react-icons/ai";
 
-const ListInsurances = ({ carId }) => {
+const ListInsurances = ({ onClose, carId }) => {
   const [insurances, setInsurances] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,9 @@ const ListInsurances = ({ carId }) => {
       {loading && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
+          <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center gap-2">
+            <AiOutlineClose size={20} />
+          </button>
           <h2 className="text-xl font-bold text-gray-800">
             Seguros del Vehiculo
           </h2>

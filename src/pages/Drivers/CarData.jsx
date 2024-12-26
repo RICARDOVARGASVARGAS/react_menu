@@ -18,6 +18,7 @@ import {
   API_STORAGE_URL,
   TOKEN_API_STORAGE,
 } from "../../config/config/apiConfig";
+import ListInsurances from "../Insurances/ListInsurances";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
@@ -229,7 +230,7 @@ const CarData = ({ driverId }) => {
                   <td className="border px-2 py-1 text-left">
                     <div className="flex flex-col">
                       <span>
-                        <strong>Motor:</strong> {car.plate || "N/A"}
+                        <strong>Placa:</strong> {car.plate || "N/A"}
                       </span>
                       <span>
                         <strong>Motor:</strong> {car.motor || "N/A"}
@@ -276,18 +277,19 @@ const CarData = ({ driverId }) => {
                       </span>
                     </div>
                   </td>
-                  <td className="border px-2 py-1">
-                    <div className="flex flex-col">
+                  <td className="border px-2 py-1 text-center">
+                    <div className="flex flex-col text-left">
                       <span>
                         <strong>N°:</strong>{" "}
                         {car.latest_insurance?.number_insurance || "N/A"}
                       </span>
                       <span>
-                        <strong>F.Inicio:</strong>{" "}
+                        <strong>F.Inicio:</strong>
+                        <br />
                         {car.latest_insurance?.issue_date || "N/A"}
                       </span>
                       <span>
-                        <strong>F.Expiración:</strong>{" "}
+                        <strong>F.Expiración: </strong> <br />
                         {car.latest_insurance?.expiration_date || "N/A"}
                       </span>
                       {car.latest_insurance?.is_valid ? (
@@ -302,8 +304,21 @@ const CarData = ({ driverId }) => {
                         </div>
                       )}
                     </div>
-                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos 1
+                    {car.latest_insurance?.file_insurance && (
+                      <a
+                        href={car.latest_insurance?.file_insurance}
+                        target="_blank"
+                        className="inline-flex items-center justify-center w-full bg-orange-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaFilePdf className="md:mr-1" />
+                        <p className="hidden md:block">SOAT</p>
+                      </a>
+                    )}
+                    <button
+                      onClick={() => openModal("insurance", car.id)}
+                      className="inline-flex items-center justify-center bg-gray-300 hover:bg-gray-400 w-full text-gray-800 font-semibold py-2 px-4 rounded"
+                    >
+                      ADMINISTRAR
                     </button>
                   </td>
                   <td className="border px-2 py-1">
@@ -392,6 +407,16 @@ const CarData = ({ driverId }) => {
               carId={selectedCarId}
               driverId={driverId}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de SOAT */}
+      {modalShow === "insurance" && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
+            <ListInsurances onClose={closeModal} carId={selectedCarId} />
+            {/* <Soat onClose={closeModal} carId={selectedCarId} /> */}
           </div>
         </div>
       )}
