@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
-import { FaPlus, FaEdit, FaFilePdf, FaUpload, FaTrash } from "react-icons/fa";
+import { FaPlus, FaEdit, FaFilePdf, FaUpload, FaTrash, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AddCar from "./AddCar"; // Formulario para agregar vehículos
 import EditCar from "./EditCar"; // Formulario para editar vehículos
@@ -14,8 +14,6 @@ import {
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [modalData, setModalData] = useState(null);
-  const [modalType, setModalType] = useState(""); // 'edit' o 'image' o 'pdf'
   const [isAddVehicleModalOpen, setIsAddVehicleModalOpen] = useState(false); // Estado para el modal de agregar vehículo
   const [isEditVehicleModalOpen, setIsEditVehicleModalOpen] = useState(false);
   const [selectedCarId, setSelectedCarId] = useState(null);
@@ -265,8 +263,31 @@ const CarData = ({ driverId }) => {
                     </div>
                   </td>
                   <td className="border px-2 py-1">
-                    F.Inicio: 13-12-2022 <br />
-                    F.Fin: 13-12-2022
+                    <div className="flex flex-col">
+                      <span>
+                        <strong>N°:</strong>{" "}
+                        {car.latest_insurance?.number_insurance || "N/A"}
+                      </span>
+                      <span>
+                        <strong>F.Inicio:</strong>{" "}
+                        {car.latest_insurance?.issue_date || "N/A"}
+                      </span>
+                      <span>
+                        <strong>F.Expiración:</strong>{" "}
+                        {car.latest_insurance?.expiration_date || "N/A"}
+                      </span>
+                      {car.latest_insurance?.is_valid ? (
+                        <div className="flex items-center space-x-1 text-green-500">
+                          <FaCheckCircle className="text-xl" />
+                          <span className="font-semibold">Vigente</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-1 text-red-500">
+                          <FaExclamationCircle className="text-xl" />
+                          <span className="font-semibold">Vencido</span>
+                        </div>
+                      )}
+                    </div>
                     <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
                       Documentos
                     </button>
