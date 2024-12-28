@@ -63,16 +63,201 @@ const ListInsurances = ({ onClose, carId }) => {
   // Manejar cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLicenseData((prevData) => ({
+    setInsuranceForm((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrors({});
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/registerInsurance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...insuranceForm,
+          car_id: carId,
+        }),
+      });
+
+      const { data, message, errors } = await response.json();
+
+      if (data) {
+        toast.success(message);
+        setShowForm(false);
+        setInsuranceForm({});
+        setErrors({});
+        fetchInsurances();
+      } else {
+        console.log(errors);
+        toast.error(message);
+        setErrors(errors);
+      }
+    } catch (error) {
+      console.error("Error al registrar el seguro:", error);
+      toast.error("Ocurrió un error al realizar el seguro.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Subir SOAT
+  const uploadInsuranceFile = async (e, insuranceItem) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const file = e.target.files[0];
+
+    if (!file) {
+      toast.error("Por favor, seleccione un archivo.");
+      setLoading(false);
+      return;
+    }
+
+    // Validar tipo de archivo
+    if (file.type !== "application/pdf") {
+      toast.error("Solo se permiten archivos PDF.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+
+    // Validar tamaño del archivo (máximo 3 MB)
+    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
+    if (file.size > maxSize) {
+      toast.error("El archivo excede el tamaño máximo de 3 MB.");
+      e.target.value = ""; // Limpiar el input
+      setLoading(false);
+      return;
+    }
+
+    const formFile = new FormData();
+    formFile.append("file", file);
+    formFile.append("location", `cars/${carId}/insurances/${insuranceItem.id}`);
+
+    try {
+      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: TOKEN_API_STORAGE,
+        },
+        body: formFile,
+      });
+
+      const { message, errors, file } = await response.json();
+
+      if (file) {
+        insuranceItem.file_insurance = file.url;
+        updateInsurance(insuranceItem);
+      } else {
+        toast.error(message || "Ocurrió un error al subir el archivo.");
+      }
+    } catch (err) {
+      toast.error("Ocurrió un error al subir el archivo.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateInsurance = async (insuranceData) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_BASE_URL}/updateInsurance/${insuranceData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            ...insuranceData,
+          }),
+        }
+      );
+
+      const { data, message, errors } = await response.json();
+      if (data) {
+        toast.success(message);
+        await fetchInsurances();
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al actualizar el Licencia.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteInsurance = async (insuranceId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${API_BASE_URL}/deleteInsurance/${insuranceId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const { data, message, errors } = await response.json();
+      if (data) {
+        if (data.file_insurance) {
+          deleteInsuranceFile(data);
+        } else {
+          toast.success(message);
+          await fetchInsurances();
+        }
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al eliminar el seguro.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Eliminar el seguro
+  const deleteInsuranceFile = async (insuranceItem) => {
+    setLoading(true);
+    const encodedUrl = btoa(insuranceItem.file_insurance);
+    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: TOKEN_API_STORAGE,
+      },
+      body: JSON.stringify({}),
+    });
+
+    const { file, message, errors } = await response.json();
+    if (file) {
+      insuranceItem.file_insurance = null;
+      toast.success("Seguro eliminado.");
+      await fetchInsurances();
+      // updateInsurance(insuranceItem);
+    } else {
+      toast.error(message);
+    }
+
+    setLoading(false);
+  };
   return (
     <>
       {loading && <Loading />}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-lg overflow-y-auto max-h-[80vh]">
         <div className="p-4 flex justify-between items-center">
           <button
             onClick={onClose}
@@ -106,7 +291,7 @@ const ListInsurances = ({ onClose, carId }) => {
             <h3 className="text-lg font-semibold text-gray-700 mb-3">
               Registrar Nuevo Seguro
             </h3>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-semibold">N° SOAT</label>
@@ -229,7 +414,8 @@ const ListInsurances = ({ onClose, carId }) => {
                         <span className="font-semibold">Vencido</span>
                       </div>
                     )}
-                    {insurance.file_insurance && (
+
+                    {insurance.file_insurance ? (
                       <a
                         href={insurance.file_insurance}
                         target="_blank"
@@ -238,7 +424,42 @@ const ListInsurances = ({ onClose, carId }) => {
                         <FaFilePdf className="md:mr-1" />
                         <p className="hidden md:block">SOAT</p>
                       </a>
+                    ) : (
+                      <>
+                        <input
+                          type="file"
+                          id={`insuranceInput-${insurance.id}`} // ID único basado en el ID de la licencia
+                          className="hidden"
+                          accept="application/pdf"
+                          onChange={(e) =>
+                            uploadInsuranceFile(e, { ...insurance })
+                          }
+                          disabled={loading}
+                        />
+                        <label
+                          htmlFor={`insuranceInput-${insurance.id}`} // Ajuste en el for del label
+                          className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                        >
+                          {loading ? (
+                            "Subiendo..."
+                          ) : (
+                            <>
+                              <FaUpload className="md:mr-1" />
+                              <p className="hidden md:block">Subir SOAT</p>
+                            </>
+                          )}
+                        </label>
+                      </>
                     )}
+                  </td>
+                  <td className="border px-2 py-1 text-center">
+                    {" "}
+                    <button
+                      onClick={() => deleteInsurance(insurance.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded"
+                    >
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}
