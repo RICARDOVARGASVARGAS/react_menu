@@ -20,6 +20,7 @@ import {
 } from "../../config/config/apiConfig";
 import ListInsurances from "../Insurances/ListInsurances";
 import ListPermits from "../Permits/ListPermits";
+import ListInspections from "../Inspections/ListInspections";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
@@ -365,16 +366,47 @@ const CarData = ({ driverId }) => {
                     </button>
                   </td>
                   {/* Inspección */}
-                  <td className="border px-2 py-1">
-                    F.Inicio: 13-12-2022 <br />
-                    F.Fin: 13-12-2022
+                  <td className="border px-2 py-1 text-center">
+                    <div className="flex flex-col text-left">
+                      <span>
+                        <strong>F.Inicio:</strong>
+                        <br />
+                        {car.latest_inspection?.issue_date || "N/A"}
+                      </span>
+                      <span>
+                        <strong>F.Expiración: </strong> <br />
+                        {car.latest_inspection?.expiration_date || "N/A"}
+                      </span>
+                      {car.latest_inspection?.is_valid ? (
+                        <div className="flex items-center space-x-1 text-green-500">
+                          <FaCheckCircle className="text-xl" />
+                          <span className="font-semibold">Vigente</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-1 text-red-500">
+                          <FaExclamationCircle className="text-xl" />
+                          <span className="font-semibold">Vencido</span>
+                        </div>
+                      )}
+                    </div>
+                    {car.latest_inspection?.file_inspection && (
+                      <a
+                        href={car.latest_inspection?.file_inspection}
+                        target="_blank"
+                        className="inline-flex items-center justify-center w-full bg-blue-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaFilePdf className="md:mr-1" />
+                        <p className="hidden md:block">INSPECCIÓN</p>
+                      </a>
+                    )}
                     <button
-                      onClick={() => openModal("permit", car.id)}
+                      onClick={() => openModal("inspection", car.id)}
                       className="inline-flex items-center justify-center bg-gray-300 hover:bg-gray-400 w-full text-gray-800 font-semibold py-2 px-4 rounded"
                     >
-                      ADMINISTRAR22222
+                      ADMINISTRAR
                     </button>
                   </td>
+                  {/* Opciones */}
                   <td className="border px-2 py-1 text-center">
                     <div className="flex justify-center items-center gap-4">
                       {/* Botón para editar */}
@@ -466,6 +498,15 @@ const CarData = ({ driverId }) => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
             <ListPermits onClose={closeModal} carId={selectedCarId} />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Inspecciones */}
+      {modalShow === "inspection" && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
+            <ListInspections onClose={closeModal} carId={selectedCarId} />
           </div>
         </div>
       )}
