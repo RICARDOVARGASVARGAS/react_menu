@@ -19,6 +19,7 @@ import {
   TOKEN_API_STORAGE,
 } from "../../config/config/apiConfig";
 import ListInsurances from "../Insurances/ListInsurances";
+import ListPermits from "../Permits/ListPermits";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
@@ -277,6 +278,7 @@ const CarData = ({ driverId }) => {
                       </span>
                     </div>
                   </td>
+                  {/* SOAT */}
                   <td className="border px-2 py-1 text-center">
                     <div className="flex flex-col text-left">
                       <span>
@@ -321,18 +323,56 @@ const CarData = ({ driverId }) => {
                       ADMINISTRAR
                     </button>
                   </td>
-                  <td className="border px-2 py-1">
-                    F.Inicio: 13-12-2022 <br />
-                    F.Fin: 13-12-2022
-                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos 2
+                  {/* Circulación */}
+                  <td className="border px-2 py-1 text-center">
+                    <div className="flex flex-col text-left">
+                      <span>
+                        <strong>F.Inicio:</strong>
+                        <br />
+                        {car.latest_permit?.issue_date || "N/A"}
+                      </span>
+                      <span>
+                        <strong>F.Expiración: </strong> <br />
+                        {car.latest_permit?.expiration_date || "N/A"}
+                      </span>
+                      {car.latest_permit?.is_valid ? (
+                        <div className="flex items-center space-x-1 text-green-500">
+                          <FaCheckCircle className="text-xl" />
+                          <span className="font-semibold">Vigente</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-1 text-red-500">
+                          <FaExclamationCircle className="text-xl" />
+                          <span className="font-semibold">Vencido</span>
+                        </div>
+                      )}
+                    </div>
+                    {car.latest_permit?.file_permit && (
+                      <a
+                        href={car.latest_permit?.file_permit}
+                        target="_blank"
+                        className="inline-flex items-center justify-center w-full bg-green-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                      >
+                        <FaFilePdf className="md:mr-1" />
+                        <p className="hidden md:block">CIRCULACIÓN</p>
+                      </a>
+                    )}
+                    <button
+                      onClick={() => openModal("permit", car.id)}
+                      className="inline-flex items-center justify-center bg-gray-300 hover:bg-gray-400 w-full text-gray-800 font-semibold py-2 px-4 rounded"
+                    >
+                      ADMINISTRAR
                     </button>
                   </td>
+                  {/* Inspección */}
                   <td className="border px-2 py-1">
                     F.Inicio: 13-12-2022 <br />
                     F.Fin: 13-12-2022
-                    <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                      Documentos 3
+                    <button
+                      onClick={() => openModal("permit", car.id)}
+                      className="inline-flex items-center justify-center bg-gray-300 hover:bg-gray-400 w-full text-gray-800 font-semibold py-2 px-4 rounded"
+                    >
+                      ADMINISTRAR22222
                     </button>
                   </td>
                   <td className="border px-2 py-1 text-center">
@@ -417,6 +457,15 @@ const CarData = ({ driverId }) => {
           <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
             <ListInsurances onClose={closeModal} carId={selectedCarId} />
             {/* <Soat onClose={closeModal} carId={selectedCarId} /> */}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Permisos */}
+      {modalShow === "permit" && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-4xl w-full">
+            <ListPermits onClose={closeModal} carId={selectedCarId} />
           </div>
         </div>
       )}
