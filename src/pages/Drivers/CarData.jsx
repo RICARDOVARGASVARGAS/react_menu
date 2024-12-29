@@ -271,10 +271,14 @@ const CarData = ({ driverId }) => {
                         <strong>Asociación:</strong> {car.group?.name || "N/A"}
                       </span>
                       <span>
+                        <strong>N°_Asociación:</strong>{" "}
+                        {car.group_number || "N/A"}
+                      </span>
+                      <span>
                         <strong>Tipo:</strong> {car.typeCar.name || "N/A"}
                       </span>
                       <span>
-                        <strong>N° Asientos:</strong>{" "}
+                        <strong>N°_Asientos:</strong>{" "}
                         {car.number_of_seats || "N/A"}
                       </span>
                     </div>
@@ -408,13 +412,18 @@ const CarData = ({ driverId }) => {
                   </td>
                   {/* Opciones */}
                   <td className="border px-2 py-1 text-center">
-                    <div className="flex justify-center items-center gap-4">
+                    <div className="flex flex-col space-y-2">
                       {/* Botón para editar */}
                       <button
                         onClick={() => openModal("editCar", car.id)}
-                        className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                        className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center justify-center space-x-1"
                       >
-                        <FaEdit className="inline-block mr-1" /> Editar
+                        <>
+                          <FaEdit />
+                          <p className="hidden md:mr-1 md:block">
+                            Editar
+                          </p>
+                        </>
                       </button>
                       {/* Botón para subir archivo */}
                       <input

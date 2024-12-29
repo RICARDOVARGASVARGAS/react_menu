@@ -25,6 +25,7 @@ const EditLicense = ({ onClose, licenseId }) => {
     class: "",
     category: "",
     driver_id: "",
+    file: null,
   });
 
   // Estado para errores
@@ -48,6 +49,7 @@ const EditLicense = ({ onClose, licenseId }) => {
             issue_date: data.issue_date || "",
             class: data.class || "",
             category: data.category || "",
+            file: data.file || null,
             driver_id: data.driver_id || "",
           });
         } else {
