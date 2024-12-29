@@ -420,7 +420,7 @@ const ListInspections = ({ onClose, carId }) => {
                           ) : (
                             <>
                               <FaUpload className="md:mr-1" />
-                              <p className="hidden md:block">Subir Permiso</p>
+                              <p className="hidden md:block">Subir Inspección</p>
                             </>
                           )}
                         </label>
