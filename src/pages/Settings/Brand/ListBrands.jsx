@@ -4,12 +4,13 @@ import Sidebar from "../../../components/Sidebar";
 import MobileToolbar from "../../../components/MobileToolbar";
 import Pagination from "../../../components/Pagination";
 import Table from "../../../components/Table";
-import Loading from "../../../components/Loading"; // Importa el componente Loading
-import axios from "axios";
+import Loading from "../../../components/Loading";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
-import {API_BASE_URL} from "../../../config/config/apiConfig";
 import RegisterBrand from "./RegisterBrand";
 import EditBrand from "./EditBrand";
+
+// Optimizando Apis
+import { get } from "../../../services/apiService";
 
 const ListBrands = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -51,25 +52,19 @@ const ListBrands = () => {
   };
 
   const fetchItems = async () => {
-    setIsLoading(true); // Activa el estado de carga
-    try {
-      const response = await axios.get(`${API_BASE_URL}/getBrands`, {
-        params: {
-          page: currentPage,
-          perPage: itemsPerPage,
-          sort: "desc",
-          search: searchQuery,
-        },
-      });
+    setIsLoading(true);
 
-      const { data, meta } = response.data;
-      setData(data);
-      setTotalPages(meta.last_page);
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    } finally {
-      setIsLoading(false); // Desactiva el estado de carga
-    }
+    const { data, meta, message } = await get("/getBrands", {
+      page: currentPage,
+      perPage: itemsPerPage,
+      sort: "desc",
+      search: searchQuery,
+    });
+    
+    setData(data);
+    setTotalPages(meta.last_page);
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
