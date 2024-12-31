@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
-import MobileToolbar from "../../components/MobileToolbar";
+import Sidebar from "../../components/layout/Sidebar";
+import MobileToolbar from "../../components/layout/MobileToolbar";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";

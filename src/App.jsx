@@ -14,28 +14,38 @@ import ListYears from "./pages/Settings/Year/ListYears";
 import ListGroups from "./pages/Settings/Group/ListGroups";
 import ListTypeCars from "./pages/Settings/TypeCar/ListTypeCars";
 import ListColors from "./pages/Settings/Color/ListColors";
+import MainLayout from "./components/layout/MainLayout";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Layout Principal */}
+        <Route path="/" element={<MainLayout />}>
+          <Route path="*" element={<Home />} />
+
+          {/* Configuraciones */}
+          <Route path="/settings/list-brands" element={<ListBrands />} />
+          <Route path="/settings/list-years" element={<ListYears />} />
+        </Route>
+
+        {/* <Route path="/" element={<Home />} />
         <Route path="/list-drivers" element={<ListDrivers />} />
         <Route path="/register-driver" element={<RegisterDriver />} />
         <Route path="/edit-driver/:driverId" element={<EditDriver />} />
-        <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
+        <Route path="/drivers/:driverId/view" element={<DetailDriver />} /> */}
         {/* VEHICULOS */}
-        <Route path="/list-cars" element={<ListCars />} />
+        {/* <Route path="/list-cars" element={<ListCars />} />
         <Route path="/cars/:carId/view" element={<DetailCar />} />
-        <Route path="*" element={<Home />} />
+        <Route path="*" element={<Home />} /> */}
 
         {/* Settings */}
-        <Route path="/settings/list-examples" element={<ListExamples />} />
-        <Route path="/settings/list-brands" element={<ListBrands />} />
-        <Route path="/settings/list-years" element={<ListYears />} />
+        {/* <Route path="/settings/list-examples" element={<ListExamples />} />
+        
+        
         <Route path="/settings/list-groups" element={<ListGroups />} />
         <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
-        <Route path="/settings/list-colors" element={<ListColors />} />
+        <Route path="/settings/list-colors" element={<ListColors />} /> */}
         {/* Redirige rutas desconocidas */}
       </Routes>
 

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
-import MobileToolbar from "../../components/MobileToolbar";
+import Sidebar from "../../components/layout/Sidebar";
+import MobileToolbar from "../../components/layout/MobileToolbar";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading"; // Importa el componente Loading
 import axios from "axios";
 import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/config/apiConfig";
 
 const ListDrivers = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

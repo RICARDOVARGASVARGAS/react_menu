@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaUser, FaIdCard, FaCar, FaTable } from "react-icons/fa";
-import Sidebar from "../../components/Sidebar";
-import MobileToolbar from "../../components/MobileToolbar";
+import Sidebar from "../../components/layout/Sidebar";
+import MobileToolbar from "../../components/layout/MobileToolbar";
 import DriverData from "./DriverData";
 import LicenseData from "./LicenseData";
 import CarData from "./CarData";

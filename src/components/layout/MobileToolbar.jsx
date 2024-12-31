@@ -1,4 +1,3 @@
-// MobileToolbar.jsx
 import React from "react";
 
 const MobileToolbar = ({ setIsSidebarOpen, title }) => {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../../components/Sidebar";
-import MobileToolbar from "../../components/MobileToolbar";
+import Sidebar from "../../components/layout/Sidebar";
+import MobileToolbar from "../../components/layout/MobileToolbar";
 import Loading from "../../components/Loading";
 import {API_BASE_URL} from "../../config/config/apiConfig";
 

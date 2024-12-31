@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import MobileToolbar from "../../components/MobileToolbar";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/layout/Sidebar";
+import MobileToolbar from "../../components/layout/MobileToolbar";
 import Loading from "../../components/Loading";
 import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/config/apiConfig";
 
 const RegisterDriver = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../../components/Sidebar";
-import MobileToolbar from "../../../components/MobileToolbar";
 import Pagination from "../../../components/Pagination";
 import Table from "../../../components/Table";
 import Loading from "../../../components/Loading";
@@ -13,7 +11,6 @@ import EditBrand from "./EditBrand";
 import { get } from "../../../services/apiService";
 
 const ListBrands = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,7 +57,7 @@ const ListBrands = () => {
       sort: "desc",
       search: searchQuery,
     });
-    
+
     setData(data);
     setTotalPages(meta.last_page);
 
@@ -103,20 +100,9 @@ const ListBrands = () => {
   ];
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Detail Driver"
-      />
-
+    <>
       <div className="flex-1 overflow-auto">
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="Lista de Marcas"
-        />
-
-        <main className="p-4">
+        <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Marcas
@@ -190,7 +176,7 @@ const ListBrands = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
