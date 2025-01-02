@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../../components/layout/Sidebar";
-import MobileToolbar from "../../../components/layout/MobileToolbar";
 import Pagination from "../../../components/Pagination";
 import Table from "../../../components/Table";
 import Loading from "../../../components/Loading"; // Importa el componente Loading
 import axios from "axios";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
-import {API_BASE_URL} from "../../../config/config/apiConfig";
+import { API_BASE_URL } from "../../../config/config/apiConfig";
 import RegisterTypeCar from "./RegisterTypeCar";
 import EditTypeCar from "./EditTypeCar";
 
 const ListTypeCars = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,20 +105,9 @@ const ListTypeCars = () => {
   ];
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Detail Driver"
-      />
-
+    <>
       <div className="flex-1 overflow-auto">
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="Lista de Tipos de Vehículos"
-        />
-
-        <main className="p-4">
+        <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Tipos de Vehículos
@@ -195,7 +181,7 @@ const ListTypeCars = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { FaUser, FaIdCard, FaCar, FaTable } from "react-icons/fa";
-import Sidebar from "../../components/layout/Sidebar";
-import MobileToolbar from "../../components/layout/MobileToolbar";
 import DriverData from "./DriverData";
 import LicenseData from "./LicenseData";
 import CarData from "./CarData";
@@ -12,7 +10,6 @@ import ListLicenses from "../Licenses/ListLicenses";
 
 const EditDriver = () => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("personalData");
 
   // Obtener el driverId desde la URL (si lo tienes en la ruta)
@@ -33,22 +30,10 @@ const EditDriver = () => {
   };
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Detail Driver"
-      />
-
+    <div>
       <div className="flex-1 overflow-auto">
-        {/* Mobile Toolbar */}
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="Editar Conductor"
-        />
-
         {/* Page Content */}
-        <main className="p-4 bg-gray-100">
+        <main className="p-1">
           <div className="bg-white shadow-md rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-blue-900">

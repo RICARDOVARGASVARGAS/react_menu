@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Sidebar from "../../components/layout/Sidebar";
-import MobileToolbar from "../../components/layout/MobileToolbar";
 import Loading from "../../components/Loading";
 import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { API_BASE_URL } from "../../config/config/apiConfig";
 
 const RegisterDriver = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [formData, setFormData] = useState({
     document_type: "dni",
     document_number: "",
@@ -131,19 +128,9 @@ const RegisterDriver = () => {
   };
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
-
+    <>
       <div className="flex-1 overflow-auto">
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="REGISTRAR CONDUCTOR"
-        />
-
-        <main className="p-4 overflow-y-auto">
+        <main className="p-1">
           <h1 className="text-2xl font-bold text-blue-900 mb-6">
             Registrar un Nuevo Conductor
           </h1>
@@ -291,7 +278,7 @@ const RegisterDriver = () => {
           </form>
         </main>
       </div>
-    </div>
+    </>
   );
 };
 

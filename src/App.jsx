@@ -22,31 +22,30 @@ const App = () => {
       <Routes>
         {/* Layout Principal */}
         <Route path="/" element={<MainLayout />}>
+          {/* Rutas principales */}
           <Route path="*" element={<Home />} />
+
+          {/* Conductores */}
+          <Route path="/list-drivers" element={<ListDrivers />} />
+          <Route path="/register-driver" element={<RegisterDriver />} />
+          <Route path="/edit-driver/:driverId" element={<EditDriver />} />
+          <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
 
           {/* Configuraciones */}
           <Route path="/settings/list-brands" element={<ListBrands />} />
           <Route path="/settings/list-years" element={<ListYears />} />
+          <Route path="/settings/list-examples" element={<ListExamples />} />
+          <Route path="/settings/list-groups" element={<ListGroups />} />
+          <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
+          <Route path="/settings/list-colors" element={<ListColors />} />
         </Route>
 
         {/* <Route path="/" element={<Home />} />
-        <Route path="/list-drivers" element={<ListDrivers />} />
-        <Route path="/register-driver" element={<RegisterDriver />} />
-        <Route path="/edit-driver/:driverId" element={<EditDriver />} />
-        <Route path="/drivers/:driverId/view" element={<DetailDriver />} /> */}
+         */}
         {/* VEHICULOS */}
         {/* <Route path="/list-cars" element={<ListCars />} />
         <Route path="/cars/:carId/view" element={<DetailCar />} />
         <Route path="*" element={<Home />} /> */}
-
-        {/* Settings */}
-        {/* <Route path="/settings/list-examples" element={<ListExamples />} />
-        
-        
-        <Route path="/settings/list-groups" element={<ListGroups />} />
-        <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
-        <Route path="/settings/list-colors" element={<ListColors />} /> */}
-        {/* Redirige rutas desconocidas */}
       </Routes>
 
       {/* Agregar ToastContainer en el componente raíz */}

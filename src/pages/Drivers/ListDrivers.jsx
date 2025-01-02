@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../components/layout/Sidebar";
-import MobileToolbar from "../../components/layout/MobileToolbar";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading"; // Importa el componente Loading
@@ -10,7 +8,6 @@ import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
 import { API_BASE_URL } from "../../config/config/apiConfig";
 
 const ListDrivers = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,20 +81,9 @@ const ListDrivers = () => {
   ];
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Examples"
-      />
-
+    <>
       <div className="flex-1 overflow-y-auto">
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="Lista de conductores"
-        />
-
-        <main className="p-4">
+        <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Conductores
@@ -162,7 +148,7 @@ const ListDrivers = () => {
           )}
         </main>
       </div>
-    </div>
+    </>
   );
 };
 
