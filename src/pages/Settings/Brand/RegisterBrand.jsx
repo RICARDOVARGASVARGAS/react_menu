@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {API_BASE_URL} from "../../../config/config/apiConfig";
+import { API_BASE_URL } from "../../../config/config/apiConfig";
 
-/**
- * Componente para agregar un nuevo Marca
- * @param {Function} onClose - Función para cerrar el modal
- */
+// UseForm
+import { useForm } from "react-hook-form";
+
 const RegisterBrand = ({ onClose }) => {
-  const navigate = useNavigate();
+  const {
+    register,
+    // handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm();
 
   // Estado para la carga del formulario
   const [loading, setLoading] = useState(false);
 
   // Estado para errores
-  const [errors, setErrors] = useState({});
+  // const [errors, setErrors] = useState({});
 
   // Estado para los datos del formulario
   const [itemData, setItemData] = useState({
@@ -97,15 +101,14 @@ const RegisterBrand = ({ onClose }) => {
             <label className="block text-sm font-semibold">Nombre</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={itemData.name || ""}
-              autoComplete="off"
-              onChange={handleChange}
-              className={`mt-1 p-2 w-full border rounded ${
-                errors.name ? "border-red-500" : ""
-              }`}
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "El nombre es requerido",
+                },
+              })}
             />
+
             {errors.name && (
               <p className="text-red-500 text-sm">{errors.name}</p>
             )}
