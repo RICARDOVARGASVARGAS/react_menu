@@ -9,83 +9,62 @@ import { API_BASE_URL } from "../../../config/config/apiConfig";
 import { useForm } from "react-hook-form";
 
 const RegisterBrand = ({ onClose }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
-    // handleSubmit,
+    handleSubmit,
     formState: { errors },
+    reset,
     watch,
-    setValue,
-  } = useForm();
-
-  // Estado para la carga del formulario
-  const [loading, setLoading] = useState(false);
-
-  // Estado para errores
-  // const [errors, setErrors] = useState({});
-
-  // Estado para los datos del formulario
-  const [itemData, setItemData] = useState({
-    name: "",
+  } = useForm({
+    defaultValues: {
+      name: "",
+    },
   });
 
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setItemData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const onSubmit = handleSubmit((data) => {
+    setIsLoading(true);
+    console.log(data);
 
-  // Reiniciar el formulario
-  const resetForm = () => {
-    setItemData({
-      name: "",
-    });
-    setErrors({});
-  };
-
-  // Manejar el envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({}); // Limpiar errores previos
     try {
-      setLoading(true);
-
-      const response = await fetch(`${API_BASE_URL}/registerBrand`, {
+      fetch(`${API_BASE_URL}/registerBrand`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({
-          ...itemData,
-        }),
-      });
-
-      const { data, message, errors } = await response.json();
-      console.log(data, message, errors);
-      if (data) {
-        toast.success(message);
-        resetForm();
-        onClose(); // Cierra el modal
-      } else {
-        console.log(errors);
-        setErrors(errors);
-        toast.error(message);
-      }
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+          if (result.data) {
+            toast.success(result.message);
+            reset();
+            onClose();
+          } else {
+            toast.error(result.message);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Error al registrar la Marca.");
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     } catch (error) {
       console.log(error);
-      toast.error("Error al registrar el Marca.");
-    } finally {
-      setLoading(false);
+      toast.error("Error al registrar la Marca.");
     }
-  };
+  });
 
-  if (loading) return <Loading />;
+  console.log(errors);
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
+      {isLoading && <Loading />}
+
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -95,22 +74,34 @@ const RegisterBrand = ({ onClose }) => {
 
       <h2 className="text-2xl font-bold mb-4">Registrar Marca</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
             <label className="block text-sm font-semibold">Nombre</label>
             <input
               type="text"
+              name="name"
+              className={`mt-1 p-2 w-full border rounded ${
+                errors.name ? "border-red-500" : ""
+              }`}
               {...register("name", {
                 required: {
                   value: true,
-                  message: "El nombre es requerido",
+                  message: "El Nombre es requerido",
+                },
+                minLength: {
+                  value: 3,
+                  message: "El Nombre debe tener al menos 3 caracteres",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El Nombre no debe exceder los 50 caracteres",
                 },
               })}
             />
 
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name}</p>
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
         </div>
@@ -118,7 +109,7 @@ const RegisterBrand = ({ onClose }) => {
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
-            onClick={resetForm}
+            onClick={() => reset()}
             className="bg-gray-600 text-white py-2 px-6 rounded"
           >
             Limpiar
@@ -130,6 +121,8 @@ const RegisterBrand = ({ onClose }) => {
             <FaSave /> Guardar
           </button>
         </div>
+
+        {JSON.stringify(watch(), null, 2)}
       </form>
     </div>
   );
