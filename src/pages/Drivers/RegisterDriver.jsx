@@ -4,7 +4,7 @@ import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { API_BASE_URL } from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/enviroments";
 
 const RegisterDriver = () => {
   const [formData, setFormData] = useState({

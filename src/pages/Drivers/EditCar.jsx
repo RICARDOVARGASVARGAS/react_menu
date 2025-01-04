@@ -8,7 +8,7 @@ import {
   API_BASE_URL,
   API_STORAGE_URL,
   TOKEN_API_STORAGE,
-} from "../../config/config/apiConfig";
+} from "../../config/enviroments";
 
 const EditCar = ({ onClose, carId, driverId }) => {
   const navigate = useNavigate();

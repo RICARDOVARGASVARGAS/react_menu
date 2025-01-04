@@ -3,7 +3,7 @@ import { FaUser, FaIdCard, FaCar, FaTable } from "react-icons/fa";
 import DriverData from "./DriverData";
 import LicenseData from "./LicenseData";
 import CarData from "./CarData";
-import { API_BASE_URL } from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/enviroments";
 import { useParams } from "react-router-dom"; // Importar useParams
 import { useNavigate } from "react-router-dom";
 import ListLicenses from "../Licenses/ListLicenses";

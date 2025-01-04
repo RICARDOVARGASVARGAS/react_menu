@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {API_BASE_URL} from "../../../config/config/apiConfig";
+import {API_BASE_URL} from "../../../config/enviroments";
 
 /**
  * Componente para editar un Tipo de Vehículo

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import { API_BASE_URL } from "../../../config/config/apiConfig";
+import { apiPost } from "../../../services/apiService";
 
 // UseForm
 import { useForm } from "react-hook-form";
@@ -24,42 +24,24 @@ const RegisterBrand = ({ onClose }) => {
 
   const onSubmit = handleSubmit((data) => {
     setIsLoading(true);
-    console.log(data);
-
-    try {
-      fetch(`${API_BASE_URL}/registerBrand`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(data),
+    apiPost("registerBrand", data)
+      .then((response) => {
+        const { data, message, errors } = response;
+        if (data) {
+          toast.success(message);
+          onClose();
+        } else {
+          console.log(errors);
+          toast.error(message);
+        }
       })
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result);
-          if (result.data) {
-            toast.success(result.message);
-            reset();
-            onClose();
-          } else {
-            toast.error(result.message);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error("Error al registrar la Marca.");
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-      toast.error("Error al registrar la Marca.");
-    }
+      .catch((error) => {
+        console.error("Error al registrar la marca:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   });
-
-  console.log(errors);
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
@@ -81,6 +63,7 @@ const RegisterBrand = ({ onClose }) => {
             <input
               type="text"
               name="name"
+              autoComplete="off"
               className={`mt-1 p-2 w-full border rounded ${
                 errors.name ? "border-red-500" : ""
               }`}
@@ -122,7 +105,7 @@ const RegisterBrand = ({ onClose }) => {
           </button>
         </div>
 
-        {JSON.stringify(watch(), null, 2)}
+        {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
     </div>
   );

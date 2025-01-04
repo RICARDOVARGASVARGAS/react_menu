@@ -3,7 +3,7 @@ import Sidebar from "../../components/layout/Sidebar";
 import MobileToolbar from "../../components/layout/MobileToolbar";
 import { useParams } from "react-router-dom";
 import Loading from "../../components/Loading";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import {API_BASE_URL} from "../../config/enviroments";
 const defaultImage = "https://via.placeholder.com/640x480.png?text=No+Image";
 
 const VehicleCard = ({ car }) => (

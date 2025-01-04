@@ -4,7 +4,7 @@ import axios from "axios";
 import Sidebar from "../../components/layout/Sidebar";
 import MobileToolbar from "../../components/layout/MobileToolbar";
 import Loading from "../../components/Loading";
-import {API_BASE_URL} from "../../config/config/apiConfig";
+import { API_BASE_URL } from "../../config/enviroments";
 
 const DetailCar = () => {
   const { carId } = useParams();
@@ -90,13 +90,16 @@ const DetailCar = () => {
                 Información del SOAT
               </h2>
               <p>
-                <strong>Número SOAT:</strong> {car.number_soat || "No disponible"}
+                <strong>Número SOAT:</strong>{" "}
+                {car.number_soat || "No disponible"}
               </p>
               <p>
-                <strong>Fecha de Emisión:</strong> {car.date_soat_issue || "No disponible"}
+                <strong>Fecha de Emisión:</strong>{" "}
+                {car.date_soat_issue || "No disponible"}
               </p>
               <p>
-                <strong>Fecha de Expiración:</strong> {car.date_soat_expiration || "No disponible"}
+                <strong>Fecha de Expiración:</strong>{" "}
+                {car.date_soat_expiration || "No disponible"}
               </p>
               <img
                 src={car.file_soat}
@@ -130,17 +133,20 @@ const DetailCar = () => {
                 {car.driver.first_name} {car.driver.last_name}
               </p>
               <p>
-                <strong>Documento:</strong> {car.driver.document_type || "No disponible"} -{" "}
+                <strong>Documento:</strong>{" "}
+                {car.driver.document_type || "No disponible"} -{" "}
                 {car.driver.document_number || "No disponible"}
               </p>
               <p>
-                <strong>Teléfono:</strong> {car.driver.phone_number || "No disponible"}
+                <strong>Teléfono:</strong>{" "}
+                {car.driver.phone_number || "No disponible"}
               </p>
               <p>
                 <strong>Email:</strong> {car.driver.email || "No disponible"}
               </p>
               <p>
-                <strong>Dirección:</strong> {car.driver.address || "No disponible"}
+                <strong>Dirección:</strong>{" "}
+                {car.driver.address || "No disponible"}
               </p>
               <img
                 src={car.driver.image}

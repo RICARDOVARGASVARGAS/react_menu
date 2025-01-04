@@ -17,7 +17,7 @@ import {
   API_BASE_URL,
   API_STORAGE_URL,
   TOKEN_API_STORAGE,
-} from "../../config/config/apiConfig";
+} from "../../config/enviroments";
 import ListInsurances from "../Insurances/ListInsurances";
 import ListPermits from "../Permits/ListPermits";
 import ListInspections from "../Inspections/ListInspections";

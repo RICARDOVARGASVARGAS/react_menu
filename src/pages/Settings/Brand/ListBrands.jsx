@@ -7,7 +7,7 @@ import RegisterBrand from "./RegisterBrand";
 import EditBrand from "./EditBrand";
 
 // Optimizando Apis
-import { get } from "../../../services/apiService";
+import { apiGet } from "../../../services/apiService";
 
 const ListBrands = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,17 +35,14 @@ const ListBrands = () => {
 
   const fetchItems = async () => {
     setIsLoading(true);
-
-    const { data, meta, message } = await get("/getBrands", {
+    const { data, meta, message } = await apiGet("getBrands", {
       page: currentPage,
       perPage: itemsPerPage,
       sort: "desc",
       search: searchQuery,
     });
-
     setData(data);
     setTotalPages(meta.last_page);
-
     setIsLoading(false);
   };
 
