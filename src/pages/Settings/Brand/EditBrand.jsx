@@ -1,129 +1,103 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {API_BASE_URL} from "../../../config/enviroments";
+import { apiGet, apiPut } from "../../../services/apiService";
+import { useForm } from "react-hook-form";
 
-/**
- * Componente para editar un Marca
- * @param {Function} onClose - Función para cerrar el modal
- * @param {number} itemId - ID del Item a editar
- */
 const EditBrand = ({ onClose, itemId }) => {
-  const navigate = useNavigate();
-
-  // Estado para la carga del formulario
-  const [loading, setLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // Estado para los datos del formulario
-  const [itemData, setItemData] = useState({
-    name: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
+      name: "",
+    },
   });
-
-  // Estado para errores
-  const [errors, setErrors] = useState({});
 
   // Cargar los datos a editar
   useEffect(() => {
-    const fetchCarData = async () => {
-      try {
-        setIsLoadingData(true);
+    const fetchData = async () => {
+      setIsLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/getBrand/${itemId}`);
-        const { data, message } = await response.json();
-
-        if (data) {
-          setItemData({
-            name: data.name || "",
-          });
-        } else {
-          toast.error(message || "No se pudieron cargar los datos.");
-        }
-      } catch (error) {
-        console.error("Error al cargar los datos:", error);
-        toast.error("Error al cargar los datos.");
-      } finally {
-        setIsLoadingData(false);
+      const response = await apiGet(`getBrand/${itemId}`);
+      const { data, message } = response;
+      console.log(data, message);
+      if (data) {
+        reset(data);
+      } else {
+        toast.error(message || "No se pudieron cargar los datos.");
       }
+      setIsLoading(false);
     };
 
-    fetchCarData();
+    fetchData();
   }, [itemId]);
 
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setItemData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   // Manejar el envío del formulario
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    setErrors({}); // Limpiar errores previos
-    try {
-      setLoading(true);
+    // setErrors({}); // Limpiar errores previos
+    // try {
+    //   setLoading(true);
 
-      const response = await fetch(`${API_BASE_URL}/updateBrand/${itemId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...itemData,
-        }),
-      });
+    //   const response = await fetch(`${API_BASE_URL}/updateBrand/${itemId}`, {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Accept: "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       ...itemData,
+    //     }),
+    //   });
 
-      const { data, message, errors } = await response.json();
-      if (data) {
-        toast.success(message);
-        onClose(); // Cierra el modal
-      } else {
-        setErrors(errors);
-        toast.error(message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error al actualizar el Marca.");
-    } finally {
-      setLoading(false);
-    }
+    //   const { data, message, errors } = await response.json();
+    //   if (data) {
+    //     toast.success(message);
+    //     onClose(); // Cierra el modal
+    //   } else {
+    //     setErrors(errors);
+    //     toast.error(message);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Error al actualizar el Marca.");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleDelete = async () => {
-    try {
-      setLoading(true);
-
-      const response = await fetch(`${API_BASE_URL}/deleteBrand/${itemId}`, {
-        method: "DELETE",
-      });
-
-      const { data, message, error } = await response.json();
-      if (error) {
-        toast.error(message || "Error al eliminar el Marca.");
-        return;
-      }
-      toast.success(message || "Marca eliminado.");
-      onClose();
-    } catch (error) {
-      console.error("Error al eliminar el Marca:", error);
-      toast.error("No se pudo eliminar el Marca.");
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   setLoading(true);
+    //   const response = await fetch(`${API_BASE_URL}/deleteBrand/${itemId}`, {
+    //     method: "DELETE",
+    //   });
+    //   const { data, message, error } = await response.json();
+    //   if (error) {
+    //     toast.error(message || "Error al eliminar el Marca.");
+    //     return;
+    //   }
+    //   toast.success(message || "Marca eliminado.");
+    //   onClose();
+    // } catch (error) {
+    //   console.error("Error al eliminar el Marca:", error);
+    //   toast.error("No se pudo eliminar el Marca.");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
-
-  if (loading || isLoadingData) return <Loading />;
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
+      {isLoading && <Loading />}
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -133,27 +107,38 @@ const EditBrand = ({ onClose, itemId }) => {
 
       <h2 className="text-2xl font-bold mb-4">Editar Marca</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
             <label className="block text-sm font-semibold">Nombre</label>
             <input
               type="text"
-              id="name"
               name="name"
               autoComplete="off"
-              value={itemData.name || ""}
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.name ? "border-red-500" : ""
               }`}
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "El Nombre es requerido",
+                },
+                minLength: {
+                  value: 3,
+                  message: "El Nombre debe tener al menos 3 caracteres",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El Nombre no debe exceder los 50 caracteres",
+                },
+              })}
             />
+
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name}</p>
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
         </div>
-
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
@@ -170,6 +155,7 @@ const EditBrand = ({ onClose, itemId }) => {
             <FaSave /> Actualizar
           </button>
         </div>
+        {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
       {showDeleteModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
