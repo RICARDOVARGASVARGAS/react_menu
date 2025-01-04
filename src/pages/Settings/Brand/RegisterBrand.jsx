@@ -14,6 +14,7 @@ const RegisterBrand = ({ onClose }) => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
     reset,
     watch,
   } = useForm({
@@ -22,26 +23,39 @@ const RegisterBrand = ({ onClose }) => {
     },
   });
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
-    apiPost("registerBrand", data)
-      .then((response) => {
-        const { data, message, errors } = response;
-        if (data) {
-          toast.success(message);
-          onClose();
-        } else {
-          console.log(errors);
-          toast.error(message);
-        }
-      })
-      .catch((error) => {
-        console.error("Error al registrar la marca:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      const response = await apiPost("registerBrand", formData);
+      const { data, message } = response;
+
+      if (data) {
+        onClose();
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      const { message, errors: backendErrors } = error;
+
+      // Mostrar mensaje general
+      toast.error(message);
+
+      // Mapear errores del backend al formulario
+      if (backendErrors) {
+        Object.entries(backendErrors).forEach(([field, messages]) => {
+          setError(field, {
+            type: "backend",
+            message: messages[0], // Usar el primer mensaje del backend
+          });
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   });
+
+  console.log(errors);
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
@@ -105,7 +119,7 @@ const RegisterBrand = ({ onClose }) => {
           </button>
         </div>
 
-        {/* {JSON.stringify(watch(), null, 2)} */}
+        {JSON.stringify(watch(), null, 2)}
       </form>
     </div>
   );

@@ -28,7 +28,6 @@ const EditBrand = ({ onClose, itemId }) => {
 
       const response = await apiGet(`getBrand/${itemId}`);
       const { data, message } = response;
-      console.log(data, message);
       if (data) {
         reset(data);
       } else {
@@ -41,38 +40,26 @@ const EditBrand = ({ onClose, itemId }) => {
   }, [itemId]);
 
   // Manejar el envío del formulario
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    // setErrors({}); // Limpiar errores previos
-    // try {
-    //   setLoading(true);
+  const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true);
 
-    //   const response = await fetch(`${API_BASE_URL}/updateBrand/${itemId}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Accept: "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       ...itemData,
-    //     }),
-    //   });
+    try {
+      const response = await apiPut(`updateBrand/${itemId}`, data);
+      const { data: updatedData, message } = response;
 
-    //   const { data, message, errors } = await response.json();
-    //   if (data) {
-    //     toast.success(message);
-    //     onClose(); // Cierra el modal
-    //   } else {
-    //     setErrors(errors);
-    //     toast.error(message);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Error al actualizar el Marca.");
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
+      if (updatedData) {
+        toast.success(message || "Marca actualizada.");
+        onClose();
+      } else {
+        toast.error(message || "No se pudo actualizar la Marca.");
+      }
+    } catch (error) {
+      console.error("Error al actualizar la marca:", error);
+      toast.error(error.message || "Error al actualizar la marca.");
+    } finally {
+      setIsLoading(false);
+    }
+  });
 
   const handleDelete = async () => {
     // try {
