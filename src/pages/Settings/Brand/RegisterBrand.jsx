@@ -4,7 +4,7 @@ import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
-
+import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 // UseForm
 import { useForm } from "react-hook-form";
 
@@ -36,26 +36,13 @@ const RegisterBrand = ({ onClose }) => {
         toast.error(message);
       }
     } catch (error) {
-      const { message, errors: backendErrors } = error;
-
-      // Mostrar mensaje general
-      toast.error(message);
-
-      // Mapear errores del backend al formulario
-      if (backendErrors) {
-        Object.entries(backendErrors).forEach(([field, messages]) => {
-          setError(field, {
-            type: "backend",
-            message: messages[0], // Usar el primer mensaje del backend
-          });
-        });
-      }
+      handleBackendErrors(error, setError, toast);
     } finally {
       setIsLoading(false);
     }
   });
 
-  console.log(errors);
+  // console.log(errors);
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
@@ -119,7 +106,7 @@ const RegisterBrand = ({ onClose }) => {
           </button>
         </div>
 
-        {JSON.stringify(watch(), null, 2)}
+        {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
     </div>
   );

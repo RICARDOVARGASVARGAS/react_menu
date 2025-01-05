@@ -42,7 +42,7 @@ export const apiRequest = async (
     return response.json();
   } catch (error) {
     // Relanzamos el error para que sea manejado en la capa superior
-    console.log(error);
+    // console.log(error);
     throw error;
   }
 };

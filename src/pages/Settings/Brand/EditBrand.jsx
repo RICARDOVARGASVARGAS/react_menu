@@ -3,8 +3,9 @@ import { toast } from "react-toastify";
 import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import { apiGet, apiPut } from "../../../services/apiService";
+import { apiGet, apiPut, apiDelete } from "../../../services/apiService";
 import { useForm } from "react-hook-form";
+import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 
 const EditBrand = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +15,7 @@ const EditBrand = ({ onClose, itemId }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    setError,
     watch,
   } = useForm({
     defaultValues: {
@@ -42,7 +44,6 @@ const EditBrand = ({ onClose, itemId }) => {
   // Manejar el envío del formulario
   const onSubmit = handleSubmit(async (data) => {
     setIsLoading(true);
-
     try {
       const response = await apiPut(`updateBrand/${itemId}`, data);
       const { data: updatedData, message } = response;
@@ -54,32 +55,29 @@ const EditBrand = ({ onClose, itemId }) => {
         toast.error(message || "No se pudo actualizar la Marca.");
       }
     } catch (error) {
-      console.error("Error al actualizar la marca:", error);
-      toast.error(error.message || "Error al actualizar la marca.");
+      handleBackendErrors(error, setError, toast);
     } finally {
       setIsLoading(false);
     }
   });
 
   const handleDelete = async () => {
-    // try {
-    //   setLoading(true);
-    //   const response = await fetch(`${API_BASE_URL}/deleteBrand/${itemId}`, {
-    //     method: "DELETE",
-    //   });
-    //   const { data, message, error } = await response.json();
-    //   if (error) {
-    //     toast.error(message || "Error al eliminar el Marca.");
-    //     return;
-    //   }
-    //   toast.success(message || "Marca eliminado.");
-    //   onClose();
-    // } catch (error) {
-    //   console.error("Error al eliminar el Marca:", error);
-    //   toast.error("No se pudo eliminar el Marca.");
-    // } finally {
-    //   setLoading(false);
-    // }
+    setIsLoading(true);
+
+    try {
+      const response = await apiDelete(`deleteBrand/${itemId}`);
+      const { data, message } = response;
+      if (data) {
+        toast.success(message || "Marca eliminada.");
+        onClose();
+      } else {
+        toast.error(message || "No se pudo eliminar la Marca.");
+      }
+    } catch (error) {
+      handleBackendErrors(error, setError, toast);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
