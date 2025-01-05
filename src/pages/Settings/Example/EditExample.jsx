@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import DeleteModal from "../../../components/elements/DeleteModal";
 
-
 const EditExample = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

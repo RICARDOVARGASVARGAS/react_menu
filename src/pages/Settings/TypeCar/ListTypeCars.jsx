@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/Pagination";
 import Table from "../../../components/Table";
-import Loading from "../../../components/Loading"; // Importa el componente Loading
-import axios from "axios";
+import Loading from "../../../components/Loading";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
-import { API_BASE_URL } from "../../../config/enviroments";
 import RegisterTypeCar from "./RegisterTypeCar";
 import EditTypeCar from "./EditTypeCar";
+import { apiGet } from "../../../services/apiService";
 
 const ListTypeCars = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,58 +13,35 @@ const ListTypeCars = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga
-  const [addForm, setAddForm] = useState(false); // Estado para el modal de agregar
-  const [editForm, setEditForm] = useState(false); // Estado para el modal de editar
-  const [selectItemId, setSelectItemId] = useState(null); // ID del item seleccionado para editar
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState("");
+  const [selectItemId, setSelectItemId] = useState(null);
   const itemsPerPage = 10;
-  const navigate = useNavigate();
 
-  // Abrir el modal de agregar
-  const handleAddForm = () => {
-    setAddForm(true);
+  // Abrir el modal
+  const handleOpenModal = (modal, id = null) => {
+    setIsOpenModal(modal);
+    setSelectItemId(id);
   };
 
-  // Cerrar el modal de agregar
-  const closeAddForm = () => {
-    setAddForm(false);
-    fetchItems(); // Recargar la lista de tras agregar uno nuevo
-  };
-
-  // Abrir el modal de edición
-  const handleEditForm = (itemId) => {
-    setSelectItemId(itemId);
-    setEditForm(true);
-  };
-
-  // Cerrar el modal de edición de
-  const closeEditForm = () => {
+  // Cerrar el modal
+  const handleCloseModal = () => {
+    setIsOpenModal("");
     setSelectItemId(null);
-    setEditForm(false);
     fetchItems();
   };
 
   const fetchItems = async () => {
-    setIsLoading(true); // Activa el estado de carga
-    try {
-      const response = await axios.get(`${API_BASE_URL}/getTypeCars`, {
-        params: {
-          page: currentPage,
-          perPage: itemsPerPage,
-          sort: "desc",
-          search: searchQuery,
-        },
-      });
-
-      const { data, meta } = response.data;
-      setData(data);
-      setTotalPages(meta.last_page);
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    } finally {
-      setIsLoading(false); // Desactiva el estado de carga
-    }
+    setIsLoading(true);
+    const { data, meta, message } = await apiGet("getTypeCars", {
+      page: currentPage,
+      perPage: itemsPerPage,
+      sort: "desc",
+      search: searchQuery,
+    });
+    setData(data);
+    setTotalPages(meta.last_page);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -100,7 +75,7 @@ const ListTypeCars = () => {
     {
       label: <FaEdit />,
       className: "bg-blue-500 text-white hover:bg-blue-600",
-      onClick: (item) => handleEditForm(item.id),
+      onClick: (item) => handleOpenModal("edit", item.id),
     },
   ];
 
@@ -109,11 +84,9 @@ const ListTypeCars = () => {
       <div className="flex-1 overflow-auto">
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">
-              Lista de Tipos de Vehículos
-            </h1>
+            <h1 className="text-2xl font-bold text-blue-900">Lista de Tipos</h1>
             <button
-              onClick={handleAddForm}
+              onClick={() => handleOpenModal("add")}
               className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
             >
               <FaPlus /> Agregar
@@ -165,19 +138,19 @@ const ListTypeCars = () => {
         </main>
       </div>
       {/* Modal de Agregar */}
-      {addForm && (
+      {isOpenModal === "add" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <RegisterTypeCar onClose={closeAddForm} />
+            <RegisterTypeCar onClose={handleCloseModal} />
           </div>
         </div>
       )}
 
       {/* Modal de Editar */}
-      {editForm && (
+      {isOpenModal === "edit" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <EditTypeCar onClose={closeEditForm} itemId={selectItemId} />
+            <EditTypeCar onClose={handleCloseModal} itemId={selectItemId} />
           </div>
         </div>
       )}

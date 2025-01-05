@@ -1,129 +1,89 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/Loading"; // Indicador de carga
+import Loading from "../../../components/Loading";
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {API_BASE_URL} from "../../../config/enviroments";
+import { apiGet, apiPut, apiDelete } from "../../../services/apiService";
+import { useForm } from "react-hook-form";
+import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
+import DeleteModal from "../../../components/elements/DeleteModal";
 
-/**
- * Componente para editar un Año
- * @param {Function} onClose - Función para cerrar el modal
- * @param {number} itemId - ID del Item a editar
- */
 const EditYear = ({ onClose, itemId }) => {
-  const navigate = useNavigate();
-
-  // Estado para la carga del formulario
-  const [loading, setLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // Estado para los datos del formulario
-  const [itemData, setItemData] = useState({
-    name: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setError,
+    watch,
+  } = useForm({
+    defaultValues: {
+      name: "",
+    },
   });
-
-  // Estado para errores
-  const [errors, setErrors] = useState({});
 
   // Cargar los datos a editar
   useEffect(() => {
-    const fetchCarData = async () => {
-      try {
-        setIsLoadingData(true);
+    const fetchData = async () => {
+      setIsLoading(true);
 
-        const response = await fetch(`${API_BASE_URL}/getYear/${itemId}`);
-        const { data, message } = await response.json();
-
-        if (data) {
-          setItemData({
-            name: data.name || "",
-          });
-        } else {
-          toast.error(message || "No se pudieron cargar los datos.");
-        }
-      } catch (error) {
-        console.error("Error al cargar los datos:", error);
-        toast.error("Error al cargar los datos.");
-      } finally {
-        setIsLoadingData(false);
+      const response = await apiGet(`getYear/${itemId}`);
+      const { data, message } = response;
+      if (data) {
+        reset(data);
+      } else {
+        toast.error(message || "No se pudieron cargar los datos.");
       }
+      setIsLoading(false);
     };
 
-    fetchCarData();
+    fetchData();
   }, [itemId]);
 
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setItemData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   // Manejar el envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({}); // Limpiar errores previos
+  const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true);
     try {
-      setLoading(true);
+      const response = await apiPut(`updateYear/${itemId}`, data);
+      const { data: updatedData, message } = response;
 
-      const response = await fetch(`${API_BASE_URL}/updateYear/${itemId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...itemData,
-        }),
-      });
-
-      const { data, message, errors } = await response.json();
-      if (data) {
-        toast.success(message);
-        onClose(); // Cierra el modal
+      if (updatedData) {
+        toast.success(message || "Año actualizado.");
+        onClose();
       } else {
-        setErrors(errors);
-        toast.error(message);
+        toast.error(message || "No se pudo actualizar el Año.");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Error al actualizar el Año.");
+      handleBackendErrors(error, setError);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  };
+  });
 
   const handleDelete = async () => {
+    setIsLoading(true);
+
     try {
-      setLoading(true);
-
-      const response = await fetch(`${API_BASE_URL}/deleteYear/${itemId}`, {
-        method: "DELETE",
-      });
-
-      const { data, message, error } = await response.json();
-      if (error) {
-        toast.error(message || "Error al eliminar el Año.");
-        return;
+      const response = await apiDelete(`deleteYear/${itemId}`);
+      const { data, message } = response;
+      if (data) {
+        toast.success(message || "Año eliminado.");
+        onClose();
+      } else {
+        toast.error(message || "No se pudo eliminar la Año.");
       }
-      toast.success(message || "Año eliminado.");
-      onClose();
     } catch (error) {
-      console.error("Error al eliminar el Año:", error);
-      toast.error("No se pudo eliminar el Año.");
+      handleBackendErrors(error, setError);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
-
-  if (loading || isLoadingData) return <Loading />;
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
+      {isLoading && <Loading />}
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -133,27 +93,38 @@ const EditYear = ({ onClose, itemId }) => {
 
       <h2 className="text-2xl font-bold mb-4">Editar Año</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-semibold">Año</label>
+            <label className="block text-sm font-semibold">Nombre</label>
             <input
               type="text"
-              id="name"
               name="name"
               autoComplete="off"
-              value={itemData.name || ""}
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.name ? "border-red-500" : ""
               }`}
+              {...register("name", {
+                required: {
+                  value: true,
+                  message: "El Nombre es requerido",
+                },
+                minLength: {
+                  value: 2,
+                  message: "El Nombre debe tener al menos 2 carácteres",
+                },
+                maxLength: {
+                  value: 50,
+                  message: "El Nombre no debe exceder los 50 carácteres",
+                },
+              })}
             />
+
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name}</p>
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
         </div>
-
         <div className="flex justify-end mt-6 gap-4">
           <button
             type="button"
@@ -172,27 +143,11 @@ const EditYear = ({ onClose, itemId }) => {
         </div>
       </form>
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-1/3">
-            <h3 className="text-lg font-semibold mb-4">
-              ¿Estás seguro de que deseas eliminar este Año?
-            </h3>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteModal
+          text="¿Estás seguro de que deseas eliminar esta Año?"
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );
