@@ -5,7 +5,6 @@ import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
-// UseForm
 import { useForm } from "react-hook-form";
 
 const RegisterBrand = ({ onClose }) => {

@@ -5,8 +5,6 @@ import Loading from "../../../components/Loading";
 import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import RegisterBrand from "./RegisterBrand";
 import EditBrand from "./EditBrand";
-
-// Optimizando Apis
 import { apiGet } from "../../../services/apiService";
 
 const ListBrands = () => {

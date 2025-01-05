@@ -6,6 +6,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut, apiDelete } from "../../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
+import DeleteModal from "../../../components/elements/DeleteModal";
 
 const EditBrand = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -143,27 +144,11 @@ const EditBrand = ({ onClose, itemId }) => {
         {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] md:w-1/3">
-            <h3 className="text-lg font-semibold mb-4">
-              ¿Estás seguro de que deseas eliminar este Marca?
-            </h3>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteModal
+          text="¿Estás seguro de que deseas eliminar esta Marca?"
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );
