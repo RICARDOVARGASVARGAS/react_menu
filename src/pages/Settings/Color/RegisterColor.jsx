@@ -36,7 +36,7 @@ const RegisterColor = ({ onClose }) => {
         toast.error(message);
       }
     } catch (error) {
-      handleBackendErrors(error, setError, toast);
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }

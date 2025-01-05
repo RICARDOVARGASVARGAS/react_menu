@@ -1,6 +1,7 @@
-export const handleBackendErrors = (error, setError, toast) => {
-  const { message, errors: backendErrors } = error;
+import { toast } from "react-toastify";
 
+export const handleBackendErrors = (error, setError) => {
+  const { message, errors: backendErrors } = error;
   // Mostrar mensaje general
   if (message) toast.error(message);
 

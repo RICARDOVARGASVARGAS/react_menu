@@ -56,7 +56,7 @@ const EditBrand = ({ onClose, itemId }) => {
         toast.error(message || "No se pudo actualizar la Marca.");
       }
     } catch (error) {
-      handleBackendErrors(error, setError, toast);
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +75,7 @@ const EditBrand = ({ onClose, itemId }) => {
         toast.error(message || "No se pudo eliminar la Marca.");
       }
     } catch (error) {
-      handleBackendErrors(error, setError, toast);
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }

@@ -57,7 +57,7 @@ const EditColor = ({ onClose, itemId }) => {
         toast.error(message || "No se pudo actualizar el Color.");
       }
     } catch (error) {
-      handleBackendErrors(error, setError, toast);
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +76,7 @@ const EditColor = ({ onClose, itemId }) => {
         toast.error(message || "No se pudo eliminar el Color.");
       }
     } catch (error) {
-      handleBackendErrors(error, setError, toast);
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }
@@ -167,10 +167,10 @@ const EditColor = ({ onClose, itemId }) => {
       </form>
       {showDeleteModal && (
         <DeleteModal
-        text="¿Estás seguro de que deseas eliminar este Color?"
-        onClose={() => setShowDeleteModal(false)}
-        onDelete={handleDelete}
-      />
+          text="¿Estás seguro de que deseas eliminar este Color?"
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );
