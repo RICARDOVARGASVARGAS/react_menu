@@ -3,116 +3,22 @@ import Loading from "../../components/Loading";
 import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { API_BASE_URL } from "../../config/enviroments";
+import { apiFetch, apiPost } from "../../services/apiService";
+import { handleBackendErrors } from "../../utils/handleBackendErrors ";
+import { useForm } from "react-hook-form";
+import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 
 const RegisterDriver = () => {
-  const [formData, setFormData] = useState({
-    document_type: "dni",
-    document_number: "",
-    name: "",
-    first_name: "",
-    last_name: "",
-    birth_date: "",
-    email: "",
-    phone_number: "",
-    address: "",
-    gender: "M",
-  });
-  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" });
-  };
-
-  const handleSearch = async () => {
-    if (!formData.document_number) {
-      toast.error("Por favor, ingrese el número de documento.");
-      return;
-    }
-
-    setIsSearching(true);
-
-    try {
-      const response = await fetch(
-        `https://data-people.codepro-peru.com/api/getPerson/${formData.document_number}`
-      );
-      const { status, message, information } = await response.json();
-      // console.log(information);
-
-      if (!status) {
-        setFormData({
-          document_type: formData.document_type,
-          document_number: formData.document_number,
-          name: "",
-          first_name: "",
-          last_name: "",
-          birth_date: "",
-          email: "",
-          phone_number: "",
-          address: "",
-          gender: "M",
-        });
-        toast.error(message);
-        return;
-      } else {
-        setFormData({
-          ...formData,
-          name: information.names,
-          first_name: information.father_last_name,
-          last_name: information.mother_last_name,
-          birth_date: information.birthday,
-        });
-      }
-    } catch (error) {
-      console.error("Error al buscar la persona:", error);
-      toast.error("Ocurrió un error al realizar la búsqueda.");
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/registerDriver`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const { data, message, errors } = await response.json();
-
-      if (data) {
-        toast.success(message);
-        navigate("/edit-driver/" + data.id);
-      } else {
-        console.log(errors);
-        toast.error(message);
-        setErrors(errors);
-      }
-    } catch (error) {
-      console.error("Error al registrar el conductor:", error);
-      toast.error("Ocurrió un error al realizar el registro.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleClear = () => {
-    setFormData({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
       document_type: "dni",
       document_number: "",
       name: "",
@@ -123,9 +29,77 @@ const RegisterDriver = () => {
       phone_number: "",
       address: "",
       gender: "M",
-    });
-    setErrors({});
+    },
+  });
+
+  const [isSearching, setIsSearching] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleSearch = async () => {
+    const documentNumber = watch("document_number");
+
+    // Validación del número de documento
+    if (!documentNumber || documentNumber.length !== 8) {
+      toast.error("Por favor, ingrese el número de documento.");
+      return;
+    }
+
+    setIsSearching(true);
+
+    try {
+      const { status, message, information } = await apiFetch(
+        `${API_DATA_PEOPLE_URL}/${documentNumber}`
+      );
+
+      if (!status) {
+        toast.error(message);
+        reset({
+          document_type: "dni",
+          document_number: "",
+          name: "",
+          first_name: "",
+          last_name: "",
+          birth_date: "",
+          email: "",
+          phone_number: "",
+          address: "",
+          gender: "M",
+        });
+      } else {
+        reset({
+          name: information.names,
+          first_name: information.father_last_name,
+          last_name: information.mother_last_name,
+          birth_date: information.birthday,
+        });
+      }
+    } catch (error) {
+      console.error("Error en la búsqueda:", error);
+      toast.error(error.message || "Error en la búsqueda.");
+    } finally {
+      setIsSearching(false);
+    }
   };
+
+  const onSubmit = handleSubmit(async (formData) => {
+    setIsLoading(true);
+    try {
+      const response = await apiPost("registerDriver", formData);
+      const { data, message } = response;
+
+      if (data) {
+        toast.success(message);
+        navigate("/edit-driver/" + data.id);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      handleBackendErrors(error, setError);
+    } finally {
+      setIsLoading(false);
+    }
+  });
 
   return (
     <>
@@ -135,7 +109,7 @@ const RegisterDriver = () => {
             Registrar un Nuevo Conductor
           </h1>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
             className="bg-white shadow-md rounded-lg p-6 space-y-4 mx-auto w-full"
           >
             <div>
@@ -144,18 +118,22 @@ const RegisterDriver = () => {
               </label>
               <select
                 name="document_type"
-                value={formData.document_type}
-                onChange={handleChange}
                 className={`border ${
                   errors.document_type ? "border-red-500" : "border-gray-300"
                 } rounded px-4 py-2 w-full`}
+                {...register("document_type", {
+                  required: {
+                    value: true,
+                    message: "El Tipo de Documento es requerido",
+                  },
+                })}
               >
                 <option value="dni">DNI</option>
                 <option value="passport">Pasaporte</option>
               </select>
               {errors.document_type && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.document_type[0]}
+                <p className="text-red-500 text-sm">
+                  {errors.document_type.message}
                 </p>
               )}
             </div>
@@ -168,8 +146,6 @@ const RegisterDriver = () => {
                 <input
                   type="text"
                   name="document_number"
-                  value={formData.document_number}
-                  onChange={handleChange}
                   autoComplete="off"
                   className={`border ${
                     errors.document_number
@@ -177,6 +153,22 @@ const RegisterDriver = () => {
                       : "border-gray-300"
                   } rounded px-4 py-2 w-full`}
                   placeholder="Ingrese el número de documento"
+                  {...register("document_number", {
+                    required: {
+                      value: true,
+                      message: "El Número de Documento es requerido",
+                    },
+                    minLength: {
+                      value: 8,
+                      message:
+                        "El Número de Documento debe tener al menos 8 caracteres",
+                    },
+                    maxLength: {
+                      value: 8,
+                      message:
+                        "El Número de Documento debe tener como mucho 8 caracteres",
+                    },
+                  })}
                 />
                 <button
                   type="button"
@@ -189,58 +181,253 @@ const RegisterDriver = () => {
                 </button>
               </div>
               {errors.document_number && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.document_number[0]}
+                <p className="text-red-500 text-sm">
+                  {errors.document_number.message}
                 </p>
               )}
             </div>
 
-            {[
-              { name: "name", label: "Nombres" },
-              { name: "first_name", label: "Apellido Paterno" },
-              { name: "last_name", label: "Apellido Materno" },
-              { name: "birth_date", label: "Fecha de Nacimiento" },
-              { name: "email", label: "Correo Electrónico" },
-              { name: "phone_number", label: "Número de Teléfono" },
-              { name: "address", label: "Dirección" },
-            ].map(({ name, label }) => (
-              <div key={name}>
-                <label className="block mb-2 text-gray-700 font-medium">
-                  {label}
-                </label>
-                <input
-                  type={name === "birth_date" ? "date" : "text"}
-                  name={name}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  className={`border ${
-                    errors[name] ? "border-red-500" : "border-gray-300"
-                  } rounded px-4 py-2 w-full`}
-                  placeholder={`Ingrese ${label.toLowerCase()}`}
-                />
-                {errors[name] && (
-                  <p className="text-red-500 text-sm mt-1">{errors[name][0]}</p>
-                )}
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-semibold">Nombres</label>
+              <input
+                type="text"
+                name="name"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.name ? "border-red-500" : ""
+                }`}
+                {...register("name", {
+                  required: {
+                    value: true,
+                    message: "El Nombre es requerido",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "El Nombre debe tener al menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "El Nombre no debe exceder los 20 caracteres",
+                  },
+                })}
+              />
+
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">
+                Apellido Paterno
+              </label>
+              <input
+                type="text"
+                name="first_name"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.first_name ? "border-red-500" : ""
+                }`}
+                {...register("first_name", {
+                  required: {
+                    value: true,
+                    message: "El Apellido Paterno es requerido",
+                  },
+                  minLength: {
+                    value: 3,
+                    message:
+                      "El Apellido Paterno debe tener al menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message:
+                      "El Apellido Paterno no debe exceder los 20 caracteres",
+                  },
+                })}
+              />
+
+              {errors.first_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.first_name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">
+                Apellido Materno
+              </label>
+              <input
+                type="text"
+                name="last_name"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.last_name ? "border-red-500" : ""
+                }`}
+                {...register("last_name", {
+                  required: {
+                    value: true,
+                    message: "El Apellido Materno es requerido",
+                  },
+                  minLength: {
+                    value: 3,
+                    message:
+                      "El Apellido Materno debe tener al menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message:
+                      "El Apellido Materno no debe exceder los 20 caracteres",
+                  },
+                })}
+              />
+
+              {errors.last_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.last_name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">
+                Fecha de Nacimiento
+              </label>
+              <input
+                type="date"
+                name="birth_date"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.birth_date ? "border-red-500" : ""
+                }`}
+                {...register("birth_date", {
+                  required: {
+                    value: true,
+                    message: "La Fecha de Nacimiento es requerida",
+                  },
+                })}
+              />
+
+              {errors.birth_date && (
+                <p className="text-red-500 text-sm">
+                  {errors.birth_date.message}
+                </p>
+              )}
+            </div>
 
             <div>
               <label className="block mb-2 text-gray-700 font-medium">
-                Género
+                Genero
               </label>
               <select
                 name="gender"
-                value={formData.gender}
-                onChange={handleChange}
                 className={`border ${
                   errors.gender ? "border-red-500" : "border-gray-300"
                 } rounded px-4 py-2 w-full`}
+                {...register("gender", {
+                  required: {
+                    value: true,
+                    message: "El Genero es requerido",
+                  },
+                })}
               >
                 <option value="M">Masculino</option>
                 <option value="F">Femenino</option>
               </select>
               {errors.gender && (
-                <p className="text-red-500 text-sm mt-1">{errors.gender[0]}</p>
+                <p className="text-red-500 text-sm">{errors.gender.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">
+                Correo Electrónico
+              </label>
+              <input
+                type="email"
+                name="email"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.email ? "border-red-500" : ""
+                }`}
+                {...register("email", {
+                  required: {
+                    value: true,
+                    message: "El Correo Electrónico es requerido",
+                  },
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "El Correo Electrónico no es válido",
+                  },
+                })}
+              />
+
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">Teléfono</label>
+              <input
+                type="text"
+                name="phone"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.phone ? "border-red-500" : ""
+                }`}
+                {...register("phone", {
+                  required: {
+                    value: true,
+                    message: "El Teléfono es requerido",
+                  },
+                  minLength: {
+                    value: 9,
+                    message: "El Teléfono debe tener al menos 9 caracteres",
+                  },
+                  maxLength: {
+                    value: 12,
+                    message: "El Teléfono no debe exceder los 12 caracteres",
+                  },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "El Teléfono debe ser numérico",
+                  },
+                })}
+              />
+
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold">Dirección</label>
+              <input
+                type="text"
+                name="address"
+                autoComplete="off"
+                className={`mt-1 p-2 w-full border rounded ${
+                  errors.address ? "border-red-500" : ""
+                }`}
+                {...register("address", {
+                  required: {
+                    value: true,
+                    message: "La Dirección es requerida",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "La Dirección debe tener al menos 3 caracteres",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "La Dirección no debe exceder los 100 caracteres",
+                  },
+                })}
+              />
+
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address.message}</p>
               )}
             </div>
 
@@ -267,7 +454,7 @@ const RegisterDriver = () => {
                   <button
                     type="button"
                     className="bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-700"
-                    onClick={handleClear}
+                    onClick={() => reset()}
                   >
                     <FaEraser />
                     Limpiar

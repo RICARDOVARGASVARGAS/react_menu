@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
-import Loading from "../../components/Loading"; // Importa el componente Loading
-import axios from "axios";
+import Loading from "../../components/Loading";
 import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
-import { API_BASE_URL } from "../../config/enviroments";
+import RegisterDriver from "./RegisterDriver";
+import EditDriver from "./EditDriver";
+import { apiGet } from "../../services/apiService";
 
 const ListDrivers = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,31 +14,21 @@ const ListDrivers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [drivers, setDrivers] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga
-
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
   const fetchDrivers = async () => {
-    setIsLoading(true); // Activa el estado de carga
-    try {
-      const response = await axios.get(`${API_BASE_URL}/getDrivers`, {
-        params: {
-          page: currentPage,
-          perPage: itemsPerPage,
-          sort: "desc",
-          search: searchQuery,
-        },
-      });
-
-      const { data, meta } = response.data;
-      setDrivers(data);
-      setTotalPages(meta.last_page);
-    } catch (error) {
-      console.error("Error fetching drivers:", error);
-    } finally {
-      setIsLoading(false); // Desactiva el estado de carga
-    }
+    setIsLoading(true);
+    const { data, meta, message } = await apiGet("getDrivers", {
+      page: currentPage,
+      perPage: itemsPerPage,
+      sort: "desc",
+      search: searchQuery,
+    });
+    setDrivers(data);
+    setTotalPages(meta.last_page);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -135,7 +126,7 @@ const ListDrivers = () => {
                   id: driver.id,
                   document_number: driver.document_number,
                   name: `${driver.name} ${driver.first_name} ${driver.last_name}`,
-                  phone: driver.phone_number || "No disponible",
+                  phone: driver.phone_number || "N/A",
                 }))}
                 actions={actions}
               />
