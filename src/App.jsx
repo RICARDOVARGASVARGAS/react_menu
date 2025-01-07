@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ListDrivers from "./pages/Drivers/ListDrivers";
 import RegisterDriver from "./pages/Drivers/RegisterDriver";
-import EditDriver from "./pages/Drivers/EditDriver";
 import DetailDriver from "./pages/Drivers/DetailDriver";
 import ListCars from "./pages/Cars/ListCars";
 import DetailCar from "./pages/Cars/DetailCar";
@@ -15,6 +14,7 @@ import ListGroups from "./pages/Settings/Group/ListGroups";
 import ListTypeCars from "./pages/Settings/TypeCar/ListTypeCars";
 import ListColors from "./pages/Settings/Color/ListColors";
 import MainLayout from "./components/layout/MainLayout";
+import DriverData from "./pages/Drivers/DriverData";
 
 const App = () => {
   return (
@@ -28,7 +28,7 @@ const App = () => {
           {/* Conductores */}
           <Route path="/list-drivers" element={<ListDrivers />} />
           <Route path="/register-driver" element={<RegisterDriver />} />
-          <Route path="/edit-driver/:driverId" element={<EditDriver />} />
+          <Route path="/driver-data/:driverId" element={<DriverData />} />
           <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
 
           {/* Configuraciones */}

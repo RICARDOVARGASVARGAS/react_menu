@@ -10,7 +10,11 @@ export const API_STORAGE_URL =
     ? "http://storage_sync.test/api" // URL en desarrollo
     : "https://storage.tu-dominio.com"); // URL en producción
 
-export const TOKEN_API_STORAGE = "064b448c-059a-4c3b-8507-312bfa1219ad"; //"640f611c-7909-46c7-b0ce-77fd7b050fde";
+export const TOKEN_API_STORAGE =
+  import.meta.env.VITE_TOKEN_API_STORAGE ||
+  (import.meta.env.MODE === "development"
+    ? "3561ac9d-e317-44be-9df3-cd163f9acc21" // URL en desarrollo
+    : "7f430e18-5c39-420e-ab04-a264fa96ca7d"); // URL en producción
 
 export const API_DATA_PEOPLE_URL =
   "https://data-people.codepro-peru.com/api/getPerson"; // URL de la API de personas

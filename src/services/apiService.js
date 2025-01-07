@@ -1,4 +1,8 @@
-import { API_BASE_URL } from "../config/enviroments";
+import {
+  API_BASE_URL,
+  API_STORAGE_URL,
+  TOKEN_API_STORAGE,
+} from "../config/enviroments";
 
 export const apiRequest = async (
   endpoint,
@@ -96,6 +100,54 @@ export const apiFetch = async (
     // Retornamos el JSON si la respuesta fue exitosa
     return response.json();
   } catch (error) {
+    // Relanzamos el error para que sea manejado en la capa superior
+    throw error;
+  }
+};
+
+// Subir Archivos
+export const uploadFileStorage = async (
+  file,
+  model,
+  model_id,
+  model_storage,
+  storage
+) => {
+  // Configuración de la solicitud
+  const body = new FormData();
+  body.append("file", file);
+  body.append("model", model);
+  body.append("model_id", model_id);
+  body.append("model_storage", model_storage);
+  body.append("storage", storage);
+  body.append("api_key", TOKEN_API_STORAGE);
+
+  const options = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+    body, // Incluimos el cuerpo directamente en las opciones
+  };
+
+  try {
+    // Realizamos la solicitud
+    const response = await fetch(`${API_BASE_URL}/uploadFile`, options);
+
+    // Verificar si la respuesta no fue exitosa (código >= 400)
+    if (!response.ok) {
+      const error = await response.json();
+      throw {
+        status: response.status,
+        message: error.message || "Error al realizar la solicitud.",
+        errors: error.errors || {},
+      };
+    }
+
+    // Retornamos el JSON si la respuesta fue exitosa
+    return response.json();
+  } catch (error) {
+    console.error(error);
     // Relanzamos el error para que sea manejado en la capa superior
     throw error;
   }

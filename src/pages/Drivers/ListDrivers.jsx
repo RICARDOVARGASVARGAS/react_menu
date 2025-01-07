@@ -67,7 +67,7 @@ const ListDrivers = () => {
     {
       label: <FaEdit />,
       className: "bg-blue-500 text-white hover:bg-blue-600",
-      onClick: (driver) => navigate(`/edit-driver/${driver.id}`),
+      onClick: (driver) => navigate(`/driver-data/${driver.id}`),
     },
   ];
 

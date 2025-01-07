@@ -90,7 +90,7 @@ const RegisterDriver = () => {
 
       if (data) {
         toast.success(message);
-        navigate("/edit-driver/" + data.id);
+        navigate("/driver-data/" + data.id);
       } else {
         toast.error(message);
       }
@@ -130,7 +130,7 @@ const RegisterDriver = () => {
                   })}
                 >
                   <option value="dni">DNI</option>
-                  <option value="passport">Pasaporte</option>
+                  <option value="pasaporte">Pasaporte</option>
                 </select>
                 {errors.document_type && (
                   <p className="text-red-500 text-sm">
@@ -374,12 +374,12 @@ const RegisterDriver = () => {
                 <label className="block text-sm font-semibold">Teléfono</label>
                 <input
                   type="text"
-                  name="phone"
+                  name="phone_number"
                   autoComplete="off"
                   className={`mt-1 p-2 w-full border rounded ${
-                    errors.phone ? "border-red-500" : ""
+                    errors.phone_number ? "border-red-500" : ""
                   }`}
-                  {...register("phone", {
+                  {...register("phone_number", {
                     required: {
                       value: true,
                       message: "El Teléfono es requerido",
@@ -399,8 +399,10 @@ const RegisterDriver = () => {
                   })}
                 />
 
-                {errors.phone && (
-                  <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                {errors.phone_number && (
+                  <p className="text-red-500 text-sm">
+                    {errors.phone_number.message}
+                  </p>
                 )}
               </div>
 
