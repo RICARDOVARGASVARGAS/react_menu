@@ -344,10 +344,10 @@ const RegisterDriver = () => {
 
               <div>
                 <label className="block text-sm font-semibold">
-                  Correo Electrónico
+                  Correo Electrónico (Opcional)
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   autoComplete="off"
                   className={`mt-1 p-2 w-full border rounded ${
@@ -355,7 +355,7 @@ const RegisterDriver = () => {
                   }`}
                   {...register("email", {
                     required: {
-                      value: true,
+                      value: false,
                       message: "El Correo Electrónico es requerido",
                     },
                     pattern: {
@@ -371,7 +371,7 @@ const RegisterDriver = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold">Teléfono</label>
+                <label className="block text-sm font-semibold">Teléfono (Opcional)</label>
                 <input
                   type="text"
                   name="phone_number"
@@ -381,7 +381,7 @@ const RegisterDriver = () => {
                   }`}
                   {...register("phone_number", {
                     required: {
-                      value: true,
+                      value: false,
                       message: "El Teléfono es requerido",
                     },
                     minLength: {
@@ -407,7 +407,7 @@ const RegisterDriver = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold">Dirección</label>
+                <label className="block text-sm font-semibold">Dirección (Opcional)</label>
                 <input
                   type="text"
                   name="address"
@@ -417,7 +417,7 @@ const RegisterDriver = () => {
                   }`}
                   {...register("address", {
                     required: {
-                      value: true,
+                      value: false,
                       message: "La Dirección es requerida",
                     },
                     minLength: {
