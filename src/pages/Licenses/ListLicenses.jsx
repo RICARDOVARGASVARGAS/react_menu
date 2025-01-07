@@ -5,6 +5,7 @@ import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 import { apiGet, uploadFileStorage } from "../../services/apiService";
+import { useFileUploader } from "../../hooks/useFileUploader";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -12,6 +13,7 @@ const ListLicenses = ({ driverId }) => {
   const [modal, setModal] = useState(false);
   const [typeModal, setTypeModal] = useState(null);
   const [selectedLicenseId, setSelectedLicenseId] = useState(null);
+  const { uploadFile, isLoading: isFileUploading } = useFileUploader();
 
   useEffect(() => {
     fetchLicenses();
@@ -25,7 +27,6 @@ const ListLicenses = ({ driverId }) => {
 
   // Obtener la lista de licencias
   const fetchLicenses = async () => {
-    console.log("driverId", driverId);
     setIsLoading(true);
     try {
       const { data } = await apiGet(`getDriverLicenses/${driverId}`);
@@ -52,56 +53,32 @@ const ListLicenses = ({ driverId }) => {
 
   // Subir la licencia
   const uploadFileLicense = async (e, licenseItem) => {
-    setIsLoading(true);
     const file = e.target.files[0];
 
-    if (!file) {
-      toast.error("Por favor, seleccione una Archivo.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Validar tamaño del archivo (máximo 5 MB)
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 5 MB.");
-      e.target.value = ""; // Limpiar el input
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const {
-        message,
-        file: document,
-        item,
-      } = await uploadFileStorage(
+      await uploadFile({
         file,
-        "License",
-        licenseItem.id,
-        "file",
-        `Driver/${driverId}/Licenses/${licenseItem.id}`
-      );
-
-      if (item) {
-        toast.success(message);
-        fetchLicenses();
-      } else {
-        toast.error(message);
-        return;
-      }
+        model: "License",
+        modelId: licenseItem.id,
+        modelStorage: "file",
+        storagePath: `Driver/${driverId}/Licenses/${licenseItem.id}`,
+        onSuccess: (uploadedFile) => {
+          // console.log("uploadedFile", uploadedFile);
+          toast.success("Archivo subido con éxito.");
+          fetchLicenses(); // Refresca la lista de licencias
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
+      });
     } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-      return;
-    } finally {
-      setIsLoading(false);
+      console.error("Error inesperado al subir el archivo:", error);
     }
   };
 
   return (
     <div>
-      {isLoading && <Loading />}
+      {(isLoading || isFileUploading) && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
