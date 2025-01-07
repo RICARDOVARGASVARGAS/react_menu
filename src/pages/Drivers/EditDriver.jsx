@@ -150,7 +150,7 @@ const EditDriver = ({ driverId }) => {
         "Driver",
         driverId,
         "image",
-        `Profile/${driverId}`
+        `Driver/${driverId}/Profile`
       );
 
       if (item) {

@@ -4,11 +4,11 @@ import Loading from "../../components/Loading";
 import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
-import { apiGet } from "../../services/apiService";
+import { apiGet, uploadFileStorage } from "../../services/apiService";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [modal, setModal] = useState(false);
   const [typeModal, setTypeModal] = useState(null);
   const [selectedLicenseId, setSelectedLicenseId] = useState(null);
@@ -26,7 +26,7 @@ const ListLicenses = ({ driverId }) => {
   // Obtener la lista de licencias
   const fetchLicenses = async () => {
     console.log("driverId", driverId);
-    setLoading(true);
+    setIsLoading(true);
     try {
       const { data } = await apiGet(`getDriverLicenses/${driverId}`);
 
@@ -39,7 +39,7 @@ const ListLicenses = ({ driverId }) => {
     } catch (error) {
       toast.error("Error al cargar los licencias.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -50,103 +50,58 @@ const ListLicenses = ({ driverId }) => {
     fetchLicenses();
   };
 
-  // Subir la imagen del conductor
-  const uploadLicenseFile = async (e, licenseItem) => {
-    e.preventDefault();
-    setLoading(true);
-
+  // Subir la licencia
+  const uploadFileLicense = async (e, licenseItem) => {
+    setIsLoading(true);
     const file = e.target.files[0];
 
     if (!file) {
-      toast.error("Por favor, seleccione un archivo.");
-      setLoading(false);
+      toast.error("Por favor, seleccione una Archivo.");
+      setIsLoading(false);
       return;
     }
 
-    // Validar tipo de archivo
-    if (file.type !== "application/pdf") {
-      toast.error("Solo se permiten archivos PDF.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    // Validar tamaño del archivo (máximo 3 MB)
-    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
+    // Validar tamaño del archivo (máximo 5 MB)
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 3 MB.");
+      toast.error("El archivo excede el tamaño máximo de 5 MB.");
       e.target.value = ""; // Limpiar el input
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
-    const formFile = new FormData();
-    formFile.append("file", file);
-    formFile.append(
-      "location",
-      `drivers/${driverId}/licenses/${licenseItem.id}`
-    );
-
     try {
-      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: TOKEN_API_STORAGE,
-        },
-        body: formFile,
-      });
-
-      const { message, errors, file } = await response.json();
-
-      if (file) {
-        licenseItem.file = file.url;
-        updateLicense(licenseItem);
-      } else {
-        toast.error(message || "Ocurrió un error al subir el archivo.");
-      }
-    } catch (err) {
-      toast.error("Ocurrió un error al subir el archivo.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const updateLicense = async (licenseData) => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/updateDriverLicense/${licenseData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...licenseData,
-          }),
-        }
+      const {
+        message,
+        file: document,
+        item,
+      } = await uploadFileStorage(
+        file,
+        "License",
+        licenseItem.id,
+        "file",
+        `Driver/${driverId}/Licenses/${licenseItem.id}`
       );
 
-      const { data, message, errors } = await response.json();
-      if (data) {
+      if (item) {
         toast.success(message);
-        await fetchLicenses();
+        fetchLicenses();
       } else {
         toast.error(message);
+        return;
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error al actualizar el Licencia.");
+      toast.error(error.message);
+      return;
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <div>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -217,15 +172,15 @@ const ListLicenses = ({ driverId }) => {
                         id={`licenseInput-${license.id}`} // ID único basado en el ID de la licencia
                         className="hidden"
                         accept="application/pdf"
-                        onChange={(e) => uploadLicenseFile(e, { ...license })}
-                        disabled={loading}
+                        onChange={(e) => uploadFileLicense(e, { ...license })}
+                        disabled={isLoading}
                       />
                       {!license.file ? (
                         <label
                           htmlFor={`licenseInput-${license.id}`} // Ajuste en el for del label
                           className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         >
-                          {loading ? (
+                          {isLoading ? (
                             "Subiendo..."
                           ) : (
                             <>
