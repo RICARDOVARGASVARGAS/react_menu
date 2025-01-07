@@ -4,7 +4,7 @@ import Loading from "../../components/Loading";
 import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
-import { apiGet, uploadFileStorage } from "../../services/apiService";
+import { apiGet } from "../../services/apiService";
 import { useFileUploader } from "../../hooks/useFileUploader";
 
 const ListLicenses = ({ driverId }) => {

@@ -12,9 +12,11 @@ import {
 } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
+import { useFileUploader } from "../../hooks/useFileUploader";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { uploadFile, isLoading: isFileUploading } = useFileUploader();
   const {
     register,
     handleSubmit,
@@ -111,7 +113,6 @@ const EditDriver = ({ driverId }) => {
   // Enviar los datos actualizados del conductor
   const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
-
     try {
       const { data, message } = await apiPut(
         `updateDriver/${driverId}`,
@@ -131,49 +132,36 @@ const EditDriver = ({ driverId }) => {
     }
   });
 
-  const uploadFile = async (e) => {
-    setIsLoading(true);
+  // Subir la licencia
+  const uploadFilePhoto = async (e, licenseItem) => {
     const file = e.target.files[0];
 
-    if (!file) {
-      toast.error("Por favor, seleccione una imagen.");
-      return;
-    }
-
     try {
-      const {
-        message,
-        file: document,
-        item,
-      } = await uploadFileStorage(
+      await uploadFile({
         file,
-        "Driver",
-        driverId,
-        "image",
-        `Driver/${driverId}/Profile`
-      );
-
-      if (item) {
-        toast.success(message);
-        reset({
-          image: item.image,
-        });
-      } else {
-        toast.error(message);
-        return;
-      }
+        model: "Driver",
+        modelId: driverId,
+        modelStorage: "image",
+        storagePath: `Driver/${driverId}/Profile`,
+        onSuccess: (uploadedFile) => {
+          // console.log("uploadedFile", uploadedFile);
+          reset({
+            image: uploadedFile.image,
+          });
+          toast.success("Archivo subido con éxito.");
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
+      });
     } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-      return;
-    } finally {
-      setIsLoading(false);
+      console.error("Error inesperado al subir el archivo:", error);
     }
   };
-
+  
   return (
     <div className="container mx-auto bg-white shadow-md rounded-lg p-6">
-      {isLoading && <Loading />}
+      {(isLoading || isFileUploading) && <Loading />}
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
         Editar Datos del Conductor
       </h2>
@@ -197,7 +185,7 @@ const EditDriver = ({ driverId }) => {
               id="avatarInput"
               className="hidden"
               accept="image/*"
-              onChange={uploadFile}
+              onChange={uploadFilePhoto}
               disabled={isLoading}
             />
           </div>
