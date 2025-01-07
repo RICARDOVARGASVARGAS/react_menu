@@ -5,7 +5,7 @@ import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 import { apiGet } from "../../services/apiService";
-import { useFileUploader } from "../../hooks/useFileUploader";
+import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -14,6 +14,7 @@ const ListLicenses = ({ driverId }) => {
   const [typeModal, setTypeModal] = useState(null);
   const [selectedLicenseId, setSelectedLicenseId] = useState(null);
   const { uploadFile, isLoading: isFileUploading } = useFileUploader();
+  const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
 
   useEffect(() => {
     fetchLicenses();
@@ -76,9 +77,36 @@ const ListLicenses = ({ driverId }) => {
     }
   };
 
+  // Eliminar la licencia
+  const deleteFileLicense = async (licenseItem) => {
+    console.log(licenseItem.id);
+    console.log(licenseItem.file);
+    let encode = btoa(licenseItem.file);
+    console.log(encode);
+    // console.log();
+    try {
+      await deleteFile({
+        model: "License",
+        modelId: licenseItem.id,
+        modelStorage: "file",
+        encode_url: encode,
+        onSuccess: (data) => {
+          console.log(data);
+          toast.success("Licencia eliminada con éxito.");
+          fetchLicenses(); // Refresca la lista de licencias
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar la licencia.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al eliminar la licencia:", error);
+    }
+  };
+
   return (
     <div>
-      {(isLoading || isFileUploading) && <Loading />}
+      {(isLoading || isFileUploading || isFileDeleting) && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
@@ -182,7 +210,7 @@ const ListLicenses = ({ driverId }) => {
                           {/* Botón para eliminar la licencia */}
                           <button
                             onClick={() => {
-                              deleteLicenseFile(license);
+                              deleteFileLicense(license);
                             }}
                             className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                           >

@@ -12,7 +12,7 @@ import {
 } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
-import { useFileUploader } from "../../hooks/useFileUploader";
+import { useFileUploader } from "../../hooks/useFileHook";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -158,7 +158,7 @@ const EditDriver = ({ driverId }) => {
       console.error("Error inesperado al subir el archivo:", error);
     }
   };
-  
+
   return (
     <div className="container mx-auto bg-white shadow-md rounded-lg p-6">
       {(isLoading || isFileUploading) && <Loading />}

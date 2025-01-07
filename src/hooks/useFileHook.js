@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { uploadFileStorage } from "../services/apiService";
+import { apiPost, uploadFileStorage } from "../services/apiService";
+import { TOKEN_API_STORAGE } from "../config/enviroments";
 
 export const useFileUploader = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -56,4 +57,47 @@ export const useFileUploader = () => {
   };
 
   return { uploadFile, isLoading };
+};
+
+export const useFileDelete = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const deleteFile = async ({
+    model,
+    modelId,
+    modelStorage,
+    encode_url,
+    onSuccess,
+    onError,
+  }) => {
+    setIsLoading(true);
+
+    try {
+      const data = await apiPost(`deleteFile`, {
+        model: model,
+        model_id: modelId,
+        model_storage: modelStorage,
+        api_key: TOKEN_API_STORAGE,
+        encode_url_file: encode_url,
+      });
+
+      console.log(data);
+
+      if (item) {
+        // toast.success(message);
+        if (onSuccess) onSuccess({ file, item, message });
+      } else {
+        toast.error(message);
+        if (onError) onError(message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+      if (onError) onError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { deleteFile, isLoading };
 };
