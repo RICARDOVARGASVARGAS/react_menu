@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loading"; // Componente de carga
-import {
-  FaPlus,
-  FaEdit,
-  FaFilePdf,
-  FaImage,
-  FaTrash,
-  FaUpload,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../../config/enviroments";
+import Loading from "../../components/Loading";
+import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
+import { apiGet } from "../../services/apiService";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -25,17 +13,23 @@ const ListLicenses = ({ driverId }) => {
   const [typeModal, setTypeModal] = useState(null);
   const [selectedLicenseId, setSelectedLicenseId] = useState(null);
 
-  const navigate = useNavigate(); // Para navegación entre páginas
+  useEffect(() => {
+    fetchLicenses();
+  }, [driverId]);
+
+  // Abrir el modal
+  const showModal = (type) => {
+    setModal(true);
+    setTypeModal(type);
+  };
 
   // Obtener la lista de licencias
   const fetchLicenses = async () => {
+    console.log("driverId", driverId);
     setLoading(true);
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/getDriverLicenses/${driverId}`
-      );
-      const { data } = await response.json();
-      //   console.log(data);
+      const { data } = await apiGet(`getDriverLicenses/${driverId}`);
+
       if (data) {
         setLicenses(data);
       } else {
@@ -49,36 +43,12 @@ const ListLicenses = ({ driverId }) => {
     }
   };
 
-  useEffect(() => {
-    fetchLicenses();
-  }, [driverId]);
-
-  // Abrir el modal
-  const showModal = (type) => {
-    setModal(true);
-    setTypeModal(type);
-  };
-
   // Cerrar el modal
   const closeModal = () => {
     setModal(false);
     setTypeModal(null);
     fetchLicenses();
   };
-
-  // Licencias
-  // useEffect(() => {
-  //   // Subir la imagen del conductor
-  //   if (formItem.image && imageStatus) {
-  //     handleSubmit();
-  //     setImageStatus(false);
-  //   }
-  //   // Eliminar la imagen del conductor
-  //   if (!formItem.image && imageStatus) {
-  //     handleSubmit();
-  //     setImageStatus(false);
-  //   }
-  // }, [formItem.image]);
 
   // Subir la imagen del conductor
   const uploadLicenseFile = async (e, licenseItem) => {
@@ -141,36 +111,7 @@ const ListLicenses = ({ driverId }) => {
       setLoading(false);
     }
   };
-
-  // Eliminar la imagen del conductor
-  const deleteLicenseFile = async (licenseItem) => {
-    setLoading(true);
-    const encodedUrl = btoa(licenseItem.file);
-    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: TOKEN_API_STORAGE,
-      },
-      body: JSON.stringify({}),
-    });
-
-    const { file, message, errors } = await response.json();
-    if (file) {
-      licenseItem.file = null;
-      updateLicense(licenseItem);
-    } else {
-      toast.error(message);
-    }
-
-    setLoading(false);
-  };
-
-  // if (loading) {
-  //   return <Loading />;
-  // }
-
+  
   const updateLicense = async (licenseData) => {
     try {
       setLoading(true);
