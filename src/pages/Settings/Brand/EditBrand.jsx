@@ -26,21 +26,22 @@ const EditBrand = ({ onClose, itemId }) => {
 
   // Cargar los datos a editar
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      const response = await apiGet(`getBrand/${itemId}`);
-      const { data, message } = response;
-      if (data) {
-        reset(data);
-      } else {
-        toast.error(message || "No se pudieron cargar los datos.");
-      }
-      setIsLoading(false);
-    };
-
     fetchData();
   }, [itemId]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+
+    const response = await apiGet(`getBrand/${itemId}`);
+    const { data, message } = response;
+    if (data) {
+      reset(data);
+    } else {
+      toast.error(message || "No se pudieron cargar los datos.");
+    }
+    setIsLoading(false);
+  };
+
 
   // Manejar el envío del formulario
   const onSubmit = handleSubmit(async (data) => {

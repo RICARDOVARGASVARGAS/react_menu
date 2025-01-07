@@ -112,323 +112,330 @@ const RegisterDriver = () => {
             onSubmit={onSubmit}
             className="bg-white shadow-md rounded-lg p-6 space-y-4 mx-auto w-full"
           >
-            <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                Tipo de Documento
-              </label>
-              <select
-                name="document_type"
-                className={`border ${
-                  errors.document_type ? "border-red-500" : "border-gray-300"
-                } rounded px-4 py-2 w-full`}
-                {...register("document_type", {
-                  required: {
-                    value: true,
-                    message: "El Tipo de Documento es requerido",
-                  },
-                })}
-              >
-                <option value="dni">DNI</option>
-                <option value="passport">Pasaporte</option>
-              </select>
-              {errors.document_type && (
-                <p className="text-red-500 text-sm">
-                  {errors.document_type.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                Número de Documento
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  name="document_number"
-                  autoComplete="off"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 text-gray-700 font-medium">
+                  Tipo de Documento
+                </label>
+                <select
+                  name="document_type"
                   className={`border ${
-                    errors.document_number
-                      ? "border-red-500"
-                      : "border-gray-300"
+                    errors.document_type ? "border-red-500" : "border-gray-300"
                   } rounded px-4 py-2 w-full`}
-                  placeholder="Ingrese el número de documento"
-                  {...register("document_number", {
+                  {...register("document_type", {
                     required: {
                       value: true,
-                      message: "El Número de Documento es requerido",
+                      message: "El Tipo de Documento es requerido",
+                    },
+                  })}
+                >
+                  <option value="dni">DNI</option>
+                  <option value="passport">Pasaporte</option>
+                </select>
+                {errors.document_type && (
+                  <p className="text-red-500 text-sm">
+                    {errors.document_type.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block mb-2 text-gray-700 font-medium">
+                  Número de Documento
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    name="document_number"
+                    autoComplete="off"
+                    className={`border ${
+                      errors.document_number
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded px-4 py-2 w-full`}
+                    placeholder="Ingrese el número de documento"
+                    {...register("document_number", {
+                      required: {
+                        value: true,
+                        message: "El Número de Documento es requerido",
+                      },
+                      minLength: {
+                        value: 8,
+                        message:
+                          "El Número de Documento debe tener al menos 8 caracteres",
+                      },
+                      maxLength: {
+                        value: 8,
+                        message:
+                          "El Número de Documento debe tener como mucho 8 caracteres",
+                      },
+                    })}
+                  />
+                  <button
+                    type="button"
+                    className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
+                    onClick={handleSearch}
+                    disabled={isSearching}
+                  >
+                    {isSearching ? <Loading size="small" /> : <FaSearch />}
+                    Buscar
+                  </button>
+                </div>
+                {errors.document_number && (
+                  <p className="text-red-500 text-sm">
+                    {errors.document_number.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold">Nombres</label>
+                <input
+                  type="text"
+                  name="name"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.name ? "border-red-500" : ""
+                  }`}
+                  {...register("name", {
+                    required: {
+                      value: true,
+                      message: "El Nombre es requerido",
                     },
                     minLength: {
-                      value: 8,
-                      message:
-                        "El Número de Documento debe tener al menos 8 caracteres",
+                      value: 3,
+                      message: "El Nombre debe tener al menos 3 caracteres",
                     },
                     maxLength: {
-                      value: 8,
-                      message:
-                        "El Número de Documento debe tener como mucho 8 caracteres",
+                      value: 20,
+                      message: "El Nombre no debe exceder los 20 caracteres",
                     },
                   })}
                 />
-                <button
-                  type="button"
-                  className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
-                  onClick={handleSearch}
-                  disabled={isSearching}
-                >
-                  {isSearching ? <Loading size="small" /> : <FaSearch />}
-                  Buscar
-                </button>
+
+                {errors.name && (
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
+                )}
               </div>
-              {errors.document_number && (
-                <p className="text-red-500 text-sm">
-                  {errors.document_number.message}
-                </p>
-              )}
-            </div>
 
-            <div>
-              <label className="block text-sm font-semibold">Nombres</label>
-              <input
-                type="text"
-                name="name"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.name ? "border-red-500" : ""
-                }`}
-                {...register("name", {
-                  required: {
-                    value: true,
-                    message: "El Nombre es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "El Nombre debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "El Nombre no debe exceder los 20 caracteres",
-                  },
-                })}
-              />
+              <div>
+                <label className="block text-sm font-semibold">
+                  Apellido Paterno
+                </label>
+                <input
+                  type="text"
+                  name="first_name"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.first_name ? "border-red-500" : ""
+                  }`}
+                  {...register("first_name", {
+                    required: {
+                      value: true,
+                      message: "El Apellido Paterno es requerido",
+                    },
+                    minLength: {
+                      value: 3,
+                      message:
+                        "El Apellido Paterno debe tener al menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message:
+                        "El Apellido Paterno no debe exceder los 20 caracteres",
+                    },
+                  })}
+                />
 
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
-            </div>
+                {errors.first_name && (
+                  <p className="text-red-500 text-sm">
+                    {errors.first_name.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm font-semibold">
-                Apellido Paterno
-              </label>
-              <input
-                type="text"
-                name="first_name"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.first_name ? "border-red-500" : ""
-                }`}
-                {...register("first_name", {
-                  required: {
-                    value: true,
-                    message: "El Apellido Paterno es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message:
-                      "El Apellido Paterno debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message:
-                      "El Apellido Paterno no debe exceder los 20 caracteres",
-                  },
-                })}
-              />
+              <div>
+                <label className="block text-sm font-semibold">
+                  Apellido Materno
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.last_name ? "border-red-500" : ""
+                  }`}
+                  {...register("last_name", {
+                    required: {
+                      value: true,
+                      message: "El Apellido Materno es requerido",
+                    },
+                    minLength: {
+                      value: 3,
+                      message:
+                        "El Apellido Materno debe tener al menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message:
+                        "El Apellido Materno no debe exceder los 20 caracteres",
+                    },
+                  })}
+                />
 
-              {errors.first_name && (
-                <p className="text-red-500 text-sm">
-                  {errors.first_name.message}
-                </p>
-              )}
-            </div>
+                {errors.last_name && (
+                  <p className="text-red-500 text-sm">
+                    {errors.last_name.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm font-semibold">
-                Apellido Materno
-              </label>
-              <input
-                type="text"
-                name="last_name"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.last_name ? "border-red-500" : ""
-                }`}
-                {...register("last_name", {
-                  required: {
-                    value: true,
-                    message: "El Apellido Materno es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message:
-                      "El Apellido Materno debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message:
-                      "El Apellido Materno no debe exceder los 20 caracteres",
-                  },
-                })}
-              />
+              <div>
+                <label className="block text-sm font-semibold">
+                  Fecha de Nacimiento
+                </label>
+                <input
+                  type="date"
+                  name="birth_date"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.birth_date ? "border-red-500" : ""
+                  }`}
+                  {...register("birth_date", {
+                    required: {
+                      value: true,
+                      message: "La Fecha de Nacimiento es requerida",
+                    },
+                  })}
+                />
 
-              {errors.last_name && (
-                <p className="text-red-500 text-sm">
-                  {errors.last_name.message}
-                </p>
-              )}
-            </div>
+                {errors.birth_date && (
+                  <p className="text-red-500 text-sm">
+                    {errors.birth_date.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm font-semibold">
-                Fecha de Nacimiento
-              </label>
-              <input
-                type="date"
-                name="birth_date"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.birth_date ? "border-red-500" : ""
-                }`}
-                {...register("birth_date", {
-                  required: {
-                    value: true,
-                    message: "La Fecha de Nacimiento es requerida",
-                  },
-                })}
-              />
+              <div>
+                <label className="block mb-2 text-gray-700 font-medium">
+                  Genero
+                </label>
+                <select
+                  name="gender"
+                  className={`border ${
+                    errors.gender ? "border-red-500" : "border-gray-300"
+                  } rounded px-4 py-2 w-full`}
+                  {...register("gender", {
+                    required: {
+                      value: true,
+                      message: "El Genero es requerido",
+                    },
+                  })}
+                >
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                </select>
+                {errors.gender && (
+                  <p className="text-red-500 text-sm">
+                    {errors.gender.message}
+                  </p>
+                )}
+              </div>
 
-              {errors.birth_date && (
-                <p className="text-red-500 text-sm">
-                  {errors.birth_date.message}
-                </p>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm font-semibold">
+                  Correo Electrónico
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.email ? "border-red-500" : ""
+                  }`}
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "El Correo Electrónico es requerido",
+                    },
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "El Correo Electrónico no es válido",
+                    },
+                  })}
+                />
 
-            <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                Genero
-              </label>
-              <select
-                name="gender"
-                className={`border ${
-                  errors.gender ? "border-red-500" : "border-gray-300"
-                } rounded px-4 py-2 w-full`}
-                {...register("gender", {
-                  required: {
-                    value: true,
-                    message: "El Genero es requerido",
-                  },
-                })}
-              >
-                <option value="M">Masculino</option>
-                <option value="F">Femenino</option>
-              </select>
-              {errors.gender && (
-                <p className="text-red-500 text-sm">{errors.gender.message}</p>
-              )}
-            </div>
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm font-semibold">
-                Correo Electrónico
-              </label>
-              <input
-                type="email"
-                name="email"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.email ? "border-red-500" : ""
-                }`}
-                {...register("email", {
-                  required: {
-                    value: true,
-                    message: "El Correo Electrónico es requerido",
-                  },
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "El Correo Electrónico no es válido",
-                  },
-                })}
-              />
+              <div>
+                <label className="block text-sm font-semibold">Teléfono</label>
+                <input
+                  type="text"
+                  name="phone"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.phone ? "border-red-500" : ""
+                  }`}
+                  {...register("phone", {
+                    required: {
+                      value: true,
+                      message: "El Teléfono es requerido",
+                    },
+                    minLength: {
+                      value: 9,
+                      message: "El Teléfono debe tener al menos 9 caracteres",
+                    },
+                    maxLength: {
+                      value: 12,
+                      message: "El Teléfono no debe exceder los 12 caracteres",
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "El Teléfono debe ser numérico",
+                    },
+                  })}
+                />
 
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )}
-            </div>
+                {errors.phone && (
+                  <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm font-semibold">Teléfono</label>
-              <input
-                type="text"
-                name="phone"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.phone ? "border-red-500" : ""
-                }`}
-                {...register("phone", {
-                  required: {
-                    value: true,
-                    message: "El Teléfono es requerido",
-                  },
-                  minLength: {
-                    value: 9,
-                    message: "El Teléfono debe tener al menos 9 caracteres",
-                  },
-                  maxLength: {
-                    value: 12,
-                    message: "El Teléfono no debe exceder los 12 caracteres",
-                  },
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: "El Teléfono debe ser numérico",
-                  },
-                })}
-              />
+              <div>
+                <label className="block text-sm font-semibold">Dirección</label>
+                <input
+                  type="text"
+                  name="address"
+                  autoComplete="off"
+                  className={`mt-1 p-2 w-full border rounded ${
+                    errors.address ? "border-red-500" : ""
+                  }`}
+                  {...register("address", {
+                    required: {
+                      value: true,
+                      message: "La Dirección es requerida",
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "La Dirección debe tener al menos 3 caracteres",
+                    },
+                    maxLength: {
+                      value: 100,
+                      message:
+                        "La Dirección no debe exceder los 100 caracteres",
+                    },
+                  })}
+                />
 
-              {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold">Dirección</label>
-              <input
-                type="text"
-                name="address"
-                autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.address ? "border-red-500" : ""
-                }`}
-                {...register("address", {
-                  required: {
-                    value: true,
-                    message: "La Dirección es requerida",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "La Dirección debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: "La Dirección no debe exceder los 100 caracteres",
-                  },
-                })}
-              />
-
-              {errors.address && (
-                <p className="text-red-500 text-sm">{errors.address.message}</p>
-              )}
+                {errors.address && (
+                  <p className="text-red-500 text-sm">
+                    {errors.address.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="flex justify-between gap-4 mt-6 overflow-x-auto">
