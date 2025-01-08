@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { apiPost, uploadFileStorage } from "../services/apiService";
+import { apiPost } from "../services/apiService";
 import { TOKEN_API_STORAGE } from "../config/enviroments";
 
 export const useFileUploader = () => {
@@ -9,9 +9,9 @@ export const useFileUploader = () => {
   const uploadFile = async ({
     file,
     model,
-    modelId,
-    modelStorage,
-    storagePath,
+    model_id,
+    model_storage,
+    storage,
     onSuccess,
     onError,
   }) => {
@@ -31,24 +31,26 @@ export const useFileUploader = () => {
       return;
     }
 
-    try {
-      const { message, item } = await uploadFileStorage(
-        file,
-        model,
-        modelId,
-        modelStorage,
-        storagePath
-      );
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("model", model);
+    formData.append("model_id", model_id);
+    formData.append("model_storage", model_storage);
+    formData.append("storage", storage);
+    formData.append("token", TOKEN_API_STORAGE);
 
-      if (item) {
-        // toast.success(message);
-        if (onSuccess) onSuccess(item);
+    try {
+      const response = await apiPost("uploadFile", formData, true); // `true` indica que es multipart
+      const { file, message } = response;
+
+      if (file) {
+        toast.success(message);
+        if (onSuccess) onSuccess(file);
       } else {
         toast.error(message);
         if (onError) onError(message);
       }
     } catch (error) {
-      console.error(error);
       toast.error(error.message);
       if (onError) onError(error.message);
     } finally {

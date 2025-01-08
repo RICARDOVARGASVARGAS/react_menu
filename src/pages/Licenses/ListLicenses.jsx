@@ -60,12 +60,12 @@ const ListLicenses = ({ driverId }) => {
       await uploadFile({
         file,
         model: "License",
-        modelId: licenseItem.id,
-        modelStorage: "file",
-        storagePath: `Driver/${driverId}/Licenses/${licenseItem.id}`,
+        model_id: licenseItem.id,
+        model_storage: "file",
+        storage: `Driver/${driverId}/Licenses/${licenseItem.id}`,
         onSuccess: (uploadedFile) => {
           // console.log("uploadedFile", uploadedFile);
-          toast.success("Archivo subido con éxito.");
+          // toast.success("Archivo subido con éxito.");
           fetchLicenses(); // Refresca la lista de licencias
         },
         onError: (errorMessage) => {

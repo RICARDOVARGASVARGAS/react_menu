@@ -8,6 +8,7 @@ export const apiRequest = async (
   endpoint,
   method = "GET",
   body = null,
+  isMultipart = false, // Indica si se envía multipart
   params = {}
 ) => {
   // Crear los parámetros de consulta si existen
@@ -19,14 +20,20 @@ export const apiRequest = async (
   // Configuración de la solicitud
   const options = {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers: isMultipart
+      ? {
+          Accept: "application/json",
+        } // No configuramos `Content-Type` para `FormData`
+      : {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
   };
 
   // Si hay un cuerpo de solicitud, lo agregamos al objeto de opciones
-  if (body) options.body = JSON.stringify(body);
+  if (body) {
+    options.body = isMultipart ? body : JSON.stringify(body);
+  }
 
   try {
     // Realizamos la solicitud
@@ -54,7 +61,8 @@ export const apiRequest = async (
 // Funciones específicas para cada método
 export const apiGet = (endpoint, params = {}) =>
   apiRequest(endpoint, "GET", null, params);
-export const apiPost = (endpoint, body) => apiRequest(endpoint, "POST", body);
+export const apiPost = (endpoint, body, isMultipart = false) =>
+  apiRequest(endpoint, "POST", body, isMultipart);
 export const apiPut = (endpoint, body, params = {}) =>
   apiRequest(endpoint, "PUT", body, params);
 export const apiDelete = (endpoint, params = {}) =>
@@ -105,7 +113,7 @@ export const apiFetch = async (
   }
 };
 
-// Subir Archivos
+// Subir Archivos - NO SRIVE
 export const uploadFileStorage = async (
   file,
   model,
