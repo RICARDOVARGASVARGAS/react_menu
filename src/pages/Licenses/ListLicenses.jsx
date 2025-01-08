@@ -6,6 +6,7 @@ import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 import { apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import { extractUUID } from "../../utils/extractUUID";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -79,21 +80,16 @@ const ListLicenses = ({ driverId }) => {
 
   // Eliminar la licencia
   const deleteFileLicense = async (licenseItem) => {
-    console.log(licenseItem.id);
-    console.log(licenseItem.file);
-    let encode = btoa(licenseItem.file);
-    console.log(encode);
-    // console.log();
+    const uuid = extractUUID(licenseItem.file);
     try {
       await deleteFile({
         model: "License",
-        modelId: licenseItem.id,
-        modelStorage: "file",
-        encode_url: encode,
+        model_id: licenseItem.id,
+        model_storage: "file",
+        uuid: uuid,
         onSuccess: (data) => {
-          console.log(data);
           toast.success("Licencia eliminada con éxito.");
-          fetchLicenses(); // Refresca la lista de licencias
+          fetchLicenses();
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al eliminar la licencia.");

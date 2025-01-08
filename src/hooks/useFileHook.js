@@ -45,7 +45,7 @@ export const useFileUploader = () => {
 
       if (file) {
         toast.success(message);
-        if (onSuccess) onSuccess(file);
+        if (onSuccess) onSuccess(file, message);
       } else {
         toast.error(message);
         if (onError) onError(message);
@@ -66,9 +66,9 @@ export const useFileDelete = () => {
 
   const deleteFile = async ({
     model,
-    modelId,
-    modelStorage,
-    encode_url,
+    model_id,
+    model_storage,
+    uuid,
     onSuccess,
     onError,
   }) => {
@@ -76,18 +76,18 @@ export const useFileDelete = () => {
 
     try {
       const data = await apiPost(`deleteFile`, {
-        model: model,
-        model_id: modelId,
-        model_storage: modelStorage,
-        api_key: TOKEN_API_STORAGE,
-        encode_url_file: encode_url,
+        model,
+        model_id,
+        model_storage,
+        token: TOKEN_API_STORAGE,
+        uuid,
       });
 
-      console.log(data);
+      const { file, message } = data;
 
-      if (item) {
+      if (file) {
         // toast.success(message);
-        if (onSuccess) onSuccess({ file, item, message });
+        if (onSuccess) onSuccess({ file, message });
       } else {
         toast.error(message);
         if (onError) onError(message);
