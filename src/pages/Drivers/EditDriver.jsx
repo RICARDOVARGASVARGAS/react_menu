@@ -4,12 +4,7 @@ import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
-import {
-  apiFetch,
-  apiGet,
-  apiPut,
-  uploadFileStorage,
-} from "../../services/apiService";
+import { apiFetch, apiGet, apiPut } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
 import { useFileUploader } from "../../hooks/useFileHook";
