@@ -45,7 +45,7 @@ export const useFileUploader = () => {
 
       if (file) {
         toast.success(message);
-        if (onSuccess) onSuccess(file, message);
+        if (onSuccess) onSuccess({ file, message });
       } else {
         toast.error(message);
         if (onError) onError(message);

@@ -133,22 +133,20 @@ const EditDriver = ({ driverId }) => {
   });
 
   // Subir la licencia
-  const uploadFilePhoto = async (e, licenseItem) => {
+  const uploadFilePhoto = async (e, driverItem) => {
     const file = e.target.files[0];
 
     try {
       await uploadFile({
         file,
         model: "Driver",
-        modelId: driverId,
-        modelStorage: "image",
-        storagePath: `Driver/${driverId}/Profile`,
-        onSuccess: (uploadedFile) => {
-          // console.log("uploadedFile", uploadedFile);
+        model_id: driverId,
+        model_storage: "image",
+        storage: `Driver/${driverId}/Profile`,
+        onSuccess: ({ file, message }) => {
           reset({
-            image: uploadedFile.image,
+            image: file.url,
           });
-          toast.success("Archivo subido con éxito.");
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al subir el archivo.");
