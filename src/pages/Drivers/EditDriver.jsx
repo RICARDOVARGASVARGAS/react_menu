@@ -7,11 +7,13 @@ import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 import { apiFetch, apiGet, apiPut } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
-import { useFileUploader } from "../../hooks/useFileHook";
+import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import { extractUUID } from "../../utils/extractUUID";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { uploadFile, isLoading: isFileUploading } = useFileUploader();
+  const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
   const {
     register,
     handleSubmit,
@@ -127,8 +129,8 @@ const EditDriver = ({ driverId }) => {
     }
   });
 
-  // Subir la licencia
-  const uploadFilePhoto = async (e, driverItem) => {
+  // Subir imagen Perfil
+  const uploadFilePhoto = async (e) => {
     const file = e.target.files[0];
 
     try {
@@ -152,27 +154,69 @@ const EditDriver = ({ driverId }) => {
     }
   };
 
+  // Eliminar imagen Perfil
+  const deleteFilePhoto = async () => {
+    const uuid = extractUUID(watch("image"));
+    try {
+      await deleteFile({
+        model: "Driver",
+        model_id: driverId,
+        model_storage: "image",
+        uuid: uuid,
+        onSuccess: ({ file, message }) => {
+          toast.success(message);
+          reset({
+            image: "",
+          });
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar el archivo.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al eliminar el archivo:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto bg-white shadow-md rounded-lg p-6">
-      {(isLoading || isFileUploading) && <Loading />}
+      {(isLoading || isFileUploading || isFileDeleting) && <Loading />}
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
         Editar Datos del Conductor
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Avatar Section */}
         <div className="col-span-1 flex flex-col items-center">
-          <div className="relative">
+          <div className="relative flex items-center justify-between">
             <img
               src={watch("image") || "/src/assets/no-image.png"}
               alt="Avatar"
               className="w-28 h-28 md:w-36 md:h-36 rounded-full border shadow"
             />
-            <label
-              htmlFor="avatarInput"
-              className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600 shadow-md"
-            >
-              {isLoading ? "Subiendo..." : <FaUpload />}
-            </label>
+            {watch("image") ? (
+              <button
+                onClick={deleteFilePhoto}
+                className="absolute bottom-0 right-0 bg-red-500 text-white p-2 rounded-full cursor-pointer hover:bg-red-600 shadow-md"
+              >
+                <FaTrashAlt />
+              </button>
+            ) : (
+              <label
+                htmlFor="avatarInput"
+                className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600 shadow-md"
+              >
+                {isLoading ? "Subiendo..." : <FaUpload />}
+              </label>
+            )}
+            {watch("image") && (
+              <a
+                target="_blank"
+                href={watch("image")}
+                className="absolute bottom-0 left-0 bg-green-500 text-white p-2 rounded-full cursor-pointer hover:bg-green-600 shadow-md"
+              >
+                <FaEye />
+              </a>
+            )}
             <input
               type="file"
               id="avatarInput"
@@ -182,16 +226,6 @@ const EditDriver = ({ driverId }) => {
               disabled={isLoading}
             />
           </div>
-          {watch("image") && (
-            <a
-              target="_blank"
-              href={watch("image")}
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2 shadow"
-            >
-              <FaEye />
-              Ver Imagen
-            </a>
-          )}
         </div>
 
         {/* Form Section */}
@@ -199,7 +233,7 @@ const EditDriver = ({ driverId }) => {
           onSubmit={onSubmit}
           className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <label className="block mb-2 text-gray-700 font-medium">
               Tipo de Documento
             </label>
@@ -225,7 +259,7 @@ const EditDriver = ({ driverId }) => {
             )}
           </div>
 
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <label className="block mb-2 text-gray-700 font-medium">
               Número de Documento
             </label>
