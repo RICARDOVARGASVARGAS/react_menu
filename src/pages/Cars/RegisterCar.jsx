@@ -290,7 +290,9 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.example_id && (
-              <p className="text-red-500 text-sm">{errors.example_id.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.example_id.message}
+              </p>
             )}
           </div>
           <div>
@@ -316,7 +318,9 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.type_car_id && (
-              <p className="text-red-500 text-sm">{errors.type_car_id.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.type_car_id.message}
+              </p>
             )}
           </div>
           <div>
@@ -430,7 +434,6 @@ const RegisterCar = ({ onClose, driverId }) => {
             )}
           </div>
         </div>
-        {JSON.stringify(watch(), null, 2)}
 
         <div className="flex justify-end mt-6 gap-4">
           <button
