@@ -36,7 +36,6 @@ const CarData = ({ driverId }) => {
     setIsLoading(true);
     try {
       const { data } = await apiGet(`getCarsByDriver/${driverId}`);
-      // console.log(data);
       if (data) {
         setCars(data);
       } else {
@@ -87,91 +86,25 @@ const CarData = ({ driverId }) => {
     }
   };
 
-  // Subir la documento del Vehículo
-  const uploadCarFilxe = async (e, carItem) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const file = e.target.files[0];
-
-    if (!file) {
-      toast.error("Por favor, seleccione un archivo.");
-      setLoading(false);
-      return;
-    }
-
-    // Validar tipo de archivo
-    if (file.type !== "application/pdf") {
-      toast.error("Solo se permiten archivos PDF.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    // Validar tamaño del archivo (máximo 3 MB)
-    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
-    if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 3 MB.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    const formFile = new FormData();
-    formFile.append("file", file);
-    formFile.append("location", `drivers/${driverId}/car/${carItem.id}`);
-
+  // Eliminar documento del vehículo
+  const deleteCarFile = async (carItem) => {
+    const uuid = extractUUID(carItem.file_car);
     try {
-      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: TOKEN_API_STORAGE,
+      await deleteFile({
+        model: "Car",
+        model_id: carItem.id,
+        model_storage: "file_car",
+        uuid: uuid,
+        onSuccess: ({ file, message }) => {
+          toast.success(message);
+          fetchCars();
         },
-        body: formFile,
-      });
-
-      const { message, errors, file } = await response.json();
-
-      if (file) {
-        carItem.file_car = file.url;
-        updateCar(carItem);
-      } else {
-        toast.error(message || "Ocurrió un error al subir el archivo.");
-      }
-    } catch (err) {
-      toast.error("Ocurrió un error al subir el archivo.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateCar = async (carItem) => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/updateCar/${carItem.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar el Documento.");
         },
-        body: JSON.stringify({
-          ...carItem,
-        }),
       });
-
-      const { data, message, errors } = await response.json();
-      if (data) {
-        toast.success(message);
-        await fetchCars();
-      } else {
-        toast.error(message);
-      }
     } catch (error) {
-      console.log(error);
-      toast.error("Error al actualizar el Licencia.");
-    } finally {
-      setLoading(false);
+      console.error("Error inesperado al eliminar el Documento:", error);
     }
   };
 
@@ -421,22 +354,33 @@ const CarData = ({ driverId }) => {
                           ) : (
                             <>
                               <FaUpload className="md:mr-1" />
-                              <p className="hidden md:block">Subir Documento</p>
+                              <p className="hidden md:block">Subir</p>
                             </>
                           )}
                         </label>
                       ) : (
-                        <div className="flex items-center justify-center space-x-2">
-                          <a
-                            href={car.file_car}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                          >
-                            <FaFilePdf className="md:mr-1" />
-                            <p className="hidden md:block">Documento</p>
-                          </a>
-                        </div>
+                        <>
+                          <div className="flex items-center justify-center space-x-2">
+                            <a
+                              href={car.file_car}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                            >
+                              <FaFilePdf className="md:mr-1" />
+                              <p className="hidden md:block">Visualizar</p>
+                            </a>
+                          </div>
+                          <div className="flex items-center justify-center space-x-2">
+                            <button
+                              onClick={() => deleteCarFile(car)}
+                              className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                            >
+                              <FaTrash className="md:mr-1" />
+                              <p className="hidden md:block">Eliminar</p>
+                            </button>
+                          </div>
+                        </>
                       )}
                     </div>
                   </td>
