@@ -6,7 +6,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut, apiDelete } from "../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
-import DeleteModal from "../../components/elements/DeleteModal";
 
 const EditLicense = ({ onClose, licenseId }) => {
   const [isLoading, setIsLoading] = useState(false);

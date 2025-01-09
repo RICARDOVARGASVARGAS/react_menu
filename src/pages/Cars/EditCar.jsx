@@ -136,19 +136,27 @@ const EditCar = ({ onClose, carId, driverId }) => {
   });
 
   const handleDelete = async () => {
+    setIsLoading(true);
+
+    if (watch("file_car") || watch("image_car")) {
+      toast.error(
+        "No se puede eliminar el vehículo porque tiene un archivo adjunto."
+      );
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      setIsLoading(true);
-
-      const response = await fetch(`${API_BASE_URL}/deleteCar/${carId}`, {
-        method: "DELETE",
-      });
-
-      const { message } = await response.json();
-      toast.success(message || "Vehículo eliminado.");
-      onClose();
+      const response = await apiDelete(`deleteCar/${carId}`);
+      const { data, message } = response;
+      if (data) {
+        toast.success(message || "Vehículo eliminado.");
+        onClose();
+      } else {
+        toast.error(message || "No se pudo eliminar la Vehículo.");
+      }
     } catch (error) {
-      console.error("Error al eliminar el vehículo:", error);
-      toast.error("No se pudo eliminar el vehículo.");
+      handleBackendErrors(error, setError);
     } finally {
       setIsLoading(false);
     }
