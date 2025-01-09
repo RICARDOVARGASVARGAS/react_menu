@@ -41,8 +41,6 @@ const RegisterBrand = ({ onClose }) => {
     }
   });
 
-  // console.log(errors);
-
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
       {isLoading && <Loading />}
