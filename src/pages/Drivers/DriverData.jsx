@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaUser, FaIdCard, FaCar, FaTable } from "react-icons/fa";
-import CarData from "./CarData";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ListLicenses from "../Licenses/ListLicenses";
+import CarData from "../Cars/CarData";
 import EditDriver from "./EditDriver";
 
 const DriverData = () => {

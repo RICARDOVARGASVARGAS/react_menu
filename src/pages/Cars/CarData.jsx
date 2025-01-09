@@ -10,37 +10,35 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import AddCar from "./AddCar"; // Formulario para agregar vehículos
-import EditCar from "./EditCar"; // Formulario para editar vehículos
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../../config/enviroments";
+import AddCar from "../Drivers/AddCar";
+import EditCar from "../Drivers/EditCar";
 import ListInsurances from "../Insurances/ListInsurances";
 import ListPermits from "../Permits/ListPermits";
 import ListInspections from "../Inspections/ListInspections";
+import { useFileDelete, useFileUploader } from "../../hooks/useFileHook";
+import { apiGet } from "../../services/apiService";
+import { extractUUID } from "../../utils/extractUUID";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [modalShow, setModalShow] = useState(null);
   const [selectedCarId, setSelectedCarId] = useState(null);
+  const { uploadFile, isLoading: isFileUploading } = useFileUploader();
+  const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
 
-  const navigate = useNavigate(); // Para navegación entre páginas
+  useEffect(() => {
+    fetchCars();
+  }, [driverId]);
 
   // Obtener la lista de vehículos
   const fetchCars = async () => {
+    setIsLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/getCarsByDriver/${driverId}`
-      );
-      const result = await response.json();
-
-      if (result.data) {
-        setCars(result.data);
+      const { data } = await apiGet(`getCarsByDriver/${driverId}`);
+      // console.log(data);
+      if (data) {
+        setCars(data);
       } else {
         setCars([]);
         toast.info("El conductor no tiene vehículos registrados.");
@@ -48,13 +46,9 @@ const CarData = ({ driverId }) => {
     } catch (error) {
       toast.error("Error al cargar los vehículos.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCars();
-  }, [driverId]);
 
   // Abrir modal
   const openModal = (type, carId = null) => {
@@ -67,46 +61,34 @@ const CarData = ({ driverId }) => {
   const closeModal = () => {
     setModalShow(null);
     setSelectedCarId(null);
-    fetchCars(); // Recargar la lista de vehículos tras agregar uno nuevo
+    fetchCars();
   };
 
-  // Abrir el modal de agregar vehículo
-  // const handleAddVehicle = () => {
-  //   setModal(true);
-  // };
+  // Subir documento del vehículo
+  const uploadCarFile = async (e, carItem) => {
+    const file = e.target.files[0];
 
-  // // Cerrar el modal de agregar vehículo
-  // const closeAddVehicleModal = () => {
-  //   setModal(false);
-  //   fetchCars(); // Recargar la lista de vehículos tras agregar uno nuevo
-  // };
-
-  // // Abrir el modal de edición de vehículo
-  // const handleEditVehicle = (carId) => {
-  //   setSelectedCarId(carId);
-  //   setModal(true);
-  // };
-
-  // // Cerrar el modal de edición de vehículo
-  // const closeEditVehicleModal = () => {
-  //   setSelectedCarId(null);
-  //   setModal(false);
-  //   fetchCars(); // Recargar la lista de vehículo tras editar uno
-  // };
-
-  // Obtener el tipo de archivo basado en la extensión
-  const getFileType = (url) => {
-    if (url) {
-      const ext = url.split(".").pop().toLowerCase();
-      if (["jpg", "jpeg", "png", "gif"].includes(ext)) return "image";
-      if (ext === "pdf") return "pdf";
-      return "other"; // Para otros tipos de archivo, como Excel o Word
+    try {
+      await uploadFile({
+        file,
+        model: "Car",
+        model_id: carItem.id,
+        model_storage: "file_car",
+        storage: `Driver/${driverId}/CarDocuments/${carItem.id}`,
+        onSuccess: (uploadedFile) => {
+          fetchCars();
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al subir el archivo:", error);
     }
-    return null;
   };
 
   // Subir la documento del Vehículo
-  const uploadCarFile = async (e, carItem) => {
+  const uploadCarFilxe = async (e, carItem) => {
     e.preventDefault();
     setLoading(true);
 
@@ -193,14 +175,11 @@ const CarData = ({ driverId }) => {
     }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
     <div>
       {/* Cabecera */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
+        {(isLoading || isFileDeleting || isFileUploading) && <Loading />}
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
             Vehículos del Conductor
@@ -420,9 +399,7 @@ const CarData = ({ driverId }) => {
                       >
                         <>
                           <FaEdit />
-                          <p className="hidden md:mr-1 md:block">
-                            Editar
-                          </p>
+                          <p className="hidden md:mr-1 md:block">Editar</p>
                         </>
                       </button>
                       {/* Botón para subir archivo */}
@@ -432,14 +409,14 @@ const CarData = ({ driverId }) => {
                         className="hidden"
                         accept="application/pdf"
                         onChange={(e) => uploadCarFile(e, { ...car })}
-                        disabled={loading}
+                        disabled={isLoading}
                       />
                       {!car.file_car ? (
                         <label
                           htmlFor={`carFileInput-${car.id}`}
                           className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         >
-                          {loading ? (
+                          {isLoading ? (
                             "Subiendo..."
                           ) : (
                             <>
@@ -449,7 +426,7 @@ const CarData = ({ driverId }) => {
                           )}
                         </label>
                       ) : (
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center justify-center space-x-2">
                           <a
                             href={car.file_car}
                             target="_blank"
@@ -457,7 +434,7 @@ const CarData = ({ driverId }) => {
                             className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                           >
                             <FaFilePdf className="md:mr-1" />
-                            <p className="hidden md:block">Ver Documento</p>
+                            <p className="hidden md:block">Documento</p>
                           </a>
                         </div>
                       )}
