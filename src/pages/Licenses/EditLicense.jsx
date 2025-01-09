@@ -66,48 +66,29 @@ const EditLicense = ({ onClose, licenseId }) => {
   });
 
   const handleDelete = async () => {
-    try {
-      setLoading(true);
+    setIsLoading(true);
 
-      const response = await fetch(
-        `${API_BASE_URL}/deleteDriverLicense/${licenseId}`,
-        {
-          method: "DELETE",
-        }
+    if (watch("file")) {
+      toast.error(
+        "No se puede eliminar la licencia porque tiene un archivo adjunto."
       );
+      setIsLoading(false);
+      return;
+    }
 
-      const { message, data } = await response.json();
-      if (data.file) {
-        setLoading(true);
-        const encodedUrl = btoa(data.file);
-        const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: TOKEN_API_STORAGE,
-          },
-          body: JSON.stringify({}),
-        });
-
-        const { file, message, errors } = await response.json();
-        if (file) {
-          toast.success(message || "Licencia eliminada.");
-          onClose();
-        } else {
-          toast.error(message);
-        }
-
-        setLoading(false);
-      } else {
+    try {
+      const response = await apiDelete(`deleteDriverLicense/${licenseId}`);
+      const { data, message } = response;
+      if (data) {
         toast.success(message || "Licencia eliminada.");
         onClose();
+      } else {
+        toast.error(message || "No se pudo eliminar la Licencia.");
       }
     } catch (error) {
-      console.error("Error al eliminar la Licencia:", error);
-      toast.error("No se pudo eliminar la Licencia.");
+      handleBackendErrors(error, setError);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -285,7 +266,7 @@ const EditLicense = ({ onClose, licenseId }) => {
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded flex items-center gap-2"
           >
-            <FaSave /> Guardar
+            <FaSave /> Actualizar
           </button>
         </div>
       </form>
