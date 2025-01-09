@@ -264,7 +264,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.brand_id && (
-              <p className="text-red-500 text-sm">{errors.brand_id}</p>
+              <p className="text-red-500 text-sm">{errors.brand_id.message}</p>
             )}
           </div>
           <div>
@@ -290,7 +290,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.example_id && (
-              <p className="text-red-500 text-sm">{errors.example_id}</p>
+              <p className="text-red-500 text-sm">{errors.example_id.message}</p>
             )}
           </div>
           <div>
@@ -316,7 +316,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.type_car_id && (
-              <p className="text-red-500 text-sm">{errors.type_car_id}</p>
+              <p className="text-red-500 text-sm">{errors.type_car_id.message}</p>
             )}
           </div>
           <div>
@@ -342,7 +342,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.year_id && (
-              <p className="text-red-500 text-sm">{errors.year_id}</p>
+              <p className="text-red-500 text-sm">{errors.year_id.message}</p>
             )}
           </div>
           <div>
@@ -368,7 +368,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.group_id && (
-              <p className="text-red-500 text-sm">{errors.group_id}</p>
+              <p className="text-red-500 text-sm">{errors.group_id.message}</p>
             )}
           </div>
           <div>
@@ -426,7 +426,7 @@ const RegisterCar = ({ onClose, driverId }) => {
               ))}
             </select>
             {errors.color_id && (
-              <p className="text-red-500 text-sm">{errors.color_id}</p>
+              <p className="text-red-500 text-sm">{errors.color_id.message}</p>
             )}
           </div>
         </div>

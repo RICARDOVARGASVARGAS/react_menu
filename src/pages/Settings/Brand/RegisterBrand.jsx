@@ -4,8 +4,8 @@ import Loading from "../../../components/Loading"; // Indicador de carga
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
-import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
+import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 
 const RegisterBrand = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ const RegisterBrand = ({ onClose }) => {
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
 
       <button
         onClick={onClose}
