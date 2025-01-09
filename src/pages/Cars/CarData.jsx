@@ -10,14 +10,14 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import AddCar from "../Drivers/AddCar";
-import EditCar from "../Drivers/EditCar";
 import ListInsurances from "../Insurances/ListInsurances";
 import ListPermits from "../Permits/ListPermits";
 import ListInspections from "../Inspections/ListInspections";
 import { useFileDelete, useFileUploader } from "../../hooks/useFileHook";
 import { apiGet } from "../../services/apiService";
 import { extractUUID } from "../../utils/extractUUID";
+import EditCar from "./EditCar";
+import RegisterCar from "./RegisterCar";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
@@ -51,7 +51,6 @@ const CarData = ({ driverId }) => {
 
   // Abrir modal
   const openModal = (type, carId = null) => {
-    console.log(type, carId);
     setModalShow(type);
     setSelectedCarId(carId);
   };
@@ -118,7 +117,7 @@ const CarData = ({ driverId }) => {
             Vehículos del Conductor
           </h2>
           <button
-            onClick={() => openModal("addCar")}
+            onClick={() => openModal("registerCar")}
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center gap-2"
           >
             <FaPlus /> Agregar Vehículo
@@ -392,10 +391,10 @@ const CarData = ({ driverId }) => {
       </div>
 
       {/* Modal de Agregar Vehículo */}
-      {modalShow === "addCar" && (
+      {modalShow === "registerCar" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <AddCar onClose={closeModal} driverId={driverId} />
+            <RegisterCar onClose={closeModal} driverId={driverId} />
           </div>
         </div>
       )}
