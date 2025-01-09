@@ -1,118 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { FaSave, FaTrash, FaTimes } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../../config/enviroments";
+import { apiGet, apiPut, apiDelete } from "../../services/apiService";
+import { useForm } from "react-hook-form";
+import { handleBackendErrors } from "../../utils/handleBackendErrors ";
+import DeleteModal from "../../components/elements/DeleteModal";
 
 const EditLicense = ({ onClose, licenseId }) => {
-  const navigate = useNavigate();
-
-  // Estado para la carga del formulario
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Estado para los datos del formulario
-  const [licenseData, setLicenseData] = useState({
-    number: "",
-    renewal_date: "",
-    issue_date: "",
-    class: "",
-    category: "",
-    driver_id: "",
-    file: null,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setError,
+    watch,
+  } = useForm({
+    defaultValues: {
+      number: "",
+      class: "",
+      category: "",
+      issue_date: "",
+      renewal_date: "",
+    },
   });
 
-  // Estado para errores
-  const [errors, setErrors] = useState({});
-
-  // Cargar los datos del Licencia a editar
   useEffect(() => {
-    const fetchLicenseData = async () => {
-      try {
-        setLoading(true);
-
-        const response = await fetch(
-          `${API_BASE_URL}/getDriverLicense/${licenseId}`
-        );
-        const { data, message } = await response.json();
-
-        if (data) {
-          setLicenseData({
-            number: data.number || "",
-            renewal_date: data.renewal_date || "",
-            issue_date: data.issue_date || "",
-            class: data.class || "",
-            category: data.category || "",
-            file: data.file || null,
-            driver_id: data.driver_id || "",
-          });
-        } else {
-          toast.error(
-            message || "No se pudieron cargar los datos de la Licencia."
-          );
-        }
-      } catch (error) {
-        console.error("Error al cargar los datos de la Licencia:", error);
-        toast.error("Error al cargar los datos de la Licencia.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchLicenseData();
   }, [licenseId]);
 
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLicenseData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const fetchLicenseData = async () => {
+    setIsLoading(true);
+    const response = await apiGet(`getDriverLicense/${licenseId}`);
+    const { data, message } = response;
+    if (data) {
+      reset(data);
+    } else {
+      toast.error(message || "No se pudieron cargar los datos.");
+    }
+    setIsLoading(false);
   };
 
   // Manejar el envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({}); // Limpiar errores previos
+  const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true);
     try {
-      setLoading(true);
+      const response = await apiPut(`updateDriverLicense/${licenseId}`, data);
+      const { data: updatedData, message } = response;
 
-      const response = await fetch(
-        `${API_BASE_URL}/updateDriverLicense/${licenseId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...licenseData,
-          }),
-        }
-      );
-
-      const { data, message, errors } = await response.json();
-      if (data) {
-        toast.success(message);
+      if (updatedData) {
+        toast.success(message || "Licencia actualizada.");
         onClose();
       } else {
-        setErrors(errors);
-        toast.error(message);
+        toast.error(message || "No se pudo actualizar la Licencia.");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Error al actualizar el Licencia.");
+      handleBackendErrors(error, setError);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  };
+  });
 
   const handleDelete = async () => {
     try {
@@ -160,10 +111,9 @@ const EditLicense = ({ onClose, licenseId }) => {
     }
   };
 
-  if (loading) return <Loading />;
-
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
+      {isLoading && <Loading />}
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -173,23 +123,35 @@ const EditLicense = ({ onClose, licenseId }) => {
 
       <h2 className="text-2xl font-bold mb-4">Editar Licencia</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-          <div className="col-span-2">
+          <div>
             <label className="block text-sm font-semibold">N° Licencia</label>
             <input
               type="text"
-              id="number"
               name="number"
-              value={licenseData.number || ""}
               autoComplete="off"
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.number ? "border-red-500" : ""
               }`}
+              {...register("number", {
+                required: {
+                  value: true,
+                  message: "El N° Licencia es requerido",
+                },
+                minLength: {
+                  value: 3,
+                  message: "El N° Licencia debe tener al menos 3 caracteres",
+                },
+                maxLength: {
+                  value: 30,
+                  message: "El N° Licencia no debe exceder los 30 caracteres",
+                },
+              })}
             />
+
             {errors.number && (
-              <p className="text-red-500 text-sm">{errors.number}</p>
+              <p className="text-red-500 text-sm">{errors.number.message}</p>
             )}
           </div>
 
@@ -197,17 +159,29 @@ const EditLicense = ({ onClose, licenseId }) => {
             <label className="block text-sm font-semibold">Clase</label>
             <input
               type="text"
-              id="class"
               name="class"
-              value={licenseData.class || ""}
               autoComplete="off"
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.class ? "border-red-500" : ""
               }`}
+              {...register("class", {
+                required: {
+                  value: true,
+                  message: "El Clase es requerido",
+                },
+                minLength: {
+                  value: 2,
+                  message: "El Clase debe tener al menos 2 caracteres",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "El Clase no debe exceder los 10 caracteres",
+                },
+              })}
             />
+
             {errors.class && (
-              <p className="text-red-500 text-sm">{errors.class}</p>
+              <p className="text-red-500 text-sm">{errors.class.message}</p>
             )}
           </div>
 
@@ -215,17 +189,29 @@ const EditLicense = ({ onClose, licenseId }) => {
             <label className="block text-sm font-semibold">Categoría</label>
             <input
               type="text"
-              id="category"
               name="category"
-              value={licenseData.category || ""}
               autoComplete="off"
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
-                errors.category ? "border-red-500" : ""
+                errors.class ? "border-red-500" : ""
               }`}
+              {...register("category", {
+                required: {
+                  value: true,
+                  message: "El Categoría es requerido",
+                },
+                minLength: {
+                  value: 2,
+                  message: "El Categoría debe tener al menos 2 caracteres",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "El Categoría no debe exceder los 10 caracteres",
+                },
+              })}
             />
+
             {errors.category && (
-              <p className="text-red-500 text-sm">{errors.category}</p>
+              <p className="text-red-500 text-sm">{errors.category.message}</p>
             )}
           </div>
 
@@ -233,17 +219,23 @@ const EditLicense = ({ onClose, licenseId }) => {
             <label className="block text-sm font-semibold">F. Inicio</label>
             <input
               type="date"
-              id="issue_date"
               name="issue_date"
-              value={licenseData.issue_date || ""}
               autoComplete="off"
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.issue_date ? "border-red-500" : ""
               }`}
+              {...register("issue_date", {
+                required: {
+                  value: true,
+                  message: "El Fecha Inicio es requerido",
+                },
+              })}
             />
+
             {errors.issue_date && (
-              <p className="text-red-500 text-sm">{errors.issue_date}</p>
+              <p className="text-red-500 text-sm">
+                {errors.issue_date.message}
+              </p>
             )}
           </div>
 
@@ -253,17 +245,23 @@ const EditLicense = ({ onClose, licenseId }) => {
             </label>
             <input
               type="date"
-              id="renewal_date"
               name="renewal_date"
-              value={licenseData.renewal_date || ""}
               autoComplete="off"
-              onChange={handleChange}
               className={`mt-1 p-2 w-full border rounded ${
                 errors.renewal_date ? "border-red-500" : ""
               }`}
+              {...register("renewal_date", {
+                required: {
+                  value: true,
+                  message: "El Fecha Revalidación es requerido",
+                },
+              })}
             />
+
             {errors.renewal_date && (
-              <p className="text-red-500 text-sm">{errors.renewal_date}</p>
+              <p className="text-red-500 text-sm">
+                {errors.renewal_date.message}
+              </p>
             )}
           </div>
         </div>

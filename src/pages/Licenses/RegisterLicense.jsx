@@ -18,7 +18,11 @@ const RegisterLicense = ({ onClose, driverId }) => {
     watch,
   } = useForm({
     defaultValues: {
-      name: "",
+      number: "",
+      class: "",
+      category: "",
+      issue_date: "",
+      renewal_date: "",
     },
   });
 
