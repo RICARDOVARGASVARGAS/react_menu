@@ -1,263 +1,115 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loading"; // Componente de carga
+import Loading from "../../components/Loading";
 import {
   FaPlus,
-  FaEdit,
   FaFilePdf,
-  FaImage,
-  FaTrash,
   FaUpload,
   FaCheckCircle,
   FaExclamationCircle,
   FaTimes,
-  FaSave,
 } from "react-icons/fa";
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../../config/enviroments";
 import { AiOutlineClose } from "react-icons/ai";
+import { apiDelete, apiGet } from "../../services/apiService";
+import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import { extractUUID } from "../../utils/extractUUID";
+import RegisterInspection from "./RegisterInspection";
 
 const ListInspections = ({ onClose, carId }) => {
   const [inspections, setInspections] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false); // Estado para mostrar u ocultar el formulario
-  const [inspectionForm, setInspectionForm] = useState({
-    issue_date: "",
-    expiration_date: "",
-    file_inspection: "",
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const { uploadFile, isLoading: isFileUploading } = useFileUploader();
+  const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
 
-  const [errors, setErrors] = useState({});
-
-  // Obtener la lista de Inspecciones
-  const fetchInspections = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/getInspections/${carId}`);
-      const { data } = await response.json();
-      if (data) {
-        setInspections(data);
-      } else {
-        setInspections([]);
-        toast.info("El vehículo no tiene Inspecciones registradas.");
-      }
-    } catch (error) {
-      toast.error("Error al cargar las Inspecciones.");
-    } finally {
-      setLoading(false);
-    }
+  // Obtener la lista de seguros
+  const fetchItems = async () => {
+    setIsLoading(true);
+    const { data } = await apiGet(`getInspections/${carId}`);
+    setInspections(data);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchInspections();
-  }, [carId]);
+    fetchItems();
+  }, []);
 
   const toggleForm = () => {
     setShowForm(!showForm);
   };
 
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInspectionForm((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrors({});
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/registerInspection`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...inspectionForm,
-          car_id: carId,
-        }),
-      });
-
-      const { data, message, errors } = await response.json();
-
-      if (data) {
-        toast.success(message);
-        setShowForm(false);
-        setInspectionForm({});
-        setErrors({});
-        fetchInspections();
-      } else {
-        console.log(errors);
-        toast.error(message);
-        setErrors(errors);
-      }
-    } catch (error) {
-      console.error("Error al registrar el Inspección:", error);
-      toast.error("Ocurrió un error al realizar el Inspección.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Subir SOAT
-  const uploadInspectionFile = async (e, inspectionItem) => {
-    e.preventDefault();
-    setLoading(true);
-
+  // Subir Inspeccion
+  const uploadFileDocument = async (e, item) => {
     const file = e.target.files[0];
-
-    if (!file) {
-      toast.error("Por favor, seleccione un archivo.");
-      setLoading(false);
-      return;
-    }
-
-    // Validar tipo de archivo
-    if (file.type !== "application/pdf") {
-      toast.error("Solo se permiten archivos PDF.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    // Validar tamaño del archivo (máximo 3 MB)
-    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
-    if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 3 MB.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    const formFile = new FormData();
-    formFile.append("file", file);
-    formFile.append(
-      "location",
-      `cars/${carId}/inspections/${inspectionItem.id}`
-    );
-
     try {
-      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: TOKEN_API_STORAGE,
+      await uploadFile({
+        file,
+        model: "Inspection",
+        model_id: item.id,
+        model_storage: "file_inspection",
+        storage: `Car/${carId}/Inspection/${item.id}`,
+        onSuccess: (uploadedFile) => {
+          fetchItems();
         },
-        body: formFile,
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
       });
-
-      const { message, errors, file } = await response.json();
-
-      if (file) {
-        inspectionItem.file_inspection = file.url;
-        updateInspection(inspectionItem);
-      } else {
-        toast.error(message || "Ocurrió un error al subir el archivo.");
-      }
-    } catch (err) {
-      toast.error("Ocurrió un error al subir el archivo.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error inesperado al subir el archivo:", error);
     }
   };
 
-  const updateInspection = async (inspectionData) => {
+  // Eliminar la licencia
+  const deleteFileDocument = async (item) => {
+    const uuid = extractUUID(item.file_inspection);
     try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/updateInspection/${inspectionData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...inspectionData,
-          }),
-        }
-      );
+      await deleteFile({
+        model: "Inspection",
+        model_id: item.id,
+        model_storage: "file_inspection",
+        uuid: uuid,
+        onSuccess: (data) => {
+          toast.success("Elemento eliminado con éxito.");
+          fetchItems();
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar el Elemento.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al eliminar el Elemento:", error);
+    }
+  };
 
-      const { data, message, errors } = await response.json();
+  const handleDelete = async (item) => {
+    setIsLoading(true);
+    if (item.file_inspection) {
+      toast.error("No se puede eliminar  porque tiene un archivo adjunto.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await apiDelete(`deleteInspection/${item.id}`);
+      const { data, message } = response;
       if (data) {
-        toast.success(message);
-        await fetchInspections();
+        toast.success(message || "Elemento eliminado.");
+        fetchItems();
       } else {
-        toast.error(message);
+        toast.error(message || "No se pudo eliminar el Elemento.");
       }
     } catch (error) {
+      toast.error("No se pudo eliminar el Elemento.");
       console.log(error);
-      toast.error("Error al actualizar el Permiso.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const deleteInspection = async (inspectionId) => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/deleteInspection/${inspectionId}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      const { data, message, errors } = await response.json();
-      if (data) {
-        if (data.file_inspection) {
-          deleteInspectionFile(data);
-        } else {
-          toast.success(message);
-          await fetchInspections();
-        }
-      } else {
-        toast.error(message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error al eliminar el Inspección.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Eliminar el Inspección
-  const deleteInspectionFile = async (inspectionItem) => {
-    setLoading(true);
-    const encodedUrl = btoa(inspectionItem.file_inspection);
-    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: TOKEN_API_STORAGE,
-      },
-      body: JSON.stringify({}),
-    });
-
-    const { file, message, errors } = await response.json();
-    if (file) {
-      inspectionItem.file_inspection = null;
-      toast.success("Inspección eliminado.");
-      await fetchInspections();
-    } else {
-      toast.error(message);
-    }
-
-    setLoading(false);
-  };
   return (
     <>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-y-auto max-h-[80vh]">
         <div className="p-4 flex justify-between items-center">
           <button
@@ -286,71 +138,12 @@ const ListInspections = ({ onClose, carId }) => {
         </div>
         {/* Formulario de registro */}
         {showForm && (
-          <div className="p-4 border-t bg-gray-50">
-            <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Registrar Nuevo Inspección
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                <div>
-                  <label className="block text-sm font-semibold">
-                    Fecha de Emision
-                  </label>
-                  <input
-                    type="date"
-                    id="issue_date"
-                    name="issue_date"
-                    value={inspectionForm.issue_date || ""}
-                    autoComplete="off"
-                    onChange={handleChange}
-                    className={`mt-1 p-2 w-full border rounded ${
-                      errors.issue_date ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.issue_date && (
-                    <p className="text-red-500 text-sm">{errors.issue_date}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">
-                    Fecha de Vencimiento
-                  </label>
-                  <input
-                    type="date"
-                    id="expiration_date"
-                    name="expiration_date"
-                    value={inspectionForm.expiration_date || ""}
-                    autoComplete="off"
-                    onChange={handleChange}
-                    className={`mt-1 p-2 w-full border rounded ${
-                      errors.expiration_date ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.expiration_date && (
-                    <p className="text-red-500 text-sm">
-                      {errors.expiration_date}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex justify-end mt-6 gap-4">
-                <button
-                  type="button"
-                  className="bg-gray-600 text-white py-2 px-6 rounded"
-                >
-                  Cerrar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
-                >
-                  <FaSave /> Guardar
-                </button>
-              </div>
-            </form>
-          </div>
+          <RegisterInspection
+            toggleForm={toggleForm}
+            cardId={carId}
+            setIsLoading={setIsLoading}
+            fetchItems={fetchItems}
+          />
         )}
         {/* Tabla de Inspecciones */}
         <div className="overflow-x-auto">
@@ -407,34 +200,43 @@ const ListInspections = ({ onClose, carId }) => {
                           className="hidden"
                           accept="application/pdf"
                           onChange={(e) =>
-                            uploadInspectionFile(e, { ...inspection })
+                            uploadFileDocument(e, { ...inspection })
                           }
-                          disabled={loading}
+                          disabled={isLoading}
                         />
                         <label
                           htmlFor={`inspectionInput-${inspection.id}`} // Ajuste en el for del label
                           className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         >
-                          {loading ? (
+                          {isLoading ? (
                             "Subiendo..."
                           ) : (
                             <>
                               <FaUpload className="md:mr-1" />
-                              <p className="hidden md:block">Subir Inspección</p>
+                              <p className="hidden md:block">
+                                Subir Inspección
+                              </p>
                             </>
                           )}
                         </label>
                       </>
                     )}
                   </td>
-                  <td className="border px-2 py-1 text-center">
-                    {" "}
+                  <td className="border px-2 py-1 text-center flex flex-col gap-2">
                     <button
-                      onClick={() => deleteInspection(inspection.id)}
+                      onClick={() => handleDelete(inspection)}
                       className="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded"
                     >
-                      Eliminar
+                      Eliminar Inspección
                     </button>
+                    {inspection.file_inspection && (
+                      <button
+                        onClick={() => deleteFileDocument(inspection)}
+                        className="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded"
+                      >
+                        Eliminar Documento
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

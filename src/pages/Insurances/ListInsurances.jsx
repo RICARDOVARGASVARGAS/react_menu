@@ -12,10 +12,8 @@ import {
 import { AiOutlineClose } from "react-icons/ai";
 import RegisterInsurance from "./RegisterInsurance";
 import { apiDelete, apiGet } from "../../services/apiService";
-import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
 import { extractUUID } from "../../utils/extractUUID";
-import { BsXLg } from "react-icons/bs";
 
 const ListInsurances = ({ onClose, carId }) => {
   const [insurances, setInsurances] = useState([]);
