@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaSearch, FaEdit, FaUpload, FaTrashAlt, FaEye } from "react-icons/fa";
+import {
+  FaSearch,
+  FaEdit,
+  FaUpload,
+  FaTrashAlt,
+  FaEye,
+  FaTrash,
+  FaFilePdf,
+} from "react-icons/fa";
 import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -33,6 +41,7 @@ const EditDriver = ({ driverId }) => {
       phone_number: "",
       address: "",
       gender: "M",
+      file_driver: "",
     },
   });
 
@@ -40,10 +49,8 @@ const EditDriver = ({ driverId }) => {
 
   // Cargar los datos del conductor al iniciar
   useEffect(() => {
-    if (driverId) {
-      fetchDriverData();
-    }
-  }, [driverId]);
+    fetchDriverData();
+  }, []);
 
   // Obtener los datos del conductor por ID
   const fetchDriverData = async () => {
@@ -175,6 +182,53 @@ const EditDriver = ({ driverId }) => {
       });
     } catch (error) {
       console.error("Error inesperado al eliminar el archivo:", error);
+    }
+  };
+
+  const uploadFileDriver = async (e) => {
+    const file = e.target.files[0];
+
+    try {
+      await uploadFile({
+        file,
+        model: "Driver",
+        model_id: driverId,
+        model_storage: "file_driver",
+        storage: `Driver/${driverId}/Document`,
+        onSuccess: ({ file, message }) => {
+          reset({
+            file_driver: file.url,
+          });
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al subir el archivo:", error);
+    }
+  };
+
+  const deleteFileDriver = async () => {
+    const uuid = extractUUID(watch("file_driver"));
+    try {
+      await deleteFile({
+        model: "Driver",
+        model_id: driverId,
+        model_storage: "file_driver",
+        uuid: uuid,
+        onSuccess: (data) => {
+          toast.success("Documento eliminado");
+          reset({
+            file_driver: null,
+          });
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar el documento.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al eliminar el documento:", error);
     }
   };
 
@@ -553,11 +607,57 @@ const EditDriver = ({ driverId }) => {
               <p className="text-red-500 text-sm">{errors.address.message}</p>
             )}
           </div>
-          {/* Botón Actualizar */}
-          <div className="col-span-full">
+          <div className="col-span-full flex flex-col md:flex-row items-center justify-center md:justify-between text-center gap-4 md:gap-0">
+            {!watch("file_driver") ? (
+              <>
+                <label
+                  htmlFor="file_driver"
+                  className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                >
+                  {isLoading ? (
+                    "Subiendo..."
+                  ) : (
+                    <>
+                      <FaUpload className="md:mr-1" />
+                      <p className="hidden md:block">Subir Documento</p>
+                    </>
+                  )}
+                </label>
+                <input
+                  type="file"
+                  id={`file_driver`}
+                  className="hidden"
+                  accept="application/pdf"
+                  onChange={(e) => uploadFileDriver(e)}
+                  disabled={isLoading}
+                />
+              </>
+            ) : (
+              <div className="flex items-center space-x-2">
+                {/* Botón para ver */}
+                <a
+                  href={watch("file_driver")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                >
+                  <FaFilePdf className="md:mr-1" />
+                  <p className="hidden md:block">Ver</p>
+                </a>
+
+                {/* Botón para eliminar */}
+                <button
+                  onClick={deleteFileDriver}
+                  className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                >
+                  <FaTrash className="md:mr-1" />
+                  <p className="hidden md:block">Eliminar</p>
+                </button>
+              </div>
+            )}
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 shadow-lg"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 shadow-lg"
             >
               <FaEdit />
               Actualizar

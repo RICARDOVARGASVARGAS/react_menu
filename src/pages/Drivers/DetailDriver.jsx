@@ -30,7 +30,7 @@ const DetailDriver = () => {
     console.log("fechtData");
     const { data } = await apiGet(`getDriver/${driverId}`, {
       included:
-        "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example",
+        "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense",
     });
 
     console.log(data);
@@ -81,13 +81,17 @@ const DetailDriver = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <button
-                  onClick={() => window.open("#", "_blank")}
-                  className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  <FileText className="w-4 h-4" />
-                  <span className="hidden md:inline">Ver Documentos</span>
-                </button>
+                {driverData?.file_driver && (
+                  <a
+                    href={driverData?.file_driver}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span className="hidden md:inline">Ver Documento</span>
+                  </a>
+                )}
               </div>
               {/* Rest of personal information remains the same */}
               <div className="flex-grow grid md:grid-cols-2 gap-4">
@@ -152,25 +156,54 @@ const DetailDriver = () => {
                 <CreditCard className="w-6 h-6 text-blue-600" />
                 <h2 className="text-2xl font-bold text-gray-800">Licencia</h2>
               </div>
-              <button
-                onClick={() => window.open("#", "_blank")}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              >
-                <FileText className="w-4 h-4" />
-                <span className="hidden md:inline">Ver Archivo</span>
-              </button>
+              {driverData?.latest_license?.file && (
+                <a
+                  href={driverData?.latest_license?.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span className="hidden md:inline">Ver Archivo</span>
+                </a>
+              )}
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               {[
-                { label: "Número", value: "No disponible" },
-                { label: "Fecha de Emisión", value: "No disponible" },
-                { label: "Fecha de Expiración", value: "No disponible" },
-                { label: "Clase", value: "No disponible" },
-                { label: "Categoría", value: "No disponible" },
+                {
+                  label: "Número",
+                  value: `${
+                    driverData?.latest_license?.number || "No disponible"
+                  }`,
+                },
+                {
+                  label: "Fecha de Emisión",
+                  value: `${
+                    driverData?.latest_license?.issue_date || "No disponible"
+                  }`,
+                },
+                {
+                  label: "Fecha de Expiración",
+                  value: `${
+                    driverData?.latest_license?.renewal_date || "No disponible"
+                  }`,
+                },
+                {
+                  label: "Clase",
+                  value: `${
+                    driverData?.latest_license?.class || "No disponible"
+                  }`,
+                },
+                {
+                  label: "Categoría",
+                  value: `${
+                    driverData?.latest_license?.category || "No disponible"
+                  }`,
+                },
               ].map((item, index) => (
                 <div key={index}>
                   <p className="text-gray-600">{item.label}</p>
-                  <p className="font-semibold">{item.value}</p>
+                  <p className="font-semibold uppercase">{item.value}</p>
                 </div>
               ))}
             </div>
