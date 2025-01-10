@@ -4,8 +4,6 @@ import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
 import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
-import RegisterDriver from "./RegisterDriver";
-import EditDriver from "./EditDriver";
 import { apiGet } from "../../services/apiService";
 
 const ListDrivers = () => {

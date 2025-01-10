@@ -12,17 +12,48 @@ import {
   FileWarning,
   FileCog,
   ArrowLeft,
+  FilePen,
 } from "lucide-react";
+import { useState, useEffect } from "react";
+import Loading from "../../components/Loading";
+import { apiGet } from "../../services/apiService";
+import { useNavigate } from "react-router-dom";
 
 const DetailDriver = () => {
+  const [driverData, setDriverData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { driverId } = useParams();
-  console.log(driverId);
+  const navigate = useNavigate();
+
+  const fechtData = async () => {
+    setIsLoading(true);
+    console.log("fechtData");
+    const { data } = await apiGet(`getDriver/${driverId}`, {
+      included:
+        "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example",
+    });
+
+    console.log(data);
+    setDriverData(data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fechtData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-1 md:p-2">
+      {isLoading && <Loading />}
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex justify-between">
+          <a
+            onClick={() => navigate(`/driver-data/${driverId}`)}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+          >
+            <FilePen className="w-4 h-4" />
+            <span className="hidden md:inline">Editar</span>
+          </a>
           <button
             onClick={() => window.history.back()}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
@@ -42,10 +73,10 @@ const DetailDriver = () => {
               </h2>
             </div>
             <div className="flex flex-col md:flex-row gap-6 mb-6">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 flex flex-col items-center">
                 <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100">
                   <img
-                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"
+                    src={driverData?.image || "/images/no-image.png"}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
@@ -62,24 +93,30 @@ const DetailDriver = () => {
               <div className="flex-grow grid md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-gray-600">Nombre</p>
-                  <p className="font-semibold">Cole Stoltenberg</p>
+                  <p className="font-semibold capitalize">{driverData?.name}</p>
                 </div>
                 <div>
                   <p className="text-gray-600">Documento</p>
-                  <p className="font-semibold">Pasaporte 15434359564</p>
+                  <p className="font-semibold uppercase">
+                    {driverData?.document_type} {driverData?.document_number}
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <Phone className="w-5 h-5 text-gray-500 mt-1" />
                   <div>
                     <p className="text-gray-600">Teléfono</p>
-                    <p className="font-semibold">(404) 645-2789</p>
+                    <p className="font-semibold">
+                      {driverData?.phone_number || "No disponible"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Mail className="w-5 h-5 text-gray-500 mt-1" />
                   <div>
                     <p className="text-gray-600">Email</p>
-                    <p className="font-semibold">weissnat.eric@example.org</p>
+                    <p className="font-semibold">
+                      {driverData?.email || "No disponible"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2 md:col-span-2">
@@ -87,7 +124,7 @@ const DetailDriver = () => {
                   <div>
                     <p className="text-gray-600">Dirección</p>
                     <p className="font-semibold">
-                      695 Linda Walks Apt. 478 Felipamouth, VA 94045
+                      {driverData?.address || "No disponible"}
                     </p>
                   </div>
                 </div>
@@ -95,12 +132,14 @@ const DetailDriver = () => {
                   <Calendar className="w-5 h-5 text-gray-500 mt-1" />
                   <div>
                     <p className="text-gray-600">Fecha de Nacimiento</p>
-                    <p className="font-semibold">2010-07-07</p>
+                    <p className="font-semibold">{driverData?.birth_date}</p>
                   </div>
                 </div>
                 <div>
                   <p className="text-gray-600">Género</p>
-                  <p className="font-semibold">M</p>
+                  <p className="font-semibold">
+                    {driverData?.gender === "M" ? "Masculino" : "Femenino"}
+                  </p>
                 </div>
               </div>
             </div>

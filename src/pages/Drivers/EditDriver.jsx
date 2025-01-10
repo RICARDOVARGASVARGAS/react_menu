@@ -189,7 +189,7 @@ const EditDriver = ({ driverId }) => {
         <div className="col-span-1 flex flex-col items-center">
           <div className="relative flex items-center justify-between">
             <img
-              src={watch("image") || "/src/assets/no-image.png"}
+              src={watch("image") || "/images/no-image.png"}
               alt="Avatar"
               className="w-28 h-28 md:w-36 md:h-36 rounded-full border shadow"
             />
