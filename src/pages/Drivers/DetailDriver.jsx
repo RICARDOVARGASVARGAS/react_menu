@@ -200,12 +200,37 @@ const DetailDriver = () => {
                     driverData?.latest_license?.category || "No disponible"
                   }`,
                 },
+                // {
+                //   label: "Estado",
+                //   value: `${
+                //     driverData?.latest_license?.is_valid ? "Activo" : "Inactivo"
+                //   }`,
+                // },
               ].map((item, index) => (
                 <div key={index}>
                   <p className="text-gray-600">{item.label}</p>
                   <p className="font-semibold uppercase">{item.value}</p>
                 </div>
               ))}
+
+              <div>
+                <p className="text-gray-600">Estado</p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-6 h-6 rounded-full border"
+                    style={{
+                      backgroundColor: driverData?.latest_license?.is_valid
+                        ? "green"
+                        : "red",
+                    }}
+                  />
+                  <p className="font-semibold uppercase">
+                    {driverData?.latest_license?.is_valid
+                      ? "Activo"
+                      : "Inactivo"}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
