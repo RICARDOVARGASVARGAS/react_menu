@@ -200,12 +200,6 @@ const DetailDriver = () => {
                     driverData?.latest_license?.category || "No disponible"
                   }`,
                 },
-                // {
-                //   label: "Estado",
-                //   value: `${
-                //     driverData?.latest_license?.is_valid ? "Activo" : "Inactivo"
-                //   }`,
-                // },
               ].map((item, index) => (
                 <div key={index}>
                   <p className="text-gray-600">{item.label}</p>
@@ -234,135 +228,121 @@ const DetailDriver = () => {
             </div>
           </div>
 
-          {/* Vehicles Section */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <Car className="w-6 h-6 text-blue-600" />
-              <h2 className="text-2xl font-bold text-gray-800">Vehículos</h2>
-            </div>
+          {driverData?.cars && driverData?.cars?.length > 0 && (
+            <>
+              {/* cars Section */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                  <Car className="w-6 h-6 text-blue-600" />
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Vehículos
+                  </h2>
+                </div>
 
-            {/* Vehicle Cards */}
-            {[
-              {
-                placa: "50244516508",
-                chasis: "50540488666",
-                motor: "03679409004",
-                soat: "No disponible",
-                fechaEmision: "No disponible",
-                fechaExpiracion: "No disponible",
-                marca: "Colleen Schamberger",
-                tipo: "Sasha Beatty",
-                grupo: "Mr. Lon Stroman Sr.",
-                año: "2001",
-                color: "GhostWhite",
-              },
-              {
-                placa: "30464619884",
-                chasis: "02119554322",
-                motor: "12698262913",
-                soat: "No disponible",
-                fechaEmision: "No disponible",
-                fechaExpiracion: "No disponible",
-                marca: "Ms. Trudie Muller MD",
-                tipo: "Jaylin Prosacco",
-                grupo: "Rebeka Monahan",
-                año: "1975",
-                color: "MediumBlue",
-              },
-            ].map((vehicle, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-md p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                  Vehículo {index + 1}
-                </h3>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-gray-600">Placa</p>
-                    <p className="font-semibold">{vehicle.placa}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Chasis</p>
-                    <p className="font-semibold">{vehicle.chasis}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Motor</p>
-                    <p className="font-semibold">{vehicle.motor}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">SOAT</p>
-                    <p className="font-semibold">{vehicle.soat}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Fecha de Emisión SOAT</p>
-                    <p className="font-semibold">{vehicle.fechaEmision}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Fecha de Expiración SOAT</p>
-                    <p className="font-semibold">{vehicle.fechaExpiracion}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Marca</p>
-                    <p className="font-semibold">{vehicle.marca}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Tipo</p>
-                    <p className="font-semibold">{vehicle.tipo}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Grupo</p>
-                    <p className="font-semibold">{vehicle.grupo}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Año</p>
-                    <p className="font-semibold">{vehicle.año}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Color</p>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-6 h-6 rounded-full border"
-                        style={{ backgroundColor: vehicle.color }}
-                      />
-                      <p className="font-semibold">{vehicle.color}</p>
+                {/* car Cards */}
+                {driverData?.cars?.map((car, index) => (
+                  <div
+                    key={car.id}
+                    className="bg-white rounded-xl shadow-md p-6"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                      Vehículo {index + 1}
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-gray-600">Placa</p>
+                        <p className="font-semibold">{car.plate}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Chasis</p>
+                        <p className="font-semibold">{car.chassis}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Motor</p>
+                        <p className="font-semibold">{car.motor}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">SOAT</p>
+                        <p className="font-semibold">car.soat</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Fecha de Emisión SOAT</p>
+                        <p className="font-semibold">car.fechaEmision</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">
+                          Fecha de Expiración SOAT
+                        </p>
+                        <p className="font-semibold">
+                          car.fechaExpiracion
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Marca</p>
+                        <p className="font-semibold">car.marca</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Tipo</p>
+                        <p className="font-semibold">car.tipo</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Grupo</p>
+                        <p className="font-semibold">car.grupo</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Año</p>
+                        <p className="font-semibold">car.año</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Color</p>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-6 h-6 rounded-full border"
+                            // style={{ backgroundColor: car.color }}
+                          />
+                          <p className="font-semibold">car.color</p>
+                        </div>
+                      </div>
                     </div>
+                    {/* <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <button
+                        onClick={() => window.open("#", "_blank")}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        title="SOAT"
+                      >
+                        <FileCheck className="w-4 h-4" />
+                        <span className="hidden md:inline">SOAT</span>
+                      </button>
+                      <button
+                        onClick={() => window.open("#", "_blank")}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        title="CIRCULACIÓN"
+                      >
+                        <FileWarning className="w-4 h-4" />
+                        <span className="hidden md:inline">CIRCULACIÓN</span>
+                      </button>
+                      <button
+                        onClick={() => window.open("#", "_blank")}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        title="REVISIÓN"
+                      >
+                        <FileCog className="w-4 h-4" />
+                        <span className="hidden md:inline">REVISIÓN</span>
+                      </button>
+                      <button
+                        onClick={() => window.open("#", "_blank")}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        title="DOCUMENTOS"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span className="hidden md:inline">DOCUMENTOS</span>
+                      </button>
+                    </div> */}
                   </div>
-                </div>
-                <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <button
-                    onClick={() => window.open("#", "_blank")}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    title="SOAT"
-                  >
-                    <FileCheck className="w-4 h-4" />
-                    <span className="hidden md:inline">SOAT</span>
-                  </button>
-                  <button
-                    onClick={() => window.open("#", "_blank")}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    title="CIRCULACIÓN"
-                  >
-                    <FileWarning className="w-4 h-4" />
-                    <span className="hidden md:inline">CIRCULACIÓN</span>
-                  </button>
-                  <button
-                    onClick={() => window.open("#", "_blank")}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    title="REVISIÓN"
-                  >
-                    <FileCog className="w-4 h-4" />
-                    <span className="hidden md:inline">REVISIÓN</span>
-                  </button>
-                  <button
-                    onClick={() => window.open("#", "_blank")}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                    title="DOCUMENTOS"
-                  >
-                    <FileText className="w-4 h-4" />
-                    <span className="hidden md:inline">DOCUMENTOS</span>
-                  </button>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -379,7 +359,7 @@ export default DetailDriver;
 // import {API_BASE_URL} from "../../config/enviroments";
 // const defaultImage = "https://via.placeholder.com/640x480.png?text=No+Image";
 
-// const VehicleCard = ({ car }) => (
+// const carCard = ({ car }) => (
 //   <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
 //     <div className="p-4">
 //       <h3 className="text-lg font-bold text-blue-800 mb-3">
@@ -592,7 +572,7 @@ export default DetailDriver;
 //               </h2>
 //               {driverData.cars && driverData.cars.length > 0 ? (
 //                 driverData.cars.map((car) => (
-//                   <VehicleCard key={car.id} car={car} />
+//                   <carCard key={car.id} car={car} />
 //                 ))
 //               ) : (
 //                 <p className="text-gray-600">No hay vehículos asociados.</p>
