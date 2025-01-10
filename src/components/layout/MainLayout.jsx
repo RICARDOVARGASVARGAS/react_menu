@@ -18,7 +18,7 @@ const MainLayout = () => {
           setIsSidebarOpen={setIsSidebarOpen}
           title="SECOV" // Cambiar título según la página activa es opcional
         />
-        <main className="p-4">
+        <main className="p-4 bg-gray-50">
           <Outlet /> {/* Aquí se cargarán las páginas específicas */}
         </main>
       </div>

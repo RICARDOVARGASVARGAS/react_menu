@@ -2,9 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import ListDrivers from "./pages/Drivers/ListDrivers";
 import RegisterDriver from "./pages/Drivers/RegisterDriver";
-import DetailDriver from "./pages/Drivers/DetailDriver";
-import ListCars from "./pages/Cars/ListCars";
-import DetailCar from "./pages/Cars/DetailCar";
 import { ToastContainer } from "react-toastify"; // Importar ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Importar estilos de toast
 import ListExamples from "./pages/Settings/Example/ListExample";
@@ -15,6 +12,7 @@ import ListTypeCars from "./pages/Settings/TypeCar/ListTypeCars";
 import ListColors from "./pages/Settings/Color/ListColors";
 import MainLayout from "./components/layout/MainLayout";
 import DriverData from "./pages/Drivers/DriverData";
+import DetailDriver from "./pages/Drivers/DetailDriver";
 
 const App = () => {
   return (
