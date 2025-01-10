@@ -3,24 +3,26 @@ import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import {
   FaPlus,
-  FaEdit,
   FaFilePdf,
-  FaImage,
-  FaTrash,
   FaUpload,
   FaCheckCircle,
   FaExclamationCircle,
   FaTimes,
-  FaSave,
 } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import RegisterInsurance from "./RegisterInsurance";
-import { apiGet } from "../../services/apiService";
+import { apiDelete, apiGet } from "../../services/apiService";
+import { handleBackendErrors } from "../../utils/handleBackendErrors ";
+import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import { extractUUID } from "../../utils/extractUUID";
+import { BsXLg } from "react-icons/bs";
 
 const ListInsurances = ({ onClose, carId }) => {
   const [insurances, setInsurances] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const { uploadFile, isLoading: isFileUploading } = useFileUploader();
+  const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
 
   // Obtener la lista de seguros
   const fetchItems = async () => {
@@ -39,119 +41,75 @@ const ListInsurances = ({ onClose, carId }) => {
   };
 
   // Subir SOAT
-  const uploadInsuranceFile = async (e, insuranceItem) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const uploadFileDocument = async (e, item) => {
     const file = e.target.files[0];
 
-    if (!file) {
-      toast.error("Por favor, seleccione un archivo.");
-      setLoading(false);
-      return;
-    }
-
-    // Validar tipo de archivo
-    if (file.type !== "application/pdf") {
-      toast.error("Solo se permiten archivos PDF.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    // Validar tamaño del archivo (máximo 3 MB)
-    const maxSize = 3 * 1024 * 1024; // 3 MB en bytes
-    if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 3 MB.");
-      e.target.value = ""; // Limpiar el input
-      setLoading(false);
-      return;
-    }
-
-    const formFile = new FormData();
-    formFile.append("file", file);
-    formFile.append("location", `cars/${carId}/insurances/${insuranceItem.id}`);
-
     try {
-      const response = await fetch(`${API_STORAGE_URL}/files/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: TOKEN_API_STORAGE,
+      await uploadFile({
+        file,
+        model: "Insurance",
+        model_id: item.id,
+        model_storage: "file_insurance",
+        storage: `Car/${carId}/Insurance/${item.id}`,
+        onSuccess: (uploadedFile) => {
+          fetchItems();
         },
-        body: formFile,
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al subir el archivo.");
+        },
       });
-
-      const { message, errors, file } = await response.json();
-
-      if (file) {
-        insuranceItem.file_insurance = file.url;
-        updateInsurance(insuranceItem);
-      } else {
-        toast.error(message || "Ocurrió un error al subir el archivo.");
-      }
-    } catch (err) {
-      toast.error("Ocurrió un error al subir el archivo.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error inesperado al subir el archivo:", error);
     }
   };
 
-  const deleteInsurance = async (insuranceId) => {
+  // Eliminar la licencia
+  const deleteFileDocument = async (item) => {
+    const uuid = extractUUID(item.file_insurance);
     try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/deleteInsurance/${insuranceId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      await deleteFile({
+        model: "Insurance",
+        model_id: item.id,
+        model_storage: "file_insurance",
+        uuid: uuid,
+        onSuccess: (data) => {
+          toast.success("Seguro eliminado con éxito.");
+          fetchItems();
+        },
+        onError: (errorMessage) => {
+          toast.error(errorMessage || "Error al eliminar el Seguro.");
+        },
+      });
+    } catch (error) {
+      console.error("Error inesperado al eliminar el Seguro:", error);
+    }
+  };
 
-      const { data, message, errors } = await response.json();
+  const handleDelete = async (item) => {
+    setIsLoading(true);
+    if (item.file_insurance) {
+      toast.error("No se puede eliminar  porque tiene un archivo adjunto.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await apiDelete(`deleteInsurance/${item.id}`);
+      const { data, message } = response;
       if (data) {
-        if (data.file_insurance) {
-          deleteInsuranceFile(data);
-        } else {
-          toast.success(message);
-          await fetchInsurances();
-        }
+        toast.success(message || "Elemento eliminado.");
+        fetchItems();
       } else {
-        toast.error(message);
+        toast.error(message || "No se pudo eliminar el Elemento.");
       }
     } catch (error) {
+      toast.error("No se pudo eliminar el Elemento.");
       console.log(error);
-      toast.error("Error al eliminar el seguro.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  // Eliminar el seguro
-  const deleteInsuranceFile = async (insuranceItem) => {
-    setLoading(true);
-    const encodedUrl = btoa(insuranceItem.file_insurance);
-    const response = await fetch(`${API_STORAGE_URL}/files/${encodedUrl}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: TOKEN_API_STORAGE,
-      },
-      body: JSON.stringify({}),
-    });
-
-    const { file, message, errors } = await response.json();
-    if (file) {
-      insuranceItem.file_insurance = null;
-      toast.success("Seguro eliminado.");
-      await fetchInsurances();
-      // updateInsurance(insuranceItem);
-    } else {
-      toast.error(message);
-    }
-
-    setLoading(false);
-  };
   return (
     <>
       {isLoading && <Loading />}
@@ -251,7 +209,7 @@ const ListInsurances = ({ onClose, carId }) => {
                           className="hidden"
                           accept="application/pdf"
                           onChange={(e) =>
-                            uploadInsuranceFile(e, { ...insurance })
+                            uploadFileDocument(e, { ...insurance })
                           }
                           disabled={isLoading}
                         />
@@ -271,14 +229,21 @@ const ListInsurances = ({ onClose, carId }) => {
                       </>
                     )}
                   </td>
-                  <td className="border px-2 py-1 text-center">
-                    {" "}
+                  <td className="border px-2 py-1 text-center flex flex-col gap-2">
                     <button
-                      onClick={() => deleteInsurance(insurance.id)}
+                      onClick={() => handleDelete(insurance)}
                       className="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded"
                     >
-                      Eliminar
+                      Eliminar SOAT
                     </button>
+                    {insurance.file_insurance && (
+                      <button
+                        onClick={() => deleteFileDocument(insurance)}
+                        className="bg-red-600 hover:bg-red-700 text-white py-1 px-4 rounded"
+                      >
+                        Eliminar Documento
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
