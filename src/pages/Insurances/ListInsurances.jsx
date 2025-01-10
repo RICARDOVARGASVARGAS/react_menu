@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loading"; // Componente de carga
+import Loading from "../../components/Loading";
 import {
   FaPlus,
   FaEdit,
@@ -13,99 +13,29 @@ import {
   FaTimes,
   FaSave,
 } from "react-icons/fa";
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../../config/enviroments";
 import { AiOutlineClose } from "react-icons/ai";
+import RegisterInsurance from "./RegisterInsurance";
+import { apiGet } from "../../services/apiService";
 
 const ListInsurances = ({ onClose, carId }) => {
   const [insurances, setInsurances] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false); // Estado para mostrar u ocultar el formulario
-  const [insuranceForm, setInsuranceForm] = useState({
-    number_insurance: "",
-    issue_date: "",
-    expiration_date: "",
-    file_insurance: "",
-  });
-
-  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   // Obtener la lista de seguros
-  const fetchInsurances = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/getInsurances/${carId}`);
-      const { data } = await response.json();
-      if (data) {
-        setInsurances(data);
-      } else {
-        setInsurances([]);
-        toast.info("El vehículo no tiene seguros registrados.");
-      }
-    } catch (error) {
-      toast.error("Error al cargar los licencias.");
-    } finally {
-      setLoading(false);
-    }
+  const fetchItems = async () => {
+    setIsLoading(true);
+    const { data } = await apiGet(`getInsurances/${carId}`);
+    setInsurances(data);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchInsurances();
-  }, [carId]);
+    fetchItems();
+  }, []);
 
   const toggleForm = () => {
-    setShowForm(!showForm); // Cambia entre mostrar y ocultar el formulario
-  };
-
-  // Manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInsuranceForm((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrors({});
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/registerInsurance`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          ...insuranceForm,
-          car_id: carId,
-        }),
-      });
-
-      const { data, message, errors } = await response.json();
-
-      if (data) {
-        toast.success(message);
-        setShowForm(false);
-        setInsuranceForm({});
-        setErrors({});
-        fetchInsurances();
-      } else {
-        console.log(errors);
-        toast.error(message);
-        setErrors(errors);
-      }
-    } catch (error) {
-      console.error("Error al registrar el seguro:", error);
-      toast.error("Ocurrió un error al realizar el seguro.");
-    } finally {
-      setLoading(false);
-    }
+    setShowForm(!showForm);
   };
 
   // Subir SOAT
@@ -162,38 +92,6 @@ const ListInsurances = ({ onClose, carId }) => {
     } catch (err) {
       toast.error("Ocurrió un error al subir el archivo.");
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateInsurance = async (insuranceData) => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/updateInsurance/${insuranceData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            ...insuranceData,
-          }),
-        }
-      );
-
-      const { data, message, errors } = await response.json();
-      if (data) {
-        toast.success(message);
-        await fetchInsurances();
-      } else {
-        toast.error(message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error al actualizar el Licencia.");
     } finally {
       setLoading(false);
     }
@@ -256,7 +154,7 @@ const ListInsurances = ({ onClose, carId }) => {
   };
   return (
     <>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <div className="bg-white shadow rounded-lg overflow-y-auto max-h-[80vh]">
         <div className="p-4 flex justify-between items-center">
           <button
@@ -287,91 +185,12 @@ const ListInsurances = ({ onClose, carId }) => {
         </div>
         {/* Formulario de registro */}
         {showForm && (
-          <div className="p-4 border-t bg-gray-50">
-            <h3 className="text-lg font-semibold text-gray-700 mb-3">
-              Registrar Nuevo Seguro
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                <div className="col-span-2">
-                  <label className="block text-sm font-semibold">N° SOAT</label>
-                  <input
-                    type="text"
-                    id="number_insurance"
-                    name="number_insurance"
-                    value={insuranceForm.number_insurance || ""}
-                    autoComplete="off"
-                    onChange={handleChange}
-                    className={`mt-1 p-2 w-full border rounded ${
-                      errors.number_insurance ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.number_insurance && (
-                    <p className="text-red-500 text-sm">
-                      {errors.number_insurance}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">
-                    Fecha de Emision
-                  </label>
-                  <input
-                    type="date"
-                    id="issue_date"
-                    name="issue_date"
-                    value={insuranceForm.issue_date || ""}
-                    autoComplete="off"
-                    onChange={handleChange}
-                    className={`mt-1 p-2 w-full border rounded ${
-                      errors.issue_date ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.issue_date && (
-                    <p className="text-red-500 text-sm">{errors.issue_date}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">
-                    Fecha de Vencimiento
-                  </label>
-                  <input
-                    type="date"
-                    id="expiration_date"
-                    name="expiration_date"
-                    value={insuranceForm.expiration_date || ""}
-                    autoComplete="off"
-                    onChange={handleChange}
-                    className={`mt-1 p-2 w-full border rounded ${
-                      errors.expiration_date ? "border-red-500" : ""
-                    }`}
-                  />
-                  {errors.expiration_date && (
-                    <p className="text-red-500 text-sm">
-                      {errors.expiration_date}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex justify-end mt-6 gap-4">
-                <button
-                  type="button"
-                  className="bg-gray-600 text-white py-2 px-6 rounded"
-                >
-                  Cerrar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
-                >
-                  <FaSave /> Guardar
-                </button>
-              </div>
-            </form>
-          </div>
+          <RegisterInsurance
+            toggleForm={toggleForm}
+            cardId={carId}
+            setIsLoading={setIsLoading}
+            fetchItems={fetchItems}
+          />
         )}
         {/* Tabla de seguros */}
         <div className="overflow-x-auto">
@@ -434,13 +253,13 @@ const ListInsurances = ({ onClose, carId }) => {
                           onChange={(e) =>
                             uploadInsuranceFile(e, { ...insurance })
                           }
-                          disabled={loading}
+                          disabled={isLoading}
                         />
                         <label
                           htmlFor={`insuranceInput-${insurance.id}`} // Ajuste en el for del label
                           className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         >
-                          {loading ? (
+                          {isLoading ? (
                             "Subiendo..."
                           ) : (
                             <>

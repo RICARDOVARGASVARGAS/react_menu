@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
-import Loading from "../../../components/Loading"; // Indicador de carga
+import Loading from "../../../components/Loading";
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
