@@ -30,7 +30,7 @@ const DetailDriver = () => {
     console.log("fechtData");
     const { data } = await apiGet(`getDriver/${driverId}`, {
       included:
-        "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense",
+        "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense,cars.inspections,cars.insurances,cars.permits,cars.latestInspection,cars.latestInsurance,cars.latestPermit",
     });
 
     console.log(data);
@@ -254,90 +254,234 @@ const DetailDriver = () => {
                         <p className="font-semibold">{car.plate}</p>
                       </div>
                       <div>
-                        <p className="text-gray-600">Chasis</p>
+                        <p className="text-gray-600">N° Asientos</p>
+                        <p className="font-semibold">{car.number_of_seats}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">N° Chasis</p>
                         <p className="font-semibold">{car.chassis}</p>
                       </div>
                       <div>
-                        <p className="text-gray-600">Motor</p>
+                        <p className="text-gray-600">N° Motor</p>
                         <p className="font-semibold">{car.motor}</p>
                       </div>
                       <div>
-                        <p className="text-gray-600">SOAT</p>
-                        <p className="font-semibold">car.soat</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Fecha de Emisión SOAT</p>
-                        <p className="font-semibold">car.fechaEmision</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">
-                          Fecha de Expiración SOAT
-                        </p>
-                        <p className="font-semibold">
-                          car.fechaExpiracion
-                        </p>
-                      </div>
-                      <div>
                         <p className="text-gray-600">Marca</p>
-                        <p className="font-semibold">car.marca</p>
+                        <p className="font-semibold capitalize">
+                          {car.brand?.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Modelo/Clase</p>
+                        <p className="font-semibold capitalize">
+                          {car.example?.name}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Tipo</p>
-                        <p className="font-semibold">car.tipo</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Grupo</p>
-                        <p className="font-semibold">car.grupo</p>
+                        <p className="font-semibold capitalize">
+                          {car.typeCar?.name}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Año</p>
-                        <p className="font-semibold">car.año</p>
+                        <p className="font-semibold capitalize">
+                          {car.year?.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">Asociación</p>
+                        <p className="font-semibold capitalize">
+                          {car.group?.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-600">N° de Asociación</p>
+                        <p className="font-semibold capitalize">
+                          {car.group_number || "N/A"}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Color</p>
                         <div className="flex items-center gap-2">
                           <div
                             className="w-6 h-6 rounded-full border"
-                            // style={{ backgroundColor: car.color }}
+                            style={{ backgroundColor: car.color?.hex }}
                           />
-                          <p className="font-semibold">car.color</p>
+                          <p className="font-semibold capitalize">
+                            {car.color?.name}
+                          </p>
+                        </div>
+                      </div>
+                      <div className=""></div>
+                      {/* SOAT */}
+                      <div className="p-4 border rounded-lg shadow-md bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <p className="text-lg font-semibold text-gray-800">
+                            SOAT
+                          </p>
+                          <div
+                            className={`px-2 py-1 text-sm font-medium rounded uppercase ${
+                              car.latest_insurance?.is_valid
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
+                            }`}
+                          >
+                            {car.latest_insurance?.is_valid
+                              ? "Activo"
+                              : "Inactivo"}
+                          </div>
+                        </div>
+                        <div className="mt-3 space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">N° SOAT:</span>
+                            <span className="font-medium">
+                              {car.latest_insurance?.number_insurance || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Emisión:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_insurance?.issue_date || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Expiración:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_insurance?.expiration_date || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Revisión */}
+                      <div className="p-4 border rounded-lg shadow-md bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <p className="text-lg font-semibold text-gray-800">
+                            Revisión Técnica
+                          </p>
+                          <div
+                            className={`px-2 py-1 text-sm font-medium rounded uppercase ${
+                              car.latest_inspection?.is_valid
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
+                            }`}
+                          >
+                            {car.latest_inspection?.is_valid
+                              ? "Activo"
+                              : "Inactivo"}
+                          </div>
+                        </div>
+                        <div className="mt-3 space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Emisión:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_inspection?.issue_date || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Expiración:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_inspection?.expiration_date || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Permiso */}
+                      <div className="p-4 border rounded-lg shadow-md bg-gray-50">
+                        <div className="flex items-center justify-between">
+                          <p className="text-lg font-semibold text-gray-800">
+                            Permiso de Circulación
+                          </p>
+                          <div
+                            className={`px-2 py-1 text-sm font-medium rounded uppercase ${
+                              car.latest_permit?.is_valid
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
+                            }`}
+                          >
+                            {car.latest_permit?.is_valid
+                              ? "Activo"
+                              : "Inactivo"}
+                          </div>
+                        </div>
+                        <div className="mt-3 space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Emisión:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_permit?.issue_date || "N/A"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">
+                              Fecha de Expiración:
+                            </span>
+                            <span className="font-medium">
+                              {car.latest_permit?.expiration_date || "N/A"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    {/* <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <button
-                        onClick={() => window.open("#", "_blank")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                        title="SOAT"
-                      >
-                        <FileCheck className="w-4 h-4" />
-                        <span className="hidden md:inline">SOAT</span>
-                      </button>
-                      <button
-                        onClick={() => window.open("#", "_blank")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                        title="CIRCULACIÓN"
-                      >
-                        <FileWarning className="w-4 h-4" />
-                        <span className="hidden md:inline">CIRCULACIÓN</span>
-                      </button>
-                      <button
-                        onClick={() => window.open("#", "_blank")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                        title="REVISIÓN"
-                      >
-                        <FileCog className="w-4 h-4" />
-                        <span className="hidden md:inline">REVISIÓN</span>
-                      </button>
-                      <button
-                        onClick={() => window.open("#", "_blank")}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-                        title="DOCUMENTOS"
-                      >
-                        <FileText className="w-4 h-4" />
-                        <span className="hidden md:inline">DOCUMENTOS</span>
-                      </button>
-                    </div> */}
+                    <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {car.latest_insurance?.file_insurance && (
+                        <a
+                          href={car.latest_insurance?.file_insurance}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                          title="SOAT"
+                        >
+                          <FileCheck className="w-4 h-4" />
+                          <span className="hidden md:inline">SOAT</span>
+                        </a>
+                      )}
+                      {car.latest_permit?.file_permit && (
+                        <a
+                          href={car.latest_permit?.file_permit}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                          title="SOAT"
+                        >
+                          <FileCheck className="w-4 h-4" />
+                          <span className="hidden md:inline">CIRCULACIÓN</span>
+                        </a>
+                      )}
+                      {car.latest_inspection?.file_inspection && (
+                        <a
+                          href={car.latest_inspection?.file_inspection}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                          title="SOAT"
+                        >
+                          <FileCheck className="w-4 h-4" />
+                          <span className="hidden md:inline">REVISIÓN</span>
+                        </a>
+                      )}
+                      {car.file_car && (
+                        <a
+                          href={car.file_car}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                          title="SOAT"
+                        >
+                          <FileCheck className="w-4 h-4" />
+                          <span className="hidden md:inline">DOCUMENTOS</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -350,239 +494,3 @@ const DetailDriver = () => {
 };
 
 export default DetailDriver;
-
-// import React, { useState, useEffect } from "react";
-// import Sidebar from "../../components/layout/Sidebar";
-// import MobileToolbar from "../../components/layout/MobileToolbar";
-// import { useParams } from "react-router-dom";
-// import Loading from "../../components/Loading";
-// import {API_BASE_URL} from "../../config/enviroments";
-// const defaultImage = "https://via.placeholder.com/640x480.png?text=No+Image";
-
-// const carCard = ({ car }) => (
-//   <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-//     <div className="p-4">
-//       <h3 className="text-lg font-bold text-blue-800 mb-3">
-//         Detalles del Vehículo
-//       </h3>
-//       <p>
-//         <strong>Placa:</strong> {car.plate || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Chasis:</strong> {car.chassis || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Motor:</strong> {car.motor || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>SOAT:</strong> {car.number_soat || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Fecha de Emisión SOAT:</strong>{" "}
-//         {car.date_soat_issue || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Fecha de Expiración SOAT:</strong>{" "}
-//         {car.date_soat_expiration || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Marca:</strong> {car.brand?.name || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Tipo:</strong> {car.type_car?.name || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Grupo:</strong> {car.group?.name || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Año:</strong> {car.year?.name || "No disponible"}
-//       </p>
-//       <p>
-//         <strong>Color:</strong> {car.color?.name || "No disponible"}
-//       </p>
-//     </div>
-//     <div className="grid grid-cols-2 gap-2 p-4">
-//       {car.file_soat && (
-//         <img
-//           src={car.file_soat}
-//           alt="SOAT"
-//           className="w-full h-40 object-cover rounded-lg"
-//           onError={(e) => (e.target.src = defaultImage)}
-//         />
-//       )}
-//       {car.file_car && (
-//         <img
-//           src={car.file_car}
-//           alt="Vehículo"
-//           className="w-full h-40 object-cover rounded-lg"
-//           onError={(e) => (e.target.src = defaultImage)}
-//         />
-//       )}
-//     </div>
-//   </div>
-// );
-
-// const DetailDriver = () => {
-//   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-//   const [driverData, setDriverData] = useState(null);
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const { driverId } = useParams();
-
-//   useEffect(() => {
-//     const fetchDriverData = async () => {
-//       try {
-//         setIsLoading(true);
-//         const response = await fetch(
-//           `${API_BASE_URL}/getDriver/${driverId}?included=cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example`
-//         );
-
-//         if (!response.ok) {
-//           throw new Error(`Error ${response.status}: ${response.statusText}`);
-//         }
-
-//         const data = await response.json();
-//         setDriverData(data.data);
-//       } catch (error) {
-//         setError(error.message);
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     };
-
-//     fetchDriverData();
-//   }, [driverId]);
-
-//   if (isLoading) return <Loading />;
-
-//   if (error) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen">
-//         <p className="text-red-600">Error al cargar la información: {error}</p>
-//       </div>
-//     );
-//   }
-
-//   if (!driverData) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen">
-//         <p className="text-gray-600">
-//           No se encontró información del conductor.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex max-h-screen md:min-h-screen">
-//       <Sidebar
-//         isSidebarOpen={isSidebarOpen}
-//         setIsSidebarOpen={setIsSidebarOpen}
-//         activeItem="Detail Driver"
-//       />
-
-//       <div className="flex-1 overflow-auto">
-//         <MobileToolbar
-//           setIsSidebarOpen={setIsSidebarOpen}
-//           title="Detalle del Conductor"
-//         />
-
-//         <main className="p-4 bg-gray-100">
-//           <div className="bg-white shadow-md rounded-lg p-6">
-//             <div className="flex justify-between items-center mb-6">
-//               <h1 className="text-2xl font-bold text-blue-900">
-//                 Detalle del Conductor
-//               </h1>
-//               <button
-//                 onClick={() => window.history.back()}
-//                 className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
-//               >
-//                 Volver
-//               </button>
-//             </div>
-
-//             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-//               <div className="p-4 bg-gray-50 rounded-lg shadow">
-//                 <h2 className="text-lg font-bold text-gray-700 mb-4">
-//                   Información Personal
-//                 </h2>
-//                 <p>
-//                   <strong>Nombre:</strong> {driverData.name || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Documento:</strong> {driverData.document_type}{" "}
-//                   {driverData.document_number}
-//                 </p>
-//                 <p>
-//                   <strong>Teléfono:</strong>{" "}
-//                   {driverData.phone_number || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Email:</strong> {driverData.email || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Dirección:</strong>{" "}
-//                   {driverData.address || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Fecha de Nacimiento:</strong>{" "}
-//                   {driverData.birth_date || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Género:</strong>{" "}
-//                   {driverData.gender || "No disponible"}
-//                 </p>
-//               </div>
-//               <div className="p-4 bg-gray-50 rounded-lg shadow">
-//                 <h2 className="text-lg font-bold text-gray-700 mb-4">
-//                   Licencia
-//                 </h2>
-//                 <p>
-//                   <strong>Número:</strong>{" "}
-//                   {driverData.license_number || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Fecha de Emisión:</strong>{" "}
-//                   {driverData.license_issue_date || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Fecha de Expiración:</strong>{" "}
-//                   {driverData.license_expiration_date || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Clase:</strong>{" "}
-//                   {driverData.license_class || "No disponible"}
-//                 </p>
-//                 <p>
-//                   <strong>Categoría:</strong>{" "}
-//                   {driverData.license_category || "No disponible"}
-//                 </p>
-//                 <img
-//                   src={driverData.image_license || defaultImage}
-//                   alt="Licencia"
-//                   className="w-full h-40 object-cover mt-4 rounded-lg"
-//                   onError={(e) => (e.target.src = defaultImage)}
-//                 />
-//               </div>
-//             </div>
-
-//             <div className="mt-8">
-//               <h2 className="text-xl font-bold text-gray-700 mb-4">
-//                 Vehículos Asociados
-//               </h2>
-//               {driverData.cars && driverData.cars.length > 0 ? (
-//                 driverData.cars.map((car) => (
-//                   <carCard key={car.id} car={car} />
-//                 ))
-//               ) : (
-//                 <p className="text-gray-600">No hay vehículos asociados.</p>
-//               )}
-//             </div>
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DetailDriver;
