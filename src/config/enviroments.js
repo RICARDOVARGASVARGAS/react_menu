@@ -4,12 +4,6 @@ export const API_BASE_URL =
     ? "http://secov_back.test/api" // URL en desarrollo
     : "https://secov-back.sys-code.com/api"); // URL en producción
 
-export const API_STORAGE_URL =
-  import.meta.env.VITE_API_STORAGE_URL ||
-  (import.meta.env.MODE === "development"
-    ? "http://storage_sync.test/api" // URL en desarrollo
-    : "https://storage.sys-code.com/api"); // URL en producción
-
 export const TOKEN_API_STORAGE =
   import.meta.env.VITE_TOKEN_API_STORAGE ||
   (import.meta.env.MODE === "development"

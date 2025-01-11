@@ -29,7 +29,6 @@ const DetailCar = () => {
       included:
         "driver,driver.latestLicense,brand,typeCar,group,year,color,example,latestInspection,latestInsurance,latestPermit",
     });
-    console.log(data);
     setCarData(data);
     setIsLoading(false);
   };

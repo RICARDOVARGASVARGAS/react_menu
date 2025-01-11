@@ -1,8 +1,4 @@
-import {
-  API_BASE_URL,
-  API_STORAGE_URL,
-  TOKEN_API_STORAGE,
-} from "../config/enviroments";
+import { API_BASE_URL } from "../config/enviroments";
 
 export const apiRequest = async (
   endpoint,
@@ -60,11 +56,11 @@ export const apiRequest = async (
 
 // Funciones específicas para cada método
 export const apiGet = (endpoint, params = {}) =>
-  apiRequest(endpoint, "GET", null, false ,params);
+  apiRequest(endpoint, "GET", null, false, params);
 export const apiPost = (endpoint, body, isMultipart = false) =>
   apiRequest(endpoint, "POST", body, isMultipart);
-export const apiPut = (endpoint, body, params = {},isMultipart = false) =>
-  apiRequest(endpoint, "PUT", body, isMultipart,  params);
+export const apiPut = (endpoint, body, params = {}, isMultipart = false) =>
+  apiRequest(endpoint, "PUT", body, isMultipart, params);
 export const apiDelete = (endpoint, params = {}) =>
   apiRequest(endpoint, "DELETE", null, false, params);
 
