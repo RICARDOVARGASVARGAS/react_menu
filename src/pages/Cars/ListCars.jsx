@@ -1,54 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../components/layout/Sidebar";
-import MobileToolbar from "../../components/layout/MobileToolbar";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
-import axios from "axios";
-import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
-import {API_BASE_URL} from "../../config/enviroments";
+import { FaSearch, FaEraser, FaEye } from "react-icons/fa";
+import { apiGet } from "../../services/apiService";
 
 const ListCars = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cars, setCars] = useState([]);
+  const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  const fetchCars = async () => {
+  const fetchItems = async () => {
     setIsLoading(true);
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/getCars?included=brand,typeCar,group,year,color,example`,
-        {
-          params: {
-            page: currentPage,
-            perPage: itemsPerPage,
-            sort: "desc",
-            search: searchQuery,
-          },
-        }
-      );
-
-      const { data, meta } = response.data;
-      console.log(data, meta);
-      setCars(data);
-      setTotalPages(meta.last_page);
-    } catch (error) {
-      console.error("Error fetching cars:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const { data, meta, message } = await apiGet("getCars", {
+      page: currentPage,
+      perPage: itemsPerPage,
+      sort: "desc",
+      search: searchQuery,
+      included: "brand,typeCar,group,year,color,example",
+    });
+    setData(data);
+    setTotalPages(meta.last_page);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchCars();
+    fetchItems();
   }, [currentPage, searchQuery]);
 
   const handleSearch = () => {
@@ -80,36 +63,16 @@ const ListCars = () => {
       className: "bg-green-500 text-white hover:bg-green-600",
       onClick: (car) => navigate(`/cars/${car.id}/view`),
     },
-    // {
-    //     label: <FaEdit />,
-    //     className: "bg-blue-500 text-white hover:bg-blue-600",
-    //     onClick: (car) => navigate(`/edit-car/${car.id}`),
-    // },
   ];
 
   return (
-    <div className="flex max-h-screen md:min-h-screen">
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        activeItem="Detail Driver"
-      />
-
+    <>
       <div className="flex-1 overflow-auto">
-        <MobileToolbar
-          setIsSidebarOpen={setIsSidebarOpen}
-          title="Lista de Autos"
-        />
-
-        <main className="p-4">
+        <main className="p-1">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">Lista de Autos</h1>
-            {/* <button
-                            onClick={() => navigate("/register-car")}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-                        >
-                            <FaPlus /> Agregar Auto
-                        </button> */}
+            <h1 className="text-2xl font-bold text-blue-900">
+              Lista de Vehiculos
+            </h1>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -150,14 +113,14 @@ const ListCars = () => {
                   "Asociación",
                   "Operaciones",
                 ]}
-                data={cars.map((car, index) => ({
+                data={data.map((car, index) => ({
                   id: car.id,
                   plate: car.plate,
-                  brand: car.brand.name,
-                  example: car.example.name,
-                  year: car.year.name,
-                  color: car.color.name,
-                  group: car.group.name,
+                  brand: car.brand?.name,
+                  example: car.example?.name,
+                  year: car.year?.name,
+                  color: car.color?.name,
+                  group: car.group?.name,
                 }))}
                 actions={actions}
               />
@@ -170,7 +133,7 @@ const ListCars = () => {
           )}
         </main>
       </div>
-    </div>
+    </>
   );
 };
 

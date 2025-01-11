@@ -9,8 +9,6 @@ import {
   Calendar,
   CreditCard,
   FileCheck,
-  FileWarning,
-  FileCog,
   ArrowLeft,
   FilePen,
 } from "lucide-react";
@@ -27,13 +25,10 @@ const DetailDriver = () => {
 
   const fechtData = async () => {
     setIsLoading(true);
-    console.log("fechtData");
     const { data } = await apiGet(`getDriver/${driverId}`, {
       included:
         "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense,cars.inspections,cars.insurances,cars.permits,cars.latestInspection,cars.latestInsurance,cars.latestPermit",
     });
-
-    console.log(data);
     setDriverData(data);
     setIsLoading(false);
   };
@@ -43,19 +38,19 @@ const DetailDriver = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-1 md:p-2">
+    <>
       {isLoading && <Loading />}
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex justify-between">
-          <a
+          <button
             onClick={() => navigate(`/driver-data/${driverId}`)}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
           >
             <FilePen className="w-4 h-4" />
             <span className="hidden md:inline">Editar</span>
-          </a>
+          </button>
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/list-drivers")}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -489,7 +484,7 @@ const DetailDriver = () => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

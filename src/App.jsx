@@ -13,6 +13,8 @@ import ListColors from "./pages/Settings/Color/ListColors";
 import MainLayout from "./components/layout/MainLayout";
 import DriverData from "./pages/Drivers/DriverData";
 import DetailDriver from "./pages/Drivers/DetailDriver";
+import ListCars from "./pages/Cars/ListCars";
+import DetailCar from "./pages/Cars/DetailCar";
 
 const App = () => {
   return (
@@ -29,6 +31,9 @@ const App = () => {
           <Route path="/driver-data/:driverId" element={<DriverData />} />
           <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
 
+          {/* Vehiculos */}
+          <Route path="/list-cars" element={<ListCars />} />
+          <Route path="/cars/:carId/view" element={<DetailCar />} />
           {/* Configuraciones */}
           <Route path="/settings/list-brands" element={<ListBrands />} />
           <Route path="/settings/list-years" element={<ListYears />} />
