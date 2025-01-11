@@ -11,4 +11,4 @@ export const TOKEN_API_STORAGE =
     : "7f430e18-5c39-420e-ab04-a264fa96ca7d"); // URL en producción
 
 export const API_DATA_PEOPLE_URL =
-  "https://data-people.codepro-peru.com/api/getPerson"; // URL de la API de personas
+  "https://data-people.sys-code.com/api/getPerson"; // URL de la API de personas
