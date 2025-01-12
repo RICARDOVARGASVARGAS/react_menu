@@ -29,6 +29,7 @@ const EditDriver = ({ driverId }) => {
     setError,
     reset,
     watch,
+    setValue,
   } = useForm({
     defaultValues: {
       document_type: "dni",
@@ -42,6 +43,7 @@ const EditDriver = ({ driverId }) => {
       address: "",
       gender: "M",
       file_driver: "",
+      image: "",
     },
   });
 
@@ -148,9 +150,7 @@ const EditDriver = ({ driverId }) => {
         model_storage: "image",
         storage: `Driver/${driverId}/Profile`,
         onSuccess: ({ file, message }) => {
-          reset({
-            image: file.url,
-          });
+          setValue("image", file.url, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al subir el archivo.");
@@ -172,9 +172,7 @@ const EditDriver = ({ driverId }) => {
         uuid: uuid,
         onSuccess: ({ file, message }) => {
           toast.success(message);
-          reset({
-            image: "",
-          });
+          setValue("image", "", { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al eliminar el archivo.");
@@ -196,9 +194,7 @@ const EditDriver = ({ driverId }) => {
         model_storage: "file_driver",
         storage: `Driver/${driverId}/Document`,
         onSuccess: ({ file, message }) => {
-          reset({
-            file_driver: file.url,
-          });
+          setValue("file_driver", file.url, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al subir el archivo.");
@@ -219,9 +215,7 @@ const EditDriver = ({ driverId }) => {
         uuid: uuid,
         onSuccess: (data) => {
           toast.success("Documento eliminado");
-          reset({
-            file_driver: null,
-          });
+          setValue("file_driver", "", { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al eliminar el documento.");
