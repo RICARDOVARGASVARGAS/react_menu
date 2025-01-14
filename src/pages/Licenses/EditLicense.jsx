@@ -149,10 +149,6 @@ const EditLicense = ({ onClose, licenseId }) => {
                   value: true,
                   message: "El Clase es requerido",
                 },
-                minLength: {
-                  value: 2,
-                  message: "El Clase debe tener al menos 2 caracteres",
-                },
                 maxLength: {
                   value: 10,
                   message: "El Clase no debe exceder los 10 caracteres",
@@ -178,10 +174,6 @@ const EditLicense = ({ onClose, licenseId }) => {
                 required: {
                   value: true,
                   message: "El Categoría es requerido",
-                },
-                minLength: {
-                  value: 2,
-                  message: "El Categoría debe tener al menos 2 caracteres",
                 },
                 maxLength: {
                   value: 10,

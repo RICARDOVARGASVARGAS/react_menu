@@ -56,7 +56,7 @@ const RegisterLicense = ({ onClose, driverId }) => {
         <AiOutlineClose size={20} />
       </button>
 
-      <h2 className="text-2xl font-bold mb-4">Registrar Vehículo</h2>
+      <h2 className="text-2xl font-bold mb-4">Registrar Licencia</h2>
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
@@ -104,10 +104,6 @@ const RegisterLicense = ({ onClose, driverId }) => {
                   value: true,
                   message: "El Clase es requerido",
                 },
-                minLength: {
-                  value: 2,
-                  message: "El Clase debe tener al menos 2 caracteres",
-                },
                 maxLength: {
                   value: 10,
                   message: "El Clase no debe exceder los 10 caracteres",
@@ -133,10 +129,6 @@ const RegisterLicense = ({ onClose, driverId }) => {
                 required: {
                   value: true,
                   message: "El Categoría es requerido",
-                },
-                minLength: {
-                  value: 2,
-                  message: "El Categoría debe tener al menos 2 caracteres",
                 },
                 maxLength: {
                   value: 10,
