@@ -99,7 +99,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
           </li>
           <li>
             <Link
-              to="/tickets"
+              to="/design"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
                 activeItem === "Tickets"
