@@ -6,7 +6,7 @@ const LicenseCard = () => {
       className="flex items-center justify-center p-0.5"
       style={{ width: "8.56cm", height: "5.4cm" }}
     >
-      <div className="w-full h-full bg-gradient-to-br from-green-100 via-white to-blue-100 rounded-lg shadow-xl overflow-hidden relative">
+      <div className="w-full h-full bg-gradient-to-br from-green-100 via-white to-blue-100 rounded-sm shadow-xl overflow-hidden relative">
         {/* Header Section */}
         <div
           className="relative flex items-center justify-between p-0.5"
@@ -21,7 +21,7 @@ const LicenseCard = () => {
             <img
               src="/images/logo.png"
               alt="Municipalidad Logo"
-              className="w-5 h-5"
+              className="w-10 h-auto"
             />
           </div>
 
@@ -43,18 +43,18 @@ const LicenseCard = () => {
 
         {/* Main Content */}
         <div
-          className="px-0.5 py-1 grid grid-cols-3 gap-x-2 gap-y-1 relative bg-cover bg-center"
+          className="px-1 py-1 grid grid-cols-3 gap-x-2 gap-y-1 relative bg-cover bg-center"
           style={{
             backgroundImage: "url('/images/fondo.png')",
             fontSize: "0.35rem",
           }}
         >
           {/* Overlay */}
-          <div className="absolute inset-0 bg-white/80 z-0"></div>
+          <div className="absolute inset-0 bg-white/90 z-0"></div>
 
           {/* First Column */}
           <div className="space-y-0.5 relative z-10">
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 ASOCIACIÓN:
               </label>
@@ -62,7 +62,7 @@ const LicenseCard = () => {
                 ANCO HUALLO
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 PLACA:
               </label>
@@ -70,7 +70,7 @@ const LicenseCard = () => {
                 3088-MA
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 AÑO DE FABRICACIÓN:
               </label>
@@ -78,7 +78,7 @@ const LicenseCard = () => {
                 2018
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 N° MOTOR:
               </label>
@@ -86,7 +86,7 @@ const LicenseCard = () => {
                 AZNJM59517
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 EMISIÓN:
               </label>
@@ -98,7 +98,7 @@ const LicenseCard = () => {
 
           {/* Second Column */}
           <div className="space-y-0.5 relative z-10">
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 PROPIETARIO:
               </label>
@@ -106,7 +106,7 @@ const LicenseCard = () => {
                 WILLIAM QUISPE PILLACA
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 CLASE:
               </label>
@@ -114,7 +114,7 @@ const LicenseCard = () => {
                 Mototaxi
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 MARCA:
               </label>
@@ -122,7 +122,7 @@ const LicenseCard = () => {
                 BAJAJ
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 COLOR:
               </label>
@@ -130,7 +130,7 @@ const LicenseCard = () => {
                 ROJO
               </div>
             </div>
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 CADUCA:
               </label>
@@ -142,7 +142,15 @@ const LicenseCard = () => {
 
           {/* Third Column */}
           <div className="space-y-0.5 relative z-10">
-            <div className="p-0.5 bg-white shadow-md rounded-lg">
+            <div className="p-0.5  shadow-md rounded-sm">
+              <label className="font-bold text-gray-600 text-[0.35rem]">
+                DOCUMENTO:
+              </label>
+              <div className="mt-0.5 text-gray-800 font-bold text-[0.4rem]">
+                70708525
+              </div>
+            </div>
+            <div className="p-0.5  shadow-md rounded-sm">
               <label className="font-bold text-gray-600 text-[0.35rem]">
                 CÓDIGO:
               </label>
@@ -150,7 +158,7 @@ const LicenseCard = () => {
                 77
               </div>
             </div>
-            <div className="pt-4 flex justify-center items-center">
+            <div className="pt-2 flex justify-center items-center">
               <img
                 src="/images/moto.png"
                 alt="Mototaxi"
@@ -162,7 +170,7 @@ const LicenseCard = () => {
 
         {/* Footer */}
         <div
-          className="px-1 py-0.5"
+          className="px-1 py-0.5 h-4 flex justify-center items-center"
           style={{
             background:
               "linear-gradient(135deg, #00bfff 33%, #ff8c00 33%, #ff8c00 66%, #008000 66%)",
