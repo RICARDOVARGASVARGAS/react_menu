@@ -1,8 +1,9 @@
 import React from "react";
 
 const LicenseCard = () => {
+
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center">
       {/* Front Side */}
       <div
         className="w-[8.56cm] h-[5.4cm] flex items-center justify-center p-0.5"
