@@ -3,7 +3,7 @@ import React from "react";
 const LicenseCard = () => {
   const cards: any = [];
 
-  for (let i = 0; i < 23; i++) {
+  for (let i = 0; i < 50; i++) {
     cards.push(
       <div className="flex items-center justify-center my-3" key={i}>
         {/* Front Side */}
@@ -21,7 +21,7 @@ const LicenseCard = () => {
               {/* Logo Section */}
               <div className="flex-shrink-0">
                 <img
-                  src="/images/logo.png"
+                  src="/images/logo-min.png"
                   alt="Municipalidad Logo"
                   className="w-10 h-auto"
                 />
@@ -198,7 +198,7 @@ const LicenseCard = () => {
               {/* Logo Section */}
               <div className="flex-shrink-0">
                 <img
-                  src="/images/logo.png"
+                  src="/images/logo-min.png"
                   alt="Municipalidad Logo"
                   className="w-10 h-auto"
                 />
