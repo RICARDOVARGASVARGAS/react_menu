@@ -44,12 +44,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
       {/* Profile Section */}
       <div className="flex flex-col items-center mt-4 px-4">
         <img
-          src="https://img.freepik.com/vector-gratis/gradiente-azul-usuario_78370-4692.jpg"
+          src="/images/logo-min.jpg"
           alt="Perfil"
           className="w-20 h-20 rounded-full border-2 border-yellow-400"
         />
-        <h2 className="mt-2 text-lg font-semibold">Juan Pérez</h2>
-        <p className="text-sm text-yellow-300">juan.perez@email.com</p>
+        <h2 className="mt-2 text-lg font-semibold">SECOV</h2>
+        <p className="text-sm text-yellow-300">Sistema de Control Vehicular</p>
       </div>
 
       {/* Navigation Options */}
@@ -83,7 +83,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <span className="ml-3 text-sm font-medium">Vehículos</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/history"
               onClick={() => setIsSidebarOpen(false)}
@@ -96,8 +96,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <FaHistory className="text-lg" />
               <span className="ml-3 text-sm font-medium">History</span>
             </Link>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <Link
               to="/design"
               onClick={() => setIsSidebarOpen(false)}
@@ -110,7 +110,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <FaFileAlt className="text-lg" />
               <span className="ml-3 text-sm font-medium">Tickets</span>
             </Link>
-          </li>
+          </li> */}
           {/* Configuración */}
           <li>
             <button

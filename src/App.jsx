@@ -15,13 +15,13 @@ import DriverData from "./pages/Drivers/DriverData";
 import DetailDriver from "./pages/Drivers/DetailDriver";
 import ListCars from "./pages/Cars/ListCars";
 import DetailCar from "./pages/Cars/DetailCar";
-import LicenseCard from "./pages/Design";
+import CardPermit from "./pages/Cars/CardPermit";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/design" element={<LicenseCard />} />
+        <Route path="/card-permit/:carId" element={<CardPermit />} />
         {/* Layout Principal */}
         <Route path="/" element={<MainLayout />}>
           {/* Rutas principales */}

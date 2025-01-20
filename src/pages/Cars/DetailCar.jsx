@@ -14,7 +14,6 @@ import {
   CreditCard,
   FileCheck,
   ArrowLeft,
-  FilePen,
 } from "lucide-react";
 
 const DetailCar = () => {
@@ -53,6 +52,18 @@ const DetailCar = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden md:inline">Volver</span>
           </button>
+          {carData.driver?.latest_license?.is_valid &&
+            carData.latest_permit?.is_valid &&
+            carData.latest_insurance?.is_valid &&
+            carData.latest_inspection?.is_valid && (
+              <button
+                onClick={() => window.open(`/card-permit/${carId}`, "_blank")}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+              >
+                <FileCheck className="w-4 h-4" />
+                <span className="hidden md:inline">TARJETA DE CIRCULACIÓN</span>
+              </button>
+            )}
         </div>
 
         {/* Personal Information Card */}
@@ -233,7 +244,7 @@ const DetailCar = () => {
           {/* car Cards */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-             Datos del Vehículo
+              Datos del Vehículo
             </h3>
             <div className="grid md:grid-cols-3 gap-4">
               <div>
@@ -254,15 +265,21 @@ const DetailCar = () => {
               </div>
               <div>
                 <p className="text-gray-600">Marca</p>
-                <p className="font-semibold capitalize">{carData.brand?.name}</p>
+                <p className="font-semibold capitalize">
+                  {carData.brand?.name}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Modelo/Clase</p>
-                <p className="font-semibold capitalize">{carData.example?.name}</p>
+                <p className="font-semibold capitalize">
+                  {carData.example?.name}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Tipo</p>
-                <p className="font-semibold capitalize">{carData.typeCar?.name}</p>
+                <p className="font-semibold capitalize">
+                  {carData.typeCar?.name}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">Año</p>
@@ -270,7 +287,9 @@ const DetailCar = () => {
               </div>
               <div>
                 <p className="text-gray-600">Asociación</p>
-                <p className="font-semibold capitalize">{carData.group?.name}</p>
+                <p className="font-semibold capitalize">
+                  {carData.group?.name}
+                </p>
               </div>
               <div>
                 <p className="text-gray-600">N° de Asociación</p>
@@ -285,7 +304,9 @@ const DetailCar = () => {
                     className="w-6 h-6 rounded-full border"
                     style={{ backgroundColor: carData.color?.hex }}
                   />
-                  <p className="font-semibold capitalize">{carData.color?.name}</p>
+                  <p className="font-semibold capitalize">
+                    {carData.color?.name}
+                  </p>
                 </div>
               </div>
               <div className=""></div>
@@ -337,7 +358,9 @@ const DetailCar = () => {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {carData.latest_inspection?.is_valid ? "Activo" : "Inactivo"}
+                    {carData.latest_inspection?.is_valid
+                      ? "Activo"
+                      : "Inactivo"}
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 text-sm">
