@@ -16,46 +16,46 @@ import DetailDriver from "./pages/Drivers/DetailDriver";
 import ListCars from "./pages/Cars/ListCars";
 import DetailCar from "./pages/Cars/DetailCar";
 import CardPermit from "./pages/Cars/CardPermit";
+import Login from "./pages/Auth/Login";
+import { AuthProvider } from "./hooks/AuthContext"; // Importa el AuthProvider
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/card-permit/:carId" element={<CardPermit />} />
-        {/* Layout Principal */}
-        <Route path="/" element={<MainLayout />}>
-          {/* Rutas principales */}
-          <Route path="*" element={<Home />} />
+    <AuthProvider>
+      {" "}
+      {/* Envuelve todo con AuthProvider */}
+      <Router>
+        <Routes>
+          <Route path="/card-permit/:carId" element={<CardPermit />} />
+          <Route path="/login" element={<Login />} />
+          {/* Layout Principal */}
+          <Route path="/" element={<MainLayout />}>
+            {/* Rutas principales */}
+            <Route path="*" element={<Home />} />
 
-          {/* Conductores */}
-          <Route path="/list-drivers" element={<ListDrivers />} />
-          <Route path="/register-driver" element={<RegisterDriver />} />
-          <Route path="/driver-data/:driverId" element={<DriverData />} />
-          <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
+            {/* Conductores */}
+            <Route path="/list-drivers" element={<ListDrivers />} />
+            <Route path="/register-driver" element={<RegisterDriver />} />
+            <Route path="/driver-data/:driverId" element={<DriverData />} />
+            <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
 
-          {/* Vehiculos */}
-          <Route path="/list-cars" element={<ListCars />} />
-          <Route path="/cars/:carId/view" element={<DetailCar />} />
-          {/* Configuraciones */}
-          <Route path="/settings/list-brands" element={<ListBrands />} />
-          <Route path="/settings/list-years" element={<ListYears />} />
-          <Route path="/settings/list-examples" element={<ListExamples />} />
-          <Route path="/settings/list-groups" element={<ListGroups />} />
-          <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
-          <Route path="/settings/list-colors" element={<ListColors />} />
-        </Route>
+            {/* Vehiculos */}
+            <Route path="/list-cars" element={<ListCars />} />
+            <Route path="/cars/:carId/view" element={<DetailCar />} />
+            {/* Configuraciones */}
+            <Route path="/settings/list-brands" element={<ListBrands />} />
+            <Route path="/settings/list-years" element={<ListYears />} />
+            <Route path="/settings/list-examples" element={<ListExamples />} />
+            <Route path="/settings/list-groups" element={<ListGroups />} />
+            <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
+            <Route path="/settings/list-colors" element={<ListColors />} />
+          </Route>
+        </Routes>
 
-        {/* <Route path="/" element={<Home />} />
-         */}
-        {/* VEHICULOS */}
-        {/* <Route path="/list-cars" element={<ListCars />} />
-        <Route path="/cars/:carId/view" element={<DetailCar />} />
-        <Route path="*" element={<Home />} /> */}
-      </Routes>
-
-      {/* Agregar ToastContainer en el componente raíz */}
-      <ToastContainer />
-    </Router>
+        {/* Agregar ToastContainer en el componente raíz */}
+        <ToastContainer />
+      </Router>
+    </AuthProvider>
   );
 };
 
