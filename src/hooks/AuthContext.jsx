@@ -26,12 +26,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiPost("auth/login", credentials);
       const { user, token } = response;
+      console.log("user", user);
 
       setUser(user);
       setToken(token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
     } catch (error) {
+      console.log("error", error);
       console.error("Error en el login:", error);
       throw error;
     }
@@ -45,8 +47,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       console.log(message);
+      
     } catch (error) {
       console.error("Error en el logout:", error);
+      throw error;
     }
   };
 
