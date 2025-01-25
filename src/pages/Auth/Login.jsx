@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useAuth } from "../../hooks/AuthContext"; // Importa el hook useAuth
-import { toast } from "react-toastify";
+import Loading from "../../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -15,8 +17,8 @@ const Login = () => {
     watch,
   } = useForm({
     defaultValues: {
-      username: "",
-      password: "",
+      username: "12345678",
+      password: "password",
     },
   });
 
@@ -26,10 +28,9 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(formData);
-      // Redirigir al usuario a la página de inicio o dashboard luego del login
+      navigate("/"); // Redirección a la página principal
     } catch (error) {
       handleBackendErrors(error, setError);
-      toast.error(error.message || "Error en el login");
     } finally {
       setIsLoading(false);
     }
@@ -37,6 +38,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
+      {isLoading && <Loading />}
       {/* Lado izquierdo: Imagen de fondo (solo en desktop) */}
       <div
         className="hidden lg:block flex-1 bg-cover bg-center"

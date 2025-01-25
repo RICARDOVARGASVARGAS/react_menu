@@ -96,7 +96,8 @@ export const apiFetch = async (
       const error = await response.json();
       throw {
         status: response.status,
-        message: error.message || "Error al realizar la solicitud.",
+        message:
+          error.error || error.message || "Error al realizar la solicitud.",
         errors: error.errors || {},
       };
     }

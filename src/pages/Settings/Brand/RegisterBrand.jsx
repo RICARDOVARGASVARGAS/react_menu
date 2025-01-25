@@ -43,7 +43,7 @@ const RegisterBrand = ({ onClose }) => {
 
   return (
     <div className="container mx-auto p-2 bg-white shadow-lg rounded-lg relative max-h-[80vh] overflow-y-auto">
-      {/* {isLoading && <Loading />} */}
+      {isLoading && <Loading />}
 
       <button
         onClick={onClose}
