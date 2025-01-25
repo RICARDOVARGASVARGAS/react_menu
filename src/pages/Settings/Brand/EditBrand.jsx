@@ -7,6 +7,7 @@ import { apiGet, apiPut, apiDelete } from "../../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import DeleteModal from "../../../components/elements/DeleteModal";
+import ProtectedComponent from "../../../components/ProtectedComponent";
 
 const EditBrand = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +42,6 @@ const EditBrand = ({ onClose, itemId }) => {
     }
     setIsLoading(false);
   };
-
 
   // Manejar el envío del formulario
   const onSubmit = handleSubmit(async (data) => {
@@ -127,14 +127,16 @@ const EditBrand = ({ onClose, itemId }) => {
           </div>
         </div>
         <div className="flex justify-end mt-6 gap-4">
-          <button
-            type="button"
-            onClick={() => setShowDeleteModal(true)}
-            className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
-          >
-            <FaTrash />
-            Eliminar
-          </button>
+          <ProtectedComponent requiredPermissions={"brand.destroy"}>
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
+            >
+              <FaTrash />
+              Eliminar
+            </button>
+          </ProtectedComponent>
           <button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded flex items-center gap-2"

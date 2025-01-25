@@ -6,8 +6,11 @@ import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import RegisterTypeCar from "./RegisterTypeCar";
 import EditTypeCar from "./EditTypeCar";
 import { apiGet } from "../../../services/apiService";
+import ProtectedComponent from "../../../components/ProtectedComponent";
+import { useAuth } from "../../../hooks/AuthContext";
 
 const ListTypeCars = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,26 +74,30 @@ const ListTypeCars = () => {
     }
   };
 
-  const actions = [
-    {
-      label: <FaEdit />,
-      className: "bg-blue-500 text-white hover:bg-blue-600",
-      onClick: (item) => handleOpenModal("edit", item.id),
-    },
-  ];
+  const actions = [];
 
+  // Edición (permiso único)
+  if (user?.permissions?.includes("type.edit")) {
+    actions.push({
+      label: <FaEdit />,
+      className: "bg-blue-500 hover:bg-blue-600 text-white",
+      onClick: (item) => handleOpenModal("edit", item.id),
+    });
+  }
   return (
     <>
       <div className="flex-1 overflow-auto">
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">Lista de Tipos</h1>
-            <button
-              onClick={() => handleOpenModal("add")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar
-            </button>
+            <ProtectedComponent requiredPermissions={"type.create"}>
+              <button
+                onClick={() => handleOpenModal("add")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -120,19 +127,21 @@ const ListTypeCars = () => {
             <Loading /> // Muestra el componente Loading durante la carga
           ) : (
             <>
-              <Table
-                headers={["N°", "Nombre", "Operaciones"]}
-                data={data.map((item, index) => ({
-                  id: item.id,
-                  name: item.name,
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"type.index"}>
+                <Table
+                  headers={["N°", "Nombre", "Operaciones"]}
+                  data={data.map((item, index) => ({
+                    id: item.id,
+                    name: item.name,
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

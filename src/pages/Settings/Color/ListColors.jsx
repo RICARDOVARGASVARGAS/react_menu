@@ -7,8 +7,11 @@ import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import RegisterColor from "./RegisterColor";
 import EditColor from "./EditColor";
 import { apiGet } from "../../../services/apiService";
+import ProtectedComponent from "../../../components/ProtectedComponent";
+import { useAuth } from "../../../hooks/AuthContext";
 
 const ListColors = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,13 +75,16 @@ const ListColors = () => {
     }
   };
 
-  const actions = [
-    {
+  const actions = [];
+
+  // Edición (permiso único)
+  if (user?.permissions?.includes("color.edit")) {
+    actions.push({
       label: <FaEdit />,
-      className: "bg-blue-500 text-white hover:bg-blue-600",
+      className: "bg-blue-500 hover:bg-blue-600 text-white",
       onClick: (item) => handleOpenModal("edit", item.id),
-    },
-  ];
+    });
+  }
 
   return (
     <>
@@ -88,12 +94,14 @@ const ListColors = () => {
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Colores
             </h1>
-            <button
-              onClick={() => handleOpenModal("add")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar
-            </button>
+            <ProtectedComponent requiredPermissions={"color.create"}>
+              <button
+                onClick={() => handleOpenModal("add")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -123,26 +131,28 @@ const ListColors = () => {
             <Loading />
           ) : (
             <>
-              <Table
-                headers={["N°", "Nombre", "Hex", "Operaciones"]}
-                data={data.map((item, index) => ({
-                  id: item.id,
-                  name: item.name,
-                  hex: (
-                    <span
-                      className="block w-6 h-6 rounded-full border border-gray-300"
-                      style={{ backgroundColor: item.hex }}
-                      title={item.hex} // Tooltip con el valor hexadecimal
-                    ></span>
-                  ),
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"color.index"}>
+                <Table
+                  headers={["N°", "Nombre", "Hex", "Operaciones"]}
+                  data={data.map((item, index) => ({
+                    id: item.id,
+                    name: item.name,
+                    hex: (
+                      <span
+                        className="block w-6 h-6 rounded-full border border-gray-300"
+                        style={{ backgroundColor: item.hex }}
+                        title={item.hex} // Tooltip con el valor hexadecimal
+                      ></span>
+                    ),
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

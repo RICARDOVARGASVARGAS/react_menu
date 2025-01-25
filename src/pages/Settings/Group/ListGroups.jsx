@@ -6,8 +6,11 @@ import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import RegisterGroup from "./RegisterGroup";
 import EditGroup from "./EditGroup";
 import { apiGet } from "../../../services/apiService";
+import ProtectedComponent from "../../../components/ProtectedComponent";
+import { useAuth } from "../../../hooks/AuthContext";
 
 const ListGroups = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,13 +74,16 @@ const ListGroups = () => {
     }
   };
 
-  const actions = [
-    {
+  const actions = [];
+
+  // Edición (permiso único)
+  if (user?.permissions?.includes("group.edit")) {
+    actions.push({
       label: <FaEdit />,
-      className: "bg-blue-500 text-white hover:bg-blue-600",
+      className: "bg-blue-500 hover:bg-blue-600 text-white",
       onClick: (item) => handleOpenModal("edit", item.id),
-    },
-  ];
+    });
+  }
 
   return (
     <>
@@ -87,12 +93,14 @@ const ListGroups = () => {
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Asociaciones
             </h1>
-            <button
-              onClick={() => handleOpenModal("add")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar
-            </button>
+            <ProtectedComponent requiredPermissions={"group.create"}>
+              <button
+                onClick={() => handleOpenModal("add")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -119,22 +127,24 @@ const ListGroups = () => {
           </div>
 
           {isLoading ? (
-            <Loading /> // Muestra el componente Loading durante la carga
+            <Loading />
           ) : (
             <>
-              <Table
-                headers={["N°", "Nombre", "Operaciones"]}
-                data={data.map((item, index) => ({
-                  id: item.id,
-                  name: item.name,
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"group.index"}>
+                <Table
+                  headers={["N°", "Nombre", "Operaciones"]}
+                  data={data.map((item, index) => ({
+                    id: item.id,
+                    name: item.name,
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

@@ -130,19 +130,21 @@ const ListBrands = () => {
             <Loading /> // Muestra el componente Loading durante la carga
           ) : (
             <>
-              <Table
-                headers={["N°", "Nombre", "Operaciones"]}
-                data={data.map((item, index) => ({
-                  id: item.id,
-                  name: item.name,
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"brand.index"}>
+                <Table
+                  headers={["N°", "Nombre", "Operaciones"]}
+                  data={data.map((item, index) => ({
+                    id: item.id,
+                    name: item.name,
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

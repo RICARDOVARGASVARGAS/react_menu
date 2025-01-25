@@ -6,8 +6,11 @@ import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
 import RegisterYear from "./RegisterYear";
 import EditYear from "./EditYear";
 import { apiGet } from "../../../services/apiService";
+import ProtectedComponent from "../../../components/ProtectedComponent";
+import { useAuth } from "../../../hooks/AuthContext";
 
 const ListYears = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,13 +74,16 @@ const ListYears = () => {
     }
   };
 
-  const actions = [
-    {
+  const actions = [];
+
+  // Edición (permiso único)
+  if (user?.permissions?.includes("year.edit")) {
+    actions.push({
       label: <FaEdit />,
-      className: "bg-blue-500 text-white hover:bg-blue-600",
+      className: "bg-blue-500 hover:bg-blue-600 text-white",
       onClick: (item) => handleOpenModal("edit", item.id),
-    },
-  ];
+    });
+  }
 
   return (
     <>
@@ -85,12 +91,14 @@ const ListYears = () => {
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">Lista de Años</h1>
-            <button
-              onClick={() => handleOpenModal("add")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar
-            </button>
+            <ProtectedComponent requiredPermissions={"year.create"}>
+              <button
+                onClick={() => handleOpenModal("add")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -120,19 +128,21 @@ const ListYears = () => {
             <Loading />
           ) : (
             <>
-              <Table
-                headers={["N°", "Nombre", "Operaciones"]}
-                data={data.map((item, index) => ({
-                  id: item.id,
-                  name: item.name,
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"year.index"}>
+                <Table
+                  headers={["N°", "Nombre", "Operaciones"]}
+                  data={data.map((item, index) => ({
+                    id: item.id,
+                    name: item.name,
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>
