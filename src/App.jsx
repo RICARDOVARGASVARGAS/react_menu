@@ -37,49 +37,147 @@ const App = () => {
             }
           />
 
-          {/* Rutas protegidas */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          ></Route>
+          <Route path="/" element={<MainLayout />}>
+            {/* Rutas protegidas */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            ></Route>
 
-          {/* Ruta con permisos específicos */}
-          <Route
-            path="/settings/list-brands"
-            element={
-              <ProtectedRoute requiredPermissions={["brand.index"]}>
-                <ListBrands />
-              </ProtectedRoute>
-            }
-          />
+            {/* Ruta con permisos específicos */}
+
+            <Route
+              path="/list-drivers"
+              element={
+                <ProtectedRoute requiredPermissions={["driver.index"]}>
+                  <ListDrivers />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/register-driver"
+              element={
+                <ProtectedRoute requiredPermissions={["driver.create"]}>
+                  <RegisterDriver />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/driver-data/:driverId"
+              element={
+                <ProtectedRoute requiredPermissions={["driver.edit"]}>
+                  <DriverData />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/drivers/:driverId/view"
+              element={
+                <ProtectedRoute requiredPermissions={["driver.detail"]}>
+                  <DetailDriver />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* <Route path="/driver-data/:driverId" element={<DriverData />} /> */}
+            {/* <Route path="/drivers/:driverId/view" element={<DetailDriver />} /> */}
+
+            <Route
+              path="/list-cars"
+              element={
+                <ProtectedRoute requiredPermissions={["car.index"]}>
+                  <ListCars />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/cars/:carId/view"
+              element={
+                <ProtectedRoute requiredPermissions={["car.detail"]}>
+                  <DetailCar />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/card-permit/:carId"
+              element={
+                <ProtectedRoute requiredPermissions={["car.detail"]}>
+                  <CardPermit />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* <Route path="/list-cars" element={<ListCars />} /> */}
+            {/* <Route path="/cars/:carId/view" element={<DetailCar />} /> */}
+
+            {/* <Route path="/card-permit/:carId" element={<CardPermit />} /> */}
+
+            <Route
+              path="/settings/list-brands"
+              element={
+                <ProtectedRoute requiredPermissions={["brand.index"]}>
+                  <ListBrands />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings/list-years"
+              element={
+                <ProtectedRoute requiredPermissions={["year.index"]}>
+                  <ListYears />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings/list-examples"
+              element={
+                <ProtectedRoute requiredPermissions={["example.index"]}>
+                  <ListExamples />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings/list-groups"
+              element={
+                <ProtectedRoute requiredPermissions={["group.index"]}>
+                  <ListGroups />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings/list-type-cars"
+              element={
+                <ProtectedRoute requiredPermissions={["type.index"]}>
+                  <ListTypeCars />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings/list-colors"
+              element={
+                <ProtectedRoute requiredPermissions={["color.index"]}>
+                  <ListColors />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
           {/* Ruta no encontrada */}
           <Route path="*" element={<Navigate to="/" replace />} />
-
-          {/* <Route path="/card-permit/:carId" element={<CardPermit />} /> */}
-
-          {/* <Route path="/" element={<MainLayout />}>
-            <Route path="*" element={<Home />} />
-
-            <Route path="/list-drivers" element={<ListDrivers />} />
-            <Route path="/register-driver" element={<RegisterDriver />} />
-            <Route path="/driver-data/:driverId" element={<DriverData />} />
-            <Route path="/drivers/:driverId/view" element={<DetailDriver />} />
-
-            <Route path="/list-cars" element={<ListCars />} />
-            <Route path="/cars/:carId/view" element={<DetailCar />} />
-
-            <Route path="/settings/list-brands" element={<ListBrands />} />
-            <Route path="/settings/list-years" element={<ListYears />} />
-            <Route path="/settings/list-examples" element={<ListExamples />} />
-            <Route path="/settings/list-groups" element={<ListGroups />} />
-            <Route path="/settings/list-type-cars" element={<ListTypeCars />} />
-            <Route path="/settings/list-colors" element={<ListColors />} />
-          </Route> */}
         </Routes>
 
         {/* Agregar ToastContainer en el componente raíz */}
