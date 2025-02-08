@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   FaUserCircle,
   FaCar,
@@ -15,10 +15,12 @@ import {
   FaCalendarAlt,
   FaUsers,
   FaPalette,
+  FaUserTag,
 } from "react-icons/fa";
 
-const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
-  const [isConfigOpen, setIsConfigOpen] = useState(false); // Estado para controlar el desplegable de Configuración
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <aside
@@ -60,7 +62,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/list-drivers"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Drivers"
+                location.pathname === "/list-drivers"
                   ? "bg-blue-700 text-white"
                   : "hover:bg-blue-700"
               }`}
@@ -74,7 +76,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               to="/list-cars"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Vehicles"
+                location.pathname === "/list-cars"
                   ? "bg-blue-700 text-white"
                   : "hover:bg-blue-700"
               }`}
@@ -83,34 +85,20 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
               <span className="ml-3 text-sm font-medium">Vehículos</span>
             </Link>
           </li>
-          {/* <li>
+          <li>
             <Link
-              to="/history"
+              to="/list-roles"
               onClick={() => setIsSidebarOpen(false)}
               className={`flex items-center py-3 px-4 transition ${
-                activeItem === "History"
+                location.pathname === "/list-roles"
                   ? "bg-blue-700 text-white"
                   : "hover:bg-blue-700"
               }`}
             >
-              <FaHistory className="text-lg" />
-              <span className="ml-3 text-sm font-medium">History</span>
+              <FaUserTag className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Roles</span>
             </Link>
-          </li> */}
-          {/* <li>
-            <Link
-              to="/design"
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center py-3 px-4 transition ${
-                activeItem === "Tickets"
-                  ? "bg-blue-700 text-white"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              <FaFileAlt className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Tickets</span>
-            </Link>
-          </li> */}
+          </li>
           {/* Configuración */}
           <li>
             <button
@@ -132,7 +120,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-brands"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-brands"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaTrademark className="text-lg" />
                     <span className="ml-3">Marcas</span>
@@ -142,9 +134,8 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-examples"
                     onClick={() => setIsSidebarOpen(false)}
-                    // className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
-                    className={`flex items-center py-3 px-4 transition ${
-                      activeItem === "Examples"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-examples"
                         ? "bg-blue-700 text-white"
                         : "hover:bg-blue-700"
                     }`}
@@ -157,7 +148,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-years"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-years"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaCalendarAlt className="text-lg" />
                     <span className="ml-3">Años</span>
@@ -167,7 +162,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-type-cars"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-type-cars"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaCar className="text-lg" />
                     <span className="ml-3">Tipos</span>
@@ -177,7 +176,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-groups"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-groups"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaUsers className="text-lg" />
                     <span className="ml-3">Asociaciones</span>
@@ -187,7 +190,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, activeItem }) => {
                   <Link
                     to="/settings/list-colors"
                     onClick={() => setIsSidebarOpen(false)}
-                    className="flex items-center py-2 px-4 text-sm transition hover:bg-blue-700"
+                    className={`flex items-center py-2 px-4 text-sm transition ${
+                      location.pathname === "/settings/list-colors"
+                        ? "bg-blue-700 text-white"
+                        : "hover:bg-blue-700"
+                    }`}
                   >
                     <FaPalette className="text-lg" />
                     <span className="ml-3">Colores</span>

@@ -21,6 +21,7 @@ import { AuthProvider } from "./hooks/AuthContext"; // Importa el AuthProvider
 import PublicRoute from "./components/auth/PublicRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Navigate } from "react-router-dom";
+import ListRoles from "./pages/Role/ListRoles";
 
 const App = () => {
   return (
@@ -174,6 +175,15 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/list-roles"
+              element={
+                <ProtectedRoute>
+                  <ListRoles />
+                </ProtectedRoute>
+              }
+            ></Route>
           </Route>
 
           {/* Ruta no encontrada */}
