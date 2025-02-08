@@ -99,6 +99,20 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               <span className="ml-3 text-sm font-medium">Roles</span>
             </Link>
           </li>
+          <li>
+            <Link
+              to="/list-users"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-4 transition ${
+                location.pathname === "/list-users"
+                  ? "bg-blue-700 text-white"
+                  : "hover:bg-blue-700"
+              }`}
+            >
+              <FaUsers className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Usuarios</span>
+            </Link>
+          </li>
           {/* Configuración */}
           <li>
             <button

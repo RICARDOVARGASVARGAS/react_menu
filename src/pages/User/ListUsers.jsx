@@ -3,12 +3,12 @@ import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
 import { FaSearch, FaEraser, FaEdit, FaPlus, FaKey } from "react-icons/fa";
-import RegisterRole from "./RegisterRole";
-import EditRole from "./EditRole";
+import RegisterUser from "./RegisterUser";
+import EditUser from "./EditUser";
 import { apiGet } from "../../services/apiService";
-import RolePermission from "./RolePermission";
+import UserRole from "./UserRole";
 
-const ListRoles = () => {
+const ListUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +34,7 @@ const ListRoles = () => {
 
   const fetchItems = async () => {
     setIsLoading(true);
-    const { data, meta, message } = await apiGet("role/getRoles", {
+    const { data, meta, message } = await apiGet("user/getUsers", {
       page: currentPage,
       perPage: itemsPerPage,
       sort: "desc",
@@ -80,12 +80,12 @@ const ListRoles = () => {
     className: "bg-blue-500 hover:bg-blue-600 text-white",
     onClick: (item) => handleOpenModal("edit", item.id),
   });
-  
-  // Permisos
+
+  // Roles
   actions.push({
     label: <FaKey />,
     className: "bg-green-500 hover:bg-green-600 text-white",
-    onClick: (item) => handleOpenModal("permission", item.id),
+    onClick: (item) => handleOpenModal("role", item.id),
   });
 
   return (
@@ -93,7 +93,9 @@ const ListRoles = () => {
       <div className="flex-1 overflow-auto">
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">Lista de Roles</h1>
+            <h1 className="text-2xl font-bold text-blue-900">
+              Lista de Usuarios
+            </h1>
             <button
               onClick={() => handleOpenModal("add")}
               className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
@@ -126,14 +128,15 @@ const ListRoles = () => {
           </div>
 
           {isLoading ? (
-            <Loading /> // Muestra el componente Loading durante la carga
+            <Loading />
           ) : (
             <>
               <Table
                 headers={["N°", "Nombre", "Operaciones"]}
                 data={data.map((item, index) => ({
                   id: item.id,
-                  name: item.name,
+                  name:
+                    item.name + " " + item.first_name + " " + item.last_name,
                 }))}
                 actions={actions}
               />
@@ -150,7 +153,7 @@ const ListRoles = () => {
       {isOpenModal === "add" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <RegisterRole onClose={handleCloseModal} />
+            <RegisterUser onClose={handleCloseModal} />
           </div>
         </div>
       )}
@@ -159,7 +162,7 @@ const ListRoles = () => {
       {isOpenModal === "edit" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <EditRole onClose={handleCloseModal} itemId={selectItemId} />
+            <EditUser onClose={handleCloseModal} itemId={selectItemId} />
           </div>
         </div>
       )}
@@ -168,7 +171,7 @@ const ListRoles = () => {
       {isOpenModal === "permission" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-            <RolePermission onClose={handleCloseModal} itemId={selectItemId} />
+            <UserRole onClose={handleCloseModal} itemId={selectItemId} />
           </div>
         </div>
       )}
@@ -176,4 +179,4 @@ const ListRoles = () => {
   );
 };
 
-export default ListRoles;
+export default ListUsers;

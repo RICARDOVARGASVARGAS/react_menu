@@ -22,6 +22,7 @@ import PublicRoute from "./components/auth/PublicRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Navigate } from "react-router-dom";
 import ListRoles from "./pages/Role/ListRoles";
+import ListUsers from "./pages/User/ListUsers";
 
 const App = () => {
   return (
@@ -181,6 +182,15 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <ListRoles />
+                </ProtectedRoute>
+              }
+            ></Route>
+
+            <Route
+              path="/list-users"
+              element={
+                <ProtectedRoute>
+                  <ListUsers />
                 </ProtectedRoute>
               }
             ></Route>
