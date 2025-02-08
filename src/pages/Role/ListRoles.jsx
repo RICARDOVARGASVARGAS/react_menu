@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
-import { FaSearch, FaEraser, FaEdit, FaPlus } from "react-icons/fa";
+import { FaSearch, FaEraser, FaEdit, FaPlus, FaKey } from "react-icons/fa";
 import RegisterRole from "./RegisterRole";
 import EditRole from "./EditRole";
 import { apiGet } from "../../services/apiService";
-import ProtectedComponent from "../../components/ProtectedComponent";
 import { useAuth } from "../../hooks/AuthContext";
+import RolePermission from "./RolePermission";
 
 const ListRoles = () => {
   const { user } = useAuth();
@@ -85,22 +85,25 @@ const ListRoles = () => {
     });
   }
 
+  // Permisos
+  actions.push({
+    label: <FaKey />,
+    className: "bg-green-500 hover:bg-green-600 text-white",
+    onClick: (item) => handleOpenModal("permission", item.id),
+  });
+
   return (
     <>
       <div className="flex-1 overflow-auto">
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-blue-900">
-              Lista de Marcas
-            </h1>
-            <ProtectedComponent requiredPermissions={"brand.create"}>
-              <button
-                onClick={() => handleOpenModal("add")}
-                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-              >
-                <FaPlus /> Agregar
-              </button>
-            </ProtectedComponent>
+            <h1 className="text-2xl font-bold text-blue-900">Lista de Roles</h1>
+            <button
+              onClick={() => handleOpenModal("add")}
+              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+            >
+              <FaPlus /> Agregar
+            </button>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -130,21 +133,19 @@ const ListRoles = () => {
             <Loading /> // Muestra el componente Loading durante la carga
           ) : (
             <>
-              <ProtectedComponent requiredPermissions={"brand.index"}>
-                <Table
-                  headers={["N°", "Nombre", "Operaciones"]}
-                  data={data.map((item, index) => ({
-                    id: item.id,
-                    name: item.name,
-                  }))}
-                  actions={actions}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </ProtectedComponent>
+              <Table
+                headers={["N°", "Nombre", "Operaciones"]}
+                data={data.map((item, index) => ({
+                  id: item.id,
+                  name: item.name,
+                }))}
+                actions={actions}
+              />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </>
           )}
         </main>
@@ -163,6 +164,15 @@ const ListRoles = () => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <EditRole onClose={handleCloseModal} itemId={selectItemId} />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Permisos */}
+      {isOpenModal === "permission" && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full">
+            <RolePermission onClose={handleCloseModal} itemId={selectItemId} />
           </div>
         </div>
       )}
