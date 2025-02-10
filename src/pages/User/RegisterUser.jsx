@@ -332,7 +332,14 @@ const RegisterUser = ({ onClose }) => {
               <button
                 type="button"
                 className="bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-700"
-                onClick={() => reset()}
+                onClick={() => reset({
+                  document: "",
+                  name: "",
+                  first_name: "",
+                  last_name: "",
+                  email: "",
+                  phone_number: "",
+                })}
               >
                 <FaEraser />
                 Limpiar

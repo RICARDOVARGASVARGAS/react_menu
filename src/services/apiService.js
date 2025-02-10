@@ -42,6 +42,7 @@ export const apiRequest = async (
         status: response.status,
         message: error.message || "Error al realizar la solicitud.",
         errors: error.errors || {},
+        success: error.success || false,
       };
     }
 
