@@ -168,7 +168,7 @@ const ListUsers = () => {
       )}
 
       {/* Modal de Permisos */}
-      {isOpenModal === "permission" && (
+      {isOpenModal === "role" && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <UserRole onClose={handleCloseModal} itemId={selectItemId} />

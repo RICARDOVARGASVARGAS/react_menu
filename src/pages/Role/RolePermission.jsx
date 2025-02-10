@@ -25,6 +25,8 @@ const RolePermission = ({ onClose, itemId }) => {
       const roleResponse = await apiGet(`role/getRole/${itemId}`, {
         included: "permissions",
       });
+
+      console.log(roleResponse);
       const {
         data: roleData,
         message: roleMessage,
