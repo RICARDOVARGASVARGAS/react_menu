@@ -7,6 +7,9 @@ export const apiRequest = async (
   isMultipart = false, // Indica si se envía multipart
   params = {}
 ) => {
+  // Obtener el token del localStorage o del contexto de autenticación
+  const token = localStorage.getItem("token"); // O usa el contexto de autenticación si lo tienes
+
   // Crear los parámetros de consulta si existen
   const queryString = new URLSearchParams(params).toString();
   const url = queryString
@@ -16,14 +19,12 @@ export const apiRequest = async (
   // Configuración de la solicitud
   const options = {
     method,
-    headers: isMultipart
-      ? {
-          Accept: "application/json",
-        } // No configuramos `Content-Type` para `FormData`
-      : {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+    headers: {
+      ...(isMultipart
+        ? { Accept: "application/json" } // No configuramos `Content-Type` para `FormData`
+        : { "Content-Type": "application/json", Accept: "application/json" }),
+      ...(token && { Authorization: `Bearer ${token}` }), // Añadir el token si existe
+    },
   };
 
   // Si hay un cuerpo de solicitud, lo agregamos al objeto de opciones
@@ -50,7 +51,6 @@ export const apiRequest = async (
     return response.json();
   } catch (error) {
     // Relanzamos el error para que sea manejado en la capa superior
-    // console.log(error);
     throw error;
   }
 };
@@ -72,6 +72,9 @@ export const apiFetch = async (
   method = "GET",
   body = null
 ) => {
+  // Obtener el token del localStorage o del contexto de autenticación
+  const token = localStorage.getItem("token"); // O usa el contexto de autenticación si lo tienes
+
   // Crear los parámetros de consulta si existen
   const queryString = new URLSearchParams(params).toString();
   const url = queryString ? `${endpoint}?${queryString}` : `${endpoint}`;
@@ -82,6 +85,7 @@ export const apiFetch = async (
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }), // Añadir el token si existe
     },
   };
 

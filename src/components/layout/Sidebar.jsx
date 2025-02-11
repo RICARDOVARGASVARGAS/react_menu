@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaUserCircle,
   FaCar,
@@ -17,10 +17,23 @@ import {
   FaPalette,
   FaUserTag,
 } from "react-icons/fa";
+import { useAuth } from "../../hooks/AuthContext";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const location = useLocation();
+  const { logout } = useAuth(); // Obtén la función logout del contexto
+  const navigate = useNavigate(); // Usa useNavigate para redirigir después del logout
+
+  const handleLogout = async () => {
+    console.log("ingreso a logout");
+    try {
+      await logout(); // Llama a la función logout
+      navigate("/login"); // Redirige al usuario a la página de login
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   return (
     <aside
@@ -223,7 +236,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Logout Button */}
       <div className="relative bottom-0 w-full border-t border-blue-700">
         <button
-          onClick={() => alert("Cerrar sesión")}
+          onClick={handleLogout} // Usa la función handleLogout
           className="flex items-center w-full py-3 px-4 text-left hover:bg-blue-700 transition"
         >
           <FaSignOutAlt className="h-6 w-6 text-yellow-300 group-hover:text-white" />

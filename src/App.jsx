@@ -27,8 +27,10 @@ import NoPermissionsPage from "./pages/NoPermissionsPage";
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
+        {" "}
+        {/* Mover AuthProvider dentro del Router */}
         <Routes>
           {/* Rutas públicas */}
           <Route
@@ -39,7 +41,6 @@ const App = () => {
               </PublicRoute>
             }
           />
-
           <Route path="/" element={<MainLayout />}>
             {/* Rutas protegidas */}
             <Route
@@ -50,9 +51,7 @@ const App = () => {
                 </ProtectedRoute>
               }
             ></Route>
-
             {/* Ruta con permisos específicos */}
-
             <Route
               path="/list-drivers"
               element={
@@ -61,7 +60,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/register-driver"
               element={
@@ -70,7 +68,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/driver-data/:driverId"
               element={
@@ -79,7 +76,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/drivers/:driverId/view"
               element={
@@ -88,10 +84,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
-            {/* <Route path="/driver-data/:driverId" element={<DriverData />} /> */}
-            {/* <Route path="/drivers/:driverId/view" element={<DetailDriver />} /> */}
-
             <Route
               path="/list-cars"
               element={
@@ -100,7 +92,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/cars/:carId/view"
               element={
@@ -109,7 +100,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/card-permit/:carId"
               element={
@@ -118,12 +108,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
-            {/* <Route path="/list-cars" element={<ListCars />} /> */}
-            {/* <Route path="/cars/:carId/view" element={<DetailCar />} /> */}
-
-            {/* <Route path="/card-permit/:carId" element={<CardPermit />} /> */}
-
             <Route
               path="/settings/list-brands"
               element={
@@ -132,7 +116,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/settings/list-years"
               element={
@@ -141,7 +124,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/settings/list-examples"
               element={
@@ -150,7 +132,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/settings/list-groups"
               element={
@@ -159,7 +140,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/settings/list-type-cars"
               element={
@@ -168,7 +148,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/settings/list-colors"
               element={
@@ -177,7 +156,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/list-roles"
               element={
@@ -186,7 +164,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             ></Route>
-
             <Route
               path="/list-users"
               element={
@@ -195,7 +172,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             ></Route>
-
             {/* Pagina de no permiso */}
             <Route
               path="/no-permission-page"
@@ -206,15 +182,13 @@ const App = () => {
               }
             ></Route>
           </Route>
-
           {/* Ruta no encontrada */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-
         {/* Agregar ToastContainer en el componente raíz */}
         <ToastContainer />
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 };
 

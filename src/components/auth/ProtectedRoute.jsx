@@ -1,4 +1,3 @@
-// components/auth/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 import Loading from "../Loading";
@@ -18,7 +17,6 @@ const ProtectedRoute = ({ children, requiredPermissions }) => {
     const hasPermission = requiredPermissions.some((perm) =>
       user.permissions.includes(perm)
     );
-
     if (!hasPermission) {
       return <Navigate to="/no-permission-page" replace />;
     }
