@@ -23,6 +23,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Navigate } from "react-router-dom";
 import ListRoles from "./pages/Role/ListRoles";
 import ListUsers from "./pages/User/ListUsers";
+import NoPermissionsPage from "./pages/NoPermissionsPage";
 
 const App = () => {
   return (
@@ -191,6 +192,16 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <ListUsers />
+                </ProtectedRoute>
+              }
+            ></Route>
+
+            {/* Pagina de no permiso */}
+            <Route
+              path="/no-permission-page"
+              element={
+                <ProtectedRoute>
+                  <NoPermissionsPage />
                 </ProtectedRoute>
               }
             ></Route>

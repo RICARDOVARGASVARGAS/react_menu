@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children, requiredPermissions }) => {
     );
 
     if (!hasPermission) {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/no-permission-page" replace />;
     }
   }
 
