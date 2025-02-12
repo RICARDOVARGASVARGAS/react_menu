@@ -5,8 +5,12 @@ import Table from "../../components/Table";
 import Loading from "../../components/Loading";
 import { FaSearch, FaEraser, FaEye, FaEdit, FaPlus } from "react-icons/fa";
 import { apiGet } from "../../services/apiService";
+import { useAuth } from "../../hooks/AuthContext";
+import ProtectedComponent from "../../components/ProtectedComponent";
 
 const ListDrivers = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +18,6 @@ const ListDrivers = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
-  const navigate = useNavigate();
 
   const fetchDrivers = async () => {
     setIsLoading(true);
@@ -56,18 +59,25 @@ const ListDrivers = () => {
     }
   };
 
-  const actions = [
-    {
+  const actions = [];
+
+  // Visualizar Detalle (permiso único)
+  if (user?.permissions?.includes("driver.show")) {
+    actions.push({
       label: <FaEye />,
       className: "bg-green-500 text-white hover:bg-green-600",
       onClick: (driver) => navigate(`/drivers/${driver.id}/view`),
-    },
-    {
+    });
+  }
+
+  // Edición (permiso único)
+  if (user?.permissions?.includes("driver.edit")) {
+    actions.push({
       label: <FaEdit />,
       className: "bg-blue-500 text-white hover:bg-blue-600",
       onClick: (driver) => navigate(`/driver-data/${driver.id}`),
-    },
-  ];
+    });
+  }
 
   return (
     <>
@@ -77,12 +87,14 @@ const ListDrivers = () => {
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Conductores
             </h1>
-            <button
-              onClick={() => navigate("/register-driver")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar Conductor
-            </button>
+            <ProtectedComponent requiredPermissions={"driver.create"}>
+              <button
+                onClick={() => navigate("/register-driver")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar Conductor
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -112,27 +124,29 @@ const ListDrivers = () => {
             <Loading /> // Muestra el componente Loading durante la carga
           ) : (
             <>
-              <Table
-                headers={[
-                  "N°",
-                  "N° Documento",
-                  "Nombres Completos",
-                  "Teléfono",
-                  "Operaciones",
-                ]}
-                data={drivers.map((driver, index) => ({
-                  id: driver.id,
-                  document_number: driver.document_number,
-                  name: `${driver.name} ${driver.first_name} ${driver.last_name}`,
-                  phone: driver.phone_number || "N/A",
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"driver.index"}>
+                <Table
+                  headers={[
+                    "N°",
+                    "N° Documento",
+                    "Nombres Completos",
+                    "Teléfono",
+                    "Operaciones",
+                  ]}
+                  data={drivers.map((driver, index) => ({
+                    id: driver.id,
+                    document_number: driver.document_number,
+                    name: `${driver.name} ${driver.first_name} ${driver.last_name}`,
+                    phone: driver.phone_number || "N/A",
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

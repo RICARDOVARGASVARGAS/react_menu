@@ -5,8 +5,12 @@ import Table from "../../components/Table";
 import Loading from "../../components/Loading";
 import { FaSearch, FaEraser, FaEye } from "react-icons/fa";
 import { apiGet } from "../../services/apiService";
+import { useAuth } from "../../hooks/AuthContext";
+import ProtectedComponent from "../../components/ProtectedComponent";
 
 const ListCars = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +18,6 @@ const ListCars = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
-  const navigate = useNavigate();
 
   const fetchItems = async () => {
     setIsLoading(true);
@@ -57,13 +60,16 @@ const ListCars = () => {
     }
   };
 
-  const actions = [
-    {
+  const actions = [];
+
+  // Visualizar Detalle (permiso único)
+  if (user?.permissions?.includes("car.show")) {
+    actions.push({
       label: <FaEye />,
       className: "bg-green-500 text-white hover:bg-green-600",
       onClick: (car) => navigate(`/cars/${car.id}/view`),
-    },
-  ];
+    });
+  }
 
   return (
     <>
@@ -102,33 +108,35 @@ const ListCars = () => {
             <Loading />
           ) : (
             <>
-              <Table
-                headers={[
-                  "N°",
-                  "Placa",
-                  "Marca",
-                  "Modelo",
-                  "Año",
-                  "Color",
-                  "Asociación",
-                  "Operaciones",
-                ]}
-                data={data.map((car, index) => ({
-                  id: car.id,
-                  plate: car.plate,
-                  brand: car.brand?.name,
-                  example: car.example?.name,
-                  year: car.year?.name,
-                  color: car.color?.name,
-                  group: car.group?.name,
-                }))}
-                actions={actions}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <ProtectedComponent requiredPermissions={"car.index"}>
+                <Table
+                  headers={[
+                    "N°",
+                    "Placa",
+                    "Marca",
+                    "Modelo",
+                    "Año",
+                    "Color",
+                    "Asociación",
+                    "Operaciones",
+                  ]}
+                  data={data.map((car, index) => ({
+                    id: car.id,
+                    plate: car.plate,
+                    brand: car.brand?.name,
+                    example: car.example?.name,
+                    year: car.year?.name,
+                    color: car.color?.name,
+                    group: car.group?.name,
+                  }))}
+                  actions={actions}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </ProtectedComponent>
             </>
           )}
         </main>

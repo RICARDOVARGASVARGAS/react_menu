@@ -17,8 +17,8 @@ const Login = () => {
     watch,
   } = useForm({
     defaultValues: {
-      username: "12345678",
-      password: "password",
+      username: "",
+      password: "",
     },
   });
 

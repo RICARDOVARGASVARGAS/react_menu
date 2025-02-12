@@ -18,6 +18,7 @@ import {
   FaUserTag,
 } from "react-icons/fa";
 import { useAuth } from "../../hooks/AuthContext";
+import ProtectedComponent from "../../components/ProtectedComponent";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -70,166 +71,197 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Navigation Options */}
       <nav className="mt-6">
         <ul>
-          <li>
-            <Link
-              to="/list-drivers"
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center py-3 px-4 transition ${
-                location.pathname === "/list-drivers"
-                  ? "bg-blue-700 text-white"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              <FaUserCircle className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Conductores</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/list-cars"
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center py-3 px-4 transition ${
-                location.pathname === "/list-cars"
-                  ? "bg-blue-700 text-white"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              <FaCar className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Vehículos</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/list-roles"
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center py-3 px-4 transition ${
-                location.pathname === "/list-roles"
-                  ? "bg-blue-700 text-white"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              <FaUserTag className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Roles</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/list-users"
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center py-3 px-4 transition ${
-                location.pathname === "/list-users"
-                  ? "bg-blue-700 text-white"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              <FaUsers className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Usuarios</span>
-            </Link>
-          </li>
+          <ProtectedComponent requiredPermissions={"driver.index"}>
+            <li>
+              <Link
+                to="/list-drivers"
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center py-3 px-4 transition ${
+                  location.pathname === "/list-drivers"
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-700"
+                }`}
+              >
+                <FaUserCircle className="text-lg" />
+                <span className="ml-3 text-sm font-medium">Conductores</span>
+              </Link>
+            </li>
+          </ProtectedComponent>
+          <ProtectedComponent requiredPermissions={"car.index"}>
+            <li>
+              <Link
+                to="/list-cars"
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center py-3 px-4 transition ${
+                  location.pathname === "/list-cars"
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-700"
+                }`}
+              >
+                <FaCar className="text-lg" />
+                <span className="ml-3 text-sm font-medium">Vehículos</span>
+              </Link>
+            </li>
+          </ProtectedComponent>
+          <ProtectedComponent requiredPermissions={"role.index"}>
+            <li>
+              <Link
+                to="/list-roles"
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center py-3 px-4 transition ${
+                  location.pathname === "/list-roles"
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-700"
+                }`}
+              >
+                <FaUserTag className="text-lg" />
+                <span className="ml-3 text-sm font-medium">Roles</span>
+              </Link>
+            </li>
+          </ProtectedComponent>
+          <ProtectedComponent requiredPermissions={"user.index"}>
+            <li>
+              <Link
+                to="/list-users"
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center py-3 px-4 transition ${
+                  location.pathname === "/list-users"
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-700"
+                }`}
+              >
+                <FaUsers className="text-lg" />
+                <span className="ml-3 text-sm font-medium">Usuarios</span>
+              </Link>
+            </li>
+          </ProtectedComponent>
           {/* Configuración */}
-          <li>
-            <button
-              onClick={() => setIsConfigOpen(!isConfigOpen)}
-              className="flex items-center py-3 px-4 w-full transition hover:bg-blue-700"
-            >
-              <FaCog className="text-lg" />
-              <span className="ml-3 text-sm font-medium">Configuración</span>
-              {isConfigOpen ? (
-                <FaChevronUp className="ml-auto text-sm" />
-              ) : (
-                <FaChevronDown className="ml-auto text-sm" />
+          <ProtectedComponent
+            requiredPermissions={[
+              "brand.index",
+              "example.index",
+              "year.index",
+              "type.index",
+              "color.index",
+              "group.index",
+            ]}
+          >
+            <li>
+              <button
+                onClick={() => setIsConfigOpen(!isConfigOpen)}
+                className="flex items-center py-3 px-4 w-full transition hover:bg-blue-700"
+              >
+                <FaCog className="text-lg" />
+                <span className="ml-3 text-sm font-medium">Configuración</span>
+                {isConfigOpen ? (
+                  <FaChevronUp className="ml-auto text-sm" />
+                ) : (
+                  <FaChevronDown className="ml-auto text-sm" />
+                )}
+              </button>
+              {/* Submenú */}
+              {isConfigOpen && (
+                <ul className="ml-8">
+                  <ProtectedComponent requiredPermissions={"brand.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-brands"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-brands"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaTrademark className="text-lg" />
+                        <span className="ml-3">Marcas</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                  <ProtectedComponent requiredPermissions={"example.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-examples"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-examples"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaCubes className="text-lg" />
+                        <span className="ml-3">Modelos</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                  <ProtectedComponent requiredPermissions={"year.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-years"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-years"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaCalendarAlt className="text-lg" />
+                        <span className="ml-3">Años</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                  <ProtectedComponent requiredPermissions={"type.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-type-cars"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-type-cars"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaCar className="text-lg" />
+                        <span className="ml-3">Tipos</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                  <ProtectedComponent requiredPermissions={"group.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-groups"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-groups"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaUsers className="text-lg" />
+                        <span className="ml-3">Asociaciones</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                  <ProtectedComponent requiredPermissions={"color.index"}>
+                    <li>
+                      <Link
+                        to="/settings/list-colors"
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center py-2 px-4 text-sm transition ${
+                          location.pathname === "/settings/list-colors"
+                            ? "bg-blue-700 text-white"
+                            : "hover:bg-blue-700"
+                        }`}
+                      >
+                        <FaPalette className="text-lg" />
+                        <span className="ml-3">Colores</span>
+                      </Link>
+                    </li>
+                  </ProtectedComponent>
+                </ul>
               )}
-            </button>
-            {/* Submenú */}
-            {isConfigOpen && (
-              <ul className="ml-8">
-                <li>
-                  <Link
-                    to="/settings/list-brands"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-brands"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaTrademark className="text-lg" />
-                    <span className="ml-3">Marcas</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings/list-examples"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-examples"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaCubes className="text-lg" />
-                    <span className="ml-3">Modelos</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings/list-years"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-years"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaCalendarAlt className="text-lg" />
-                    <span className="ml-3">Años</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings/list-type-cars"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-type-cars"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaCar className="text-lg" />
-                    <span className="ml-3">Tipos</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings/list-groups"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-groups"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaUsers className="text-lg" />
-                    <span className="ml-3">Asociaciones</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings/list-colors"
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`flex items-center py-2 px-4 text-sm transition ${
-                      location.pathname === "/settings/list-colors"
-                        ? "bg-blue-700 text-white"
-                        : "hover:bg-blue-700"
-                    }`}
-                  >
-                    <FaPalette className="text-lg" />
-                    <span className="ml-3">Colores</span>
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
+            </li>
+          </ProtectedComponent>
         </ul>
       </nav>
 

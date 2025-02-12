@@ -7,8 +7,11 @@ import RegisterUser from "./RegisterUser";
 import EditUser from "./EditUser";
 import { apiGet } from "../../services/apiService";
 import UserRole from "./UserRole";
+import { useAuth } from "../../hooks/AuthContext";
+import ProtectedComponent from "../../components/ProtectedComponent";
 
 const ListUsers = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,18 +78,22 @@ const ListUsers = () => {
   const actions = [];
 
   // Edición (permiso único)
-  actions.push({
-    label: <FaEdit />,
-    className: "bg-blue-500 hover:bg-blue-600 text-white",
-    onClick: (item) => handleOpenModal("edit", item.id),
-  });
+  if (user?.permissions?.includes("user.edit")) {
+    actions.push({
+      label: <FaEdit />,
+      className: "bg-blue-500 hover:bg-blue-600 text-white",
+      onClick: (item) => handleOpenModal("edit", item.id),
+    });
+  }
 
-  // Roles
-  actions.push({
-    label: <FaKey />,
-    className: "bg-green-500 hover:bg-green-600 text-white",
-    onClick: (item) => handleOpenModal("role", item.id),
-  });
+  if (user?.permissions?.includes("user.roles")) {
+    // Roles
+    actions.push({
+      label: <FaKey />,
+      className: "bg-green-500 hover:bg-green-600 text-white",
+      onClick: (item) => handleOpenModal("role", item.id),
+    });
+  }
 
   return (
     <>
@@ -96,12 +103,14 @@ const ListUsers = () => {
             <h1 className="text-2xl font-bold text-blue-900">
               Lista de Usuarios
             </h1>
-            <button
-              onClick={() => handleOpenModal("add")}
-              className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
-            >
-              <FaPlus /> Agregar
-            </button>
+            <ProtectedComponent requiredPermissions={"user.create"}>
+              <button
+                onClick={() => handleOpenModal("add")}
+                className="bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-700"
+              >
+                <FaPlus /> Agregar
+              </button>
+            </ProtectedComponent>
           </div>
 
           <div className="flex gap-4 mb-4">

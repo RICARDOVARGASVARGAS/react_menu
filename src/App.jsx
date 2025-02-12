@@ -79,7 +79,7 @@ const App = () => {
             <Route
               path="/drivers/:driverId/view"
               element={
-                <ProtectedRoute requiredPermissions={["driver.detail"]}>
+                <ProtectedRoute requiredPermissions={["driver.show"]}>
                   <DetailDriver />
                 </ProtectedRoute>
               }
@@ -95,7 +95,7 @@ const App = () => {
             <Route
               path="/cars/:carId/view"
               element={
-                <ProtectedRoute requiredPermissions={["car.detail"]}>
+                <ProtectedRoute requiredPermissions={["car.show"]}>
                   <DetailCar />
                 </ProtectedRoute>
               }
@@ -103,7 +103,7 @@ const App = () => {
             <Route
               path="/card-permit/:carId"
               element={
-                <ProtectedRoute requiredPermissions={["car.detail"]}>
+                <ProtectedRoute requiredPermissions={["car.cardPermit"]}>
                   <CardPermit />
                 </ProtectedRoute>
               }
@@ -159,7 +159,7 @@ const App = () => {
             <Route
               path="/list-roles"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute requiredPermissions={["role.index"]}>
                   <ListRoles />
                 </ProtectedRoute>
               }
@@ -167,7 +167,7 @@ const App = () => {
             <Route
               path="/list-users"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute requiredPermissions={["user.index"]}>
                   <ListUsers />
                 </ProtectedRoute>
               }
