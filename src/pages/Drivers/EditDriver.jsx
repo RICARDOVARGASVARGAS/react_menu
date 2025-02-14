@@ -16,7 +16,6 @@ import { apiFetch, apiGet, apiPut } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
-import { extractUUID } from "../../utils/extractUUID";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +60,7 @@ const EditDriver = ({ driverId }) => {
     const { data, message } = await apiGet(`getDriver/${driverId}`);
 
     if (data) {
+      console.log(data);
       reset(data);
     } else {
       toast.error(message || "No se pudieron cargar los datos.");
@@ -144,13 +144,15 @@ const EditDriver = ({ driverId }) => {
 
     try {
       await uploadFile({
-        file,
+        file: file,
         model: "Driver",
-        model_id: driverId,
-        model_storage: "image",
-        storage: `Driver/${driverId}/Profile`,
-        onSuccess: ({ file, message }) => {
-          setValue("image", file.url, { shouldValidate: true });
+        id: driverId,
+        field: "image",
+        folder: `Driver/${driverId}/Profile`,
+        onSuccess: ({ item, url }) => {
+          // Actualiza todos los campos del formulario con el objeto "item"
+          // reset(item);
+          setValue("image_url", url, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al subir el archivo.");
@@ -163,16 +165,13 @@ const EditDriver = ({ driverId }) => {
 
   // Eliminar imagen Perfil
   const deleteFilePhoto = async () => {
-    const uuid = extractUUID(watch("image"));
     try {
       await deleteFile({
         model: "Driver",
-        model_id: driverId,
-        model_storage: "image",
-        uuid: uuid,
-        onSuccess: ({ file, message }) => {
-          toast.success(message);
-          setValue("image", "", { shouldValidate: true });
+        id: driverId,
+        field: "image",
+        onSuccess: ({}) => {
+          setValue("image_url", null, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al eliminar el archivo.");
@@ -190,11 +189,11 @@ const EditDriver = ({ driverId }) => {
       await uploadFile({
         file,
         model: "Driver",
-        model_id: driverId,
-        model_storage: "file_driver",
-        storage: `Driver/${driverId}/Document`,
-        onSuccess: ({ file, message }) => {
-          setValue("file_driver", file.url, { shouldValidate: true });
+        id: driverId,
+        field: "file_driver",
+        folder: `Driver/${driverId}/Document`,
+        onSuccess: ({ url }) => {
+          setValue("file_driver_url", url, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al subir el archivo.");
@@ -206,16 +205,13 @@ const EditDriver = ({ driverId }) => {
   };
 
   const deleteFileDriver = async () => {
-    const uuid = extractUUID(watch("file_driver"));
     try {
       await deleteFile({
         model: "Driver",
-        model_id: driverId,
-        model_storage: "file_driver",
-        uuid: uuid,
-        onSuccess: (data) => {
-          toast.success("Documento eliminado");
-          setValue("file_driver", "", { shouldValidate: true });
+        id: driverId,
+        field: "file_driver",
+        onSuccess: () => {
+          setValue("file_driver_url", null, { shouldValidate: true });
         },
         onError: (errorMessage) => {
           toast.error(errorMessage || "Error al eliminar el documento.");
@@ -237,11 +233,11 @@ const EditDriver = ({ driverId }) => {
         <div className="col-span-1 flex flex-col items-center">
           <div className="relative flex items-center justify-between">
             <img
-              src={watch("image") || "/images/no-image.png"}
+              src={watch("image_url") || "/images/no-image.png"}
               alt="Avatar"
               className="w-28 h-28 md:w-36 md:h-36 rounded-full border shadow"
             />
-            {watch("image") ? (
+            {watch("image_url") ? (
               <button
                 onClick={deleteFilePhoto}
                 className="absolute bottom-0 right-0 bg-red-500 text-white p-2 rounded-full cursor-pointer hover:bg-red-600 shadow-md"
@@ -256,10 +252,10 @@ const EditDriver = ({ driverId }) => {
                 {isLoading ? "Subiendo..." : <FaUpload />}
               </label>
             )}
-            {watch("image") && (
+            {watch("image_url") && (
               <a
                 target="_blank"
-                href={watch("image")}
+                href={watch("image_url")}
                 className="absolute bottom-0 left-0 bg-green-500 text-white p-2 rounded-full cursor-pointer hover:bg-green-600 shadow-md"
               >
                 <FaEye />
@@ -602,10 +598,10 @@ const EditDriver = ({ driverId }) => {
             )}
           </div>
           <div className="col-span-full flex flex-col md:flex-row items-center justify-center md:justify-between text-center gap-4 md:gap-0">
-            {!watch("file_driver") ? (
+            {!watch("file_driver_url") ? (
               <>
                 <label
-                  htmlFor="file_driver"
+                  htmlFor="file_driver_url"
                   className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                 >
                   {isLoading ? (
@@ -619,7 +615,7 @@ const EditDriver = ({ driverId }) => {
                 </label>
                 <input
                   type="file"
-                  id={`file_driver`}
+                  id={`file_driver_url`}
                   className="hidden"
                   accept="application/pdf"
                   onChange={(e) => uploadFileDriver(e)}
@@ -630,7 +626,7 @@ const EditDriver = ({ driverId }) => {
               <div className="flex items-center space-x-2">
                 {/* Botón para ver */}
                 <a
-                  href={watch("file_driver")}
+                  href={watch("file_driver_url")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"

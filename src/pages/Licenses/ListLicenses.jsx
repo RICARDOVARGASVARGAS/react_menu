@@ -6,7 +6,6 @@ import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 import { apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
-import { extractUUID } from "../../utils/extractUUID";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -80,7 +79,6 @@ const ListLicenses = ({ driverId }) => {
 
   // Eliminar la licencia
   const deleteFileLicense = async (licenseItem) => {
-    const uuid = extractUUID(licenseItem.file);
     try {
       await deleteFile({
         model: "License",

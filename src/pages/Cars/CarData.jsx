@@ -15,7 +15,6 @@ import ListPermits from "../Permits/ListPermits";
 import ListInspections from "../Inspections/ListInspections";
 import { useFileDelete, useFileUploader } from "../../hooks/useFileHook";
 import { apiGet } from "../../services/apiService";
-import { extractUUID } from "../../utils/extractUUID";
 import EditCar from "./EditCar";
 import RegisterCar from "./RegisterCar";
 
@@ -87,7 +86,6 @@ const CarData = ({ driverId }) => {
 
   // Eliminar documento del vehículo
   const deleteCarFile = async (carItem) => {
-    const uuid = extractUUID(carItem.file_car);
     try {
       await deleteFile({
         model: "Car",

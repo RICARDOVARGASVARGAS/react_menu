@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiPost } from "../services/apiService";
-import { TOKEN_API_STORAGE } from "../config/enviroments";
 
 export const useFileUploader = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const uploadFile = async ({
-    file,
     model,
-    model_id,
-    model_storage,
-    storage,
+    id,
+    file,
+    folder,
+    field,
     onSuccess,
     onError,
   }) => {
@@ -32,20 +31,19 @@ export const useFileUploader = () => {
     }
 
     const formData = new FormData();
-    formData.append("file", file);
     formData.append("model", model);
-    formData.append("model_id", model_id);
-    formData.append("model_storage", model_storage);
-    formData.append("storage", storage);
-    formData.append("token", TOKEN_API_STORAGE);
+    formData.append("id", id);
+    formData.append("file", file);
+    formData.append("folder", folder);
+    formData.append("field", field);
 
     try {
-      const response = await apiPost("uploadFile", formData, true); // `true` indica que es multipart
-      const { file, message } = response;
+      const response = await apiPost("file/upload", formData, true); // `true` indica que es multipart
+      const { item, success, message, url } = response;
 
-      if (file) {
-        toast.success(message);
-        if (onSuccess) onSuccess({ file, message });
+      if (success) {
+        toast.success(message, { autoClose: 1000, position: "top-center" });
+        if (onSuccess) onSuccess({ item, url });
       } else {
         toast.error(message);
         if (onError) onError(message);
@@ -64,30 +62,21 @@ export const useFileUploader = () => {
 export const useFileDelete = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteFile = async ({
-    model,
-    model_id,
-    model_storage,
-    uuid,
-    onSuccess,
-    onError,
-  }) => {
+  const deleteFile = async ({ model, id, field, onSuccess, onError }) => {
     setIsLoading(true);
 
     try {
-      const data = await apiPost(`deleteFile`, {
+      const data = await apiPost(`file/delete`, {
         model,
-        model_id,
-        model_storage,
-        token: TOKEN_API_STORAGE,
-        uuid,
+        id,
+        field,
       });
 
-      const { file, message } = data;
+      const { item, success, message } = data;
 
-      if (file) {
-        // toast.success(message);
-        if (onSuccess) onSuccess({ file, message });
+      if (success) {
+        toast.success(message, { autoClose: 1000, position: "top-center" });
+        if (onSuccess) onSuccess({});
       } else {
         toast.error(message);
         if (onError) onError(message);

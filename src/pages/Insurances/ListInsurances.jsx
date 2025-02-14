@@ -13,7 +13,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import RegisterInsurance from "./RegisterInsurance";
 import { apiDelete, apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
-import { extractUUID } from "../../utils/extractUUID";
 
 const ListInsurances = ({ onClose, carId }) => {
   const [insurances, setInsurances] = useState([]);
@@ -63,7 +62,6 @@ const ListInsurances = ({ onClose, carId }) => {
 
   // Eliminar la licencia
   const deleteFileDocument = async (item) => {
-    const uuid = extractUUID(item.file_insurance);
     try {
       await deleteFile({
         model: "Insurance",

@@ -12,7 +12,6 @@ import {
 import { AiOutlineClose } from "react-icons/ai";
 import { apiDelete, apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
-import { extractUUID } from "../../utils/extractUUID";
 import RegisterInspection from "./RegisterInspection";
 
 const ListInspections = ({ onClose, carId }) => {
@@ -62,7 +61,6 @@ const ListInspections = ({ onClose, carId }) => {
 
   // Eliminar la licencia
   const deleteFileDocument = async (item) => {
-    const uuid = extractUUID(item.file_inspection);
     try {
       await deleteFile({
         model: "Inspection",
