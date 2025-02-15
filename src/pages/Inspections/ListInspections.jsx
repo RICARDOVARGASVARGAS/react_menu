@@ -44,10 +44,10 @@ const ListInspections = ({ onClose, carId }) => {
       await uploadFile({
         file,
         model: "Inspection",
-        model_id: item.id,
-        model_storage: "file_inspection",
-        storage: `Car/${carId}/Inspection/${item.id}`,
-        onSuccess: (uploadedFile) => {
+        id: item.id,
+        field: "file_inspection",
+        folder: `Car/${carId}/Inspection/${item.id}`,
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -64,11 +64,9 @@ const ListInspections = ({ onClose, carId }) => {
     try {
       await deleteFile({
         model: "Inspection",
-        model_id: item.id,
-        model_storage: "file_inspection",
-        uuid: uuid,
-        onSuccess: (data) => {
-          toast.success("Elemento eliminado con éxito.");
+        id: item.id,
+        field: "file_inspection",
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -82,12 +80,6 @@ const ListInspections = ({ onClose, carId }) => {
 
   const handleDelete = async (item) => {
     setIsLoading(true);
-    if (item.file_inspection) {
-      toast.error("No se puede eliminar  porque tiene un archivo adjunto.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await apiDelete(`deleteInspection/${item.id}`);
       const { data, message } = response;
@@ -183,7 +175,7 @@ const ListInspections = ({ onClose, carId }) => {
 
                     {inspection.file_inspection ? (
                       <a
-                        href={inspection.file_inspection}
+                        href={inspection.file_inspection_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-green-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
