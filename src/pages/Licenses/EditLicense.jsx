@@ -67,14 +67,6 @@ const EditLicense = ({ onClose, licenseId }) => {
   const handleDelete = async () => {
     setIsLoading(true);
 
-    if (watch("file")) {
-      toast.error(
-        "No se puede eliminar la licencia porque tiene un archivo adjunto."
-      );
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await apiDelete(`deleteDriverLicense/${licenseId}`);
       const { data, message } = response;
