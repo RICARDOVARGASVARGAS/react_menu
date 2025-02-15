@@ -44,10 +44,10 @@ const ListPermits = ({ onClose, carId }) => {
       await uploadFile({
         file,
         model: "Permit",
-        model_id: item.id,
-        model_storage: "file_permit",
-        storage: `Car/${carId}/Permit/${item.id}`,
-        onSuccess: (uploadedFile) => {
+        id: item.id,
+        field: "file_permit",
+        folder: `Car/${carId}/Permit/${item.id}`,
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -64,11 +64,9 @@ const ListPermits = ({ onClose, carId }) => {
     try {
       await deleteFile({
         model: "Permit",
-        model_id: item.id,
-        model_storage: "file_permit",
-        uuid: uuid,
-        onSuccess: (data) => {
-          toast.success("Elemento eliminado con éxito.");
+        id: item.id,
+        field: "file_permit",
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -82,12 +80,6 @@ const ListPermits = ({ onClose, carId }) => {
 
   const handleDelete = async (item) => {
     setIsLoading(true);
-    if (item.file_permit) {
-      toast.error("No se puede eliminar  porque tiene un archivo adjunto.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await apiDelete(`deletePermit/${item.id}`);
       const { data, message } = response;
@@ -183,7 +175,7 @@ const ListPermits = ({ onClose, carId }) => {
 
                     {permit.file_permit ? (
                       <a
-                        href={permit.file_permit}
+                        href={permit.file_permit_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-green-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
