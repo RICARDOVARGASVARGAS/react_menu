@@ -36,6 +36,7 @@ const CarData = ({ driverId }) => {
     try {
       const { data } = await apiGet(`getCarsByDriver/${driverId}`);
       if (data) {
+        console.log(data);
         setCars(data);
       } else {
         setCars([]);
@@ -69,10 +70,10 @@ const CarData = ({ driverId }) => {
       await uploadFile({
         file,
         model: "Car",
-        model_id: carItem.id,
-        model_storage: "file_car",
-        storage: `Driver/${driverId}/CarDocuments/${carItem.id}`,
-        onSuccess: (uploadedFile) => {
+        id: carItem.id,
+        field: "file_car",
+        folder: `Driver/${driverId}/CarDocuments/${carItem.id}`,
+        onSuccess: () => {
           fetchCars();
         },
         onError: (errorMessage) => {
@@ -89,11 +90,9 @@ const CarData = ({ driverId }) => {
     try {
       await deleteFile({
         model: "Car",
-        model_id: carItem.id,
-        model_storage: "file_car",
-        uuid: uuid,
-        onSuccess: ({ file, message }) => {
-          toast.success(message);
+        id: carItem.id,
+        field: "file_car",
+        onSuccess: ({}) => {
           fetchCars();
         },
         onError: (errorMessage) => {
@@ -222,7 +221,7 @@ const CarData = ({ driverId }) => {
                     </div>
                     {car.latest_insurance?.file_insurance && (
                       <a
-                        href={car.latest_insurance?.file_insurance}
+                        href={car.latest_insurance?.file_insurance_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-orange-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
@@ -263,7 +262,7 @@ const CarData = ({ driverId }) => {
                     </div>
                     {car.latest_permit?.file_permit && (
                       <a
-                        href={car.latest_permit?.file_permit}
+                        href={car.latest_permit?.file_permit_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-green-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
@@ -304,7 +303,7 @@ const CarData = ({ driverId }) => {
                     </div>
                     {car.latest_inspection?.file_inspection && (
                       <a
-                        href={car.latest_inspection?.file_inspection}
+                        href={car.latest_inspection?.file_inspection_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-blue-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
@@ -359,7 +358,7 @@ const CarData = ({ driverId }) => {
                         <>
                           <div className="flex items-center justify-center space-x-2">
                             <a
-                              href={car.file_car}
+                              href={car.file_car_url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
