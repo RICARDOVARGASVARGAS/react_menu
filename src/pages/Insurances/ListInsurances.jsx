@@ -45,10 +45,10 @@ const ListInsurances = ({ onClose, carId }) => {
       await uploadFile({
         file,
         model: "Insurance",
-        model_id: item.id,
-        model_storage: "file_insurance",
-        storage: `Car/${carId}/Insurance/${item.id}`,
-        onSuccess: (uploadedFile) => {
+        id: item.id,
+        field: "file_insurance",
+        folder: `Car/${carId}/Insurance/${item.id}`,
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -65,11 +65,9 @@ const ListInsurances = ({ onClose, carId }) => {
     try {
       await deleteFile({
         model: "Insurance",
-        model_id: item.id,
-        model_storage: "file_insurance",
-        uuid: uuid,
-        onSuccess: (data) => {
-          toast.success("Seguro eliminado con éxito.");
+        id: item.id,
+        field: "file_insurance",
+        onSuccess: () => {
           fetchItems();
         },
         onError: (errorMessage) => {
@@ -83,16 +81,10 @@ const ListInsurances = ({ onClose, carId }) => {
 
   const handleDelete = async (item) => {
     setIsLoading(true);
-    if (item.file_insurance) {
-      toast.error("No se puede eliminar  porque tiene un archivo adjunto.");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await apiDelete(`deleteInsurance/${item.id}`);
-      const { data, message } = response;
-      if (data) {
+      const { message, success } = response;
+      if (success) {
         toast.success(message || "Elemento eliminado.");
         fetchItems();
       } else {
@@ -190,7 +182,7 @@ const ListInsurances = ({ onClose, carId }) => {
 
                     {insurance.file_insurance ? (
                       <a
-                        href={insurance.file_insurance}
+                        href={insurance.file_insurance_url}
                         target="_blank"
                         className="inline-flex items-center justify-center w-full bg-orange-600 text-white text-sm my-1 px-2 py-1 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                       >
