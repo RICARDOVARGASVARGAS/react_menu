@@ -29,6 +29,7 @@ const DetailDriver = () => {
       included:
         "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense,cars.inspections,cars.insurances,cars.permits,cars.latestInspection,cars.latestInsurance,cars.latestPermit",
     });
+    console.log(data);
     setDriverData(data);
     setIsLoading(false);
   };
@@ -71,14 +72,14 @@ const DetailDriver = () => {
               <div className="flex-shrink-0 flex flex-col items-center">
                 <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100">
                   <img
-                    src={driverData?.image || "/images/no-image.png"}
+                    src={driverData?.image_url || "/images/no-image.png"}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 {driverData?.file_driver && (
                   <a
-                    href={driverData?.file_driver}
+                    href={driverData?.file_driver_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -153,13 +154,14 @@ const DetailDriver = () => {
               </div>
               {driverData?.latest_license?.file && (
                 <a
-                  href={driverData?.latest_license?.file}
+                  href={driverData?.latest_license?.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                 >
                   <FileText className="w-4 h-4" />
-                  <span className="hidden md:inline">Ver Archivo</span>
+                  <span className="hidden md:inline">Ver Archivo
+                  </span>
                 </a>
               )}
             </div>
@@ -430,7 +432,7 @@ const DetailDriver = () => {
                     <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
                       {car.latest_insurance?.file_insurance && (
                         <a
-                          href={car.latest_insurance?.file_insurance}
+                          href={car.latest_insurance?.file_insurance_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -442,7 +444,7 @@ const DetailDriver = () => {
                       )}
                       {car.latest_permit?.file_permit && (
                         <a
-                          href={car.latest_permit?.file_permit}
+                          href={car.latest_permit?.file_permit_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -454,7 +456,7 @@ const DetailDriver = () => {
                       )}
                       {car.latest_inspection?.file_inspection && (
                         <a
-                          href={car.latest_inspection?.file_inspection}
+                          href={car.latest_inspection?.file_inspection_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -466,7 +468,7 @@ const DetailDriver = () => {
                       )}
                       {car.file_car && (
                         <a
-                          href={car.file_car}
+                          href={car.file_car_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"

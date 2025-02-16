@@ -78,14 +78,14 @@ const DetailCar = () => {
             <div className="flex-shrink-0 flex flex-col items-center">
               <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100">
                 <img
-                  src={carData.driver?.image || "/images/no-image.png"}
+                  src={carData.driver?.image_url || "/images/no-image.png"}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               {carData.driver?.file_driver && (
                 <a
-                  href={carData.driver?.file_driver}
+                  href={carData.driver?.file_driver_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -163,7 +163,7 @@ const DetailCar = () => {
             </div>
             {carData.driver?.latest_license?.file && (
               <a
-                href={carData.driver?.latest_license?.file}
+                href={carData.driver?.latest_license?.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -413,7 +413,7 @@ const DetailCar = () => {
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
               {carData.latest_insurance?.file_insurance && (
                 <a
-                  href={carData.latest_insurance?.file_insurance}
+                  href={carData.latest_insurance?.file_insurance_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -425,7 +425,7 @@ const DetailCar = () => {
               )}
               {carData.latest_permit?.file_permit && (
                 <a
-                  href={carData.latest_permit?.file_permit}
+                  href={carData.latest_permit?.file_permit_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -437,7 +437,7 @@ const DetailCar = () => {
               )}
               {carData.latest_inspection?.file_inspection && (
                 <a
-                  href={carData.latest_inspection?.file_inspection}
+                  href={carData.latest_inspection?.file_inspection_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -449,7 +449,7 @@ const DetailCar = () => {
               )}
               {carData.file_car && (
                 <a
-                  href={carData.file_car}
+                  href={carData.file_car_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"

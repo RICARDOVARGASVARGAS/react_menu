@@ -36,7 +36,7 @@ const CarData = ({ driverId }) => {
     try {
       const { data } = await apiGet(`getCarsByDriver/${driverId}`);
       if (data) {
-        console.log(data);
+        // console.log(data);
         setCars(data);
       } else {
         setCars([]);

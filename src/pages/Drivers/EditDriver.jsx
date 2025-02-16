@@ -60,7 +60,7 @@ const EditDriver = ({ driverId }) => {
     const { data, message } = await apiGet(`getDriver/${driverId}`);
 
     if (data) {
-      console.log(data);
+      // console.log(data);
       reset(data);
     } else {
       toast.error(message || "No se pudieron cargar los datos.");
