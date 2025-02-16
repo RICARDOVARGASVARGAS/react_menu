@@ -70,30 +70,30 @@ const Home = () => {
   // Datos de los desarrolladores
   const desarrolladores = [
     {
-      nombre: "Juan Pérez",
-      rol: "Desarrollador Frontend",
-      titulo: "Ingeniero en Sistemas Computacionales",
-      imagen: "/images/juan-perez.jpg", // Ruta de la imagen
-      email: "juan.perez@example.com",
-      telefono: "+51 987 654 321",
-      linkedin: "https://linkedin.com/in/juanperez",
-      github: "https://github.com/juanperez",
+      nombre: "Ricardo Vargas Vargas",
+      rol: "Desarrollador FullStack",
+      titulo: "Ingeniero de Sistemas",
+      imagen: "/images/dev1.jpg", // Ruta de la imagen
+      email: "vargasvargas.ric@gmail.com",
+      telefono: "+51 913 841 534",
+      linkedin: "https://linkedin.com/in/ricardovargasvargas",
+      github: "https://github.com/RICARDOVARGASVARGAS",
       descripcion:
-        "Especializado en desarrollo frontend con React, TypeScript y diseño UX/UI. Con más de 5 años de experiencia en proyectos web empresariales.",
-      habilidades: ["React", "TypeScript", "CSS3", "Figma"],
+        "Experto en desarrollo fullstack con Angular, React, TypeScript, Laravel, Python y MySQL. Especializado en diseño UX/UI y desarrollo de aplicaciones web empresariales. Con experiencia liderando proyectos desde la conceptualización hasta la implementación, enfocado en soluciones escalables y optimizadas.",
+      habilidades: ["React", "Angular", "Laravel", "MySQL", "Python", "PHP"],
     },
     {
-      nombre: "María Gómez",
-      rol: "Desarrolladora Backend",
-      titulo: "Ingeniera en Ciencias de la Computación",
-      imagen: "/images/maria-gomez.jpg", // Ruta de la imagen
-      email: "maria.gomez@example.com",
-      telefono: "+51 987 654 322",
-      linkedin: "https://linkedin.com/in/mariagomez",
-      github: "https://github.com/mariagomez",
+      nombre: "Mario Paul Ferro Guerreros",
+      rol: "Tester y Analista de Bases de Datos",
+      titulo: "Ingeniero de Sistemas",
+      imagen: "/images/dev2.jpg", // Ruta de la imagen
+      email: "mpaulferrog@gmail.com",
+      telefono: "+51 989 503 428",
+      linkedin: "",
+      github: "",
       descripcion:
-        "Experta en backend con Node.js, Python y bases de datos relacionales/no relacionales. Ha liderado proyectos de escalabilidad y optimización.",
-      habilidades: ["Node.js", "Python", "MongoDB", "PostgreSQL"],
+        "Experto en pruebas de software y análisis de bases de datos, con habilidades en MySQL. Capacidad para diseñar y ejecutar casos de prueba, identificar errores y garantizar la calidad del software. Experiencia en la optimización y mantenimiento de bases de datos para asegurar su integridad y rendimiento.",
+      habilidades: ["MySQL", "PHP", "JavaScript", "UX/UI"],
     },
   ];
 
@@ -203,7 +203,7 @@ const Home = () => {
                 <img
                   src={dev.imagen}
                   alt={dev.nombre}
-                  className="w-28 h-28 rounded-full border-4 border-blue-200 shadow-md transition-transform duration-300 group-hover:scale-105"
+                  className="h-32 rounded-full border-4 border-blue-200 shadow-md transition-transform duration-300 group-hover:scale-105"
                 />
                 <h3 className="text-xl font-semibold text-gray-800 mt-2">
                   {dev.nombre}
