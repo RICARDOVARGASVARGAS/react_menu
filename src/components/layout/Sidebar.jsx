@@ -61,12 +61,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       {/* Sección de Perfil */}
       <div className="flex flex-col items-center mt-6 px-4">
         <img
-          src="/images/logo-min.jpg"
+          src={user?.image_url || "/images/logo-min.jpg"}
           alt="Perfil"
           className="w-24 h-24 rounded-full border-4 border-yellow-400 shadow-lg"
         />
         <h2 className="mt-4 text-xl font-semibold">
-          {`${user.name} ${user.first_name} ${user.last_name}`.slice(0, 17)}...
+          {`${user?.name} ${user?.first_name} ${user?.last_name}`.slice(0, 17)}
+          ...
         </h2>
         <p className="text-sm text-yellow-300 text-center">
           Sistema de Control Vehicular

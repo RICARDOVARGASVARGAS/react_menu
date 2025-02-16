@@ -12,15 +12,19 @@ import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
-import { apiFetch, apiGet, apiPut } from "../../services/apiService";
+import { apiDelete, apiFetch, apiGet, apiPut } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import DeleteModal from "../../components/elements/DeleteModal";
+import { useNavigate } from "react-router-dom";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { uploadFile, isLoading: isFileUploading } = useFileUploader();
   const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -222,6 +226,25 @@ const EditDriver = ({ driverId }) => {
     }
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await apiDelete(`deleteDriver/${driverId}`);
+      const { message, success } = response;
+      if (success) {
+        toast.success(message || "Conductor eliminado.");
+        navigate("/list-drivers");
+      } else {
+        toast.error(message || "No se pudo eliminar el Conductor.");
+      }
+    } catch (error) {
+      handleBackendErrors(error, setError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto bg-white shadow-md rounded-lg p-6">
       {(isLoading || isFileUploading || isFileDeleting) && <Loading />}
@@ -239,6 +262,7 @@ const EditDriver = ({ driverId }) => {
             />
             {watch("image_url") ? (
               <button
+                type="button"
                 onClick={deleteFilePhoto}
                 className="absolute bottom-0 right-0 bg-red-500 text-white p-2 rounded-full cursor-pointer hover:bg-red-600 shadow-md"
               >
@@ -597,19 +621,19 @@ const EditDriver = ({ driverId }) => {
               <p className="text-red-500 text-sm">{errors.address.message}</p>
             )}
           </div>
-          <div className="col-span-full flex flex-col md:flex-row items-center justify-center md:justify-between text-center gap-4 md:gap-0">
+          <div className="col-span-full flex flex-col md:flex-row items-center justify-center gap-4">
             {!watch("file_driver_url") ? (
               <>
                 <label
                   htmlFor="file_driver_url"
-                  className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                  className="inline-flex items-center justify-center cursor-pointer bg-gray-200 text-gray-700 text-sm px-6 py-3 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                 >
                   {isLoading ? (
                     "Subiendo..."
                   ) : (
                     <>
-                      <FaUpload className="md:mr-1" />
-                      <p className="hidden md:block">Subir Documento</p>
+                      <FaUpload className="mr-2" />
+                      <p>Subir Documento</p>
                     </>
                   )}
                 </label>
@@ -623,37 +647,57 @@ const EditDriver = ({ driverId }) => {
                 />
               </>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col md:flex-row items-center gap-4">
                 {/* Botón para ver */}
                 <a
                   href={watch("file_driver_url")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                  className="inline-flex items-center justify-center bg-green-600 text-white text-sm px-6 py-3 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                 >
-                  <FaFilePdf className="md:mr-1" />
-                  <p className="hidden md:block">Ver</p>
+                  <FaFilePdf className="mr-2" />
+                  <p>Ver Documento</p>
                 </a>
 
-                {/* Botón para eliminar */}
+                {/* Botón para eliminar documento */}
                 <button
+                  type="button"
                   onClick={deleteFileDriver}
-                  className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                  className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-6 py-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                 >
-                  <FaTrash className="md:mr-1" />
-                  <p className="hidden md:block">Eliminar</p>
+                  <FaTrash className="mr-2" />
+                  <p>Eliminar Documento</p>
                 </button>
               </div>
             )}
+
+            {/* Botón para eliminar conductor */}
+            <button
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              className="inline-flex items-center justify-center bg-red-600 text-white text-sm px-6 py-3 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+            >
+              <FaTrashAlt className="mr-2" />
+              <p>Eliminar Conductor</p>
+            </button>
+
+            {/* Botón para actualizar */}
             <button
               type="submit"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 shadow-lg"
+              className="inline-flex items-center justify-center bg-blue-500 text-white text-sm px-6 py-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
             >
-              <FaEdit />
-              Actualizar
+              <FaEdit className="mr-2" />
+              <p>Actualizar</p>
             </button>
           </div>
         </form>
+        {showDeleteModal && (
+          <DeleteModal
+            text="¿Estás seguro de que deseas eliminar este Conductor?"
+            onClose={() => setShowDeleteModal(false)}
+            onDelete={handleDelete}
+          />
+        )}
       </div>
     </div>
   );
