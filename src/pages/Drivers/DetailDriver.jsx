@@ -29,7 +29,7 @@ const DetailDriver = () => {
       included:
         "cars.brand,cars.typeCar,cars.group,cars.year,cars.color,cars.example,latestLicense,cars.inspections,cars.insurances,cars.permits,cars.latestInspection,cars.latestInsurance,cars.latestPermit",
     });
-    console.log(data);
+    // console.log(data);
     setDriverData(data);
     setIsLoading(false);
   };

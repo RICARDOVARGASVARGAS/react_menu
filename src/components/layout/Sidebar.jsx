@@ -23,7 +23,7 @@ import ProtectedComponent from "../../components/ProtectedComponent";
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -53,7 +53,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
       {/* Header del Sidebar */}
       <div className="flex items-center justify-center h-20 border-b border-blue-700">
-        <h1 className="text-2xl font-bold tracking-wide text-yellow-300">SECOV</h1>
+        <h1 className="text-2xl font-bold tracking-wide text-yellow-300">
+          SECOV
+        </h1>
       </div>
 
       {/* Sección de Perfil */}
@@ -63,8 +65,12 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           alt="Perfil"
           className="w-24 h-24 rounded-full border-4 border-yellow-400 shadow-lg"
         />
-        <h2 className="mt-4 text-xl font-semibold">SECOV</h2>
-        <p className="text-sm text-yellow-300 text-center">Sistema de Control Vehicular</p>
+        <h2 className="mt-4 text-xl font-semibold">
+          {`${user.name} ${user.first_name} ${user.last_name}`.slice(0, 17)}...
+        </h2>
+        <p className="text-sm text-yellow-300 text-center">
+          Sistema de Control Vehicular
+        </p>
       </div>
 
       {/* Navegación */}
