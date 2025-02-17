@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaFileAlt, FaSave, FaTimes, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
@@ -7,9 +6,11 @@ import { apiGet, apiPut, apiDelete, apiPost } from "../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import DeleteModal from "../../components/elements/DeleteModal";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const EditCar = ({ onClose, carId, driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastHook();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const {
     register,
@@ -62,7 +63,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
     if (data) {
       reset(data);
     } else {
-      toast.error(message || "No se pudieron cargar los datos.");
+      showToast(message || "No se pudieron cargar los datos.", "error");
     }
     setIsLoading(false);
   };
@@ -92,9 +93,7 @@ const EditCar = ({ onClose, carId, driverId }) => {
       );
     } catch (error) {
       console.error(`Error en la carga de opciones: ${error.message}`);
-      toast.error(
-        "Hubo un problema al cargar las opciones. Verifica tu conexión."
-      );
+      showToast("Hubo un problema al cargar las opciones.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -124,9 +123,9 @@ const EditCar = ({ onClose, carId, driverId }) => {
 
       if (data) {
         onClose();
-        toast.success(message);
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -137,23 +136,14 @@ const EditCar = ({ onClose, carId, driverId }) => {
 
   const handleDelete = async () => {
     setIsLoading(true);
-
-    if (watch("file_car") || watch("image_car")) {
-      toast.error(
-        "No se puede eliminar el vehículo porque tiene un archivo adjunto."
-      );
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const response = await apiDelete(`deleteCar/${carId}`);
-      const { data, message } = response;
-      if (data) {
-        toast.success(message || "Vehículo eliminado.");
+      const { success, message } = response;
+      if (success) {
+        showToast(message, "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo eliminar la Vehículo.");
+        showToast(message || "No se pudo eliminar el Vehículo.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

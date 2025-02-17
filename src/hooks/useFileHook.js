@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { apiPost } from "../services/apiService";
+import { useToastHook } from "./useToastHook";
 
 export const useFileUploader = () => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const { showToast } = useToastHook();
   const uploadFile = async ({
     model,
     id,
@@ -17,7 +17,7 @@ export const useFileUploader = () => {
     setIsLoading(true);
 
     if (!file) {
-      toast.error("Por favor, seleccione un archivo.");
+      showToast("Por favor, seleccione un archivo.", "info");
       setIsLoading(false);
       return;
     }
@@ -25,7 +25,7 @@ export const useFileUploader = () => {
     // Validar tamaño del archivo (máximo 5 MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      toast.error("El archivo excede el tamaño máximo de 5 MB.");
+      showToast("El archivo excede el tamaño máximo de 5 MB.", "error");
       setIsLoading(false);
       return;
     }
@@ -42,14 +42,14 @@ export const useFileUploader = () => {
       const { item, success, message, url } = response;
 
       if (success) {
-        toast.success(message, { autoClose: 1000, position: "top-center" });
+        showToast(message, "success");
         if (onSuccess) onSuccess({ item, url });
       } else {
-        toast.error(message);
+        showToast(message, "error");
         if (onError) onError(message);
       }
     } catch (error) {
-      toast.error(error.message);
+      showToast(error.message, "error");
       if (onError) onError(error.message);
     } finally {
       setIsLoading(false);
@@ -75,15 +75,15 @@ export const useFileDelete = () => {
       const { item, success, message } = data;
 
       if (success) {
-        toast.success(message, { autoClose: 1000, position: "top-center" });
+        showToast(message, "success");
         if (onSuccess) onSuccess({});
       } else {
-        toast.error(message);
+        showToast(message, "error");
         if (onError) onError(message);
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.message);
+      showToast(error.message, "error");
       if (onError) onError(error.message);
     } finally {
       setIsLoading(false);

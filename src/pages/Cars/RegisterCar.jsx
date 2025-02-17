@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPost } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const RegisterCar = ({ onClose, driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -74,9 +75,7 @@ const RegisterCar = ({ onClose, driverId }) => {
       );
     } catch (error) {
       console.error(`Error en la carga de opciones: ${error.message}`);
-      toast.error(
-        "Hubo un problema al cargar las opciones. Verifica tu conexión."
-      );
+      showToast("Hubo un problema al cargar las opciones.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -95,9 +94,9 @@ const RegisterCar = ({ onClose, driverId }) => {
 
       if (data) {
         onClose();
-        toast.success(message);
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

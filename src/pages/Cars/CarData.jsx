@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading"; // Componente de carga
 import {
   FaPlus,
@@ -17,9 +16,11 @@ import { useFileDelete, useFileUploader } from "../../hooks/useFileHook";
 import { apiGet } from "../../services/apiService";
 import EditCar from "./EditCar";
 import RegisterCar from "./RegisterCar";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const CarData = ({ driverId }) => {
   const [cars, setCars] = useState([]);
+  const { showToast } = useToastHook();
   const [isLoading, setIsLoading] = useState(false);
   const [modalShow, setModalShow] = useState(null);
   const [selectedCarId, setSelectedCarId] = useState(null);
@@ -40,7 +41,7 @@ const CarData = ({ driverId }) => {
         setCars(data);
       } else {
         setCars([]);
-        toast.info("El conductor no tiene vehículos registrados.");
+        showToast("El conductor no tiene vehículos registrados.", "info");
       }
     } catch (error) {
       toast.error("Error al cargar los vehículos.");
@@ -77,7 +78,12 @@ const CarData = ({ driverId }) => {
           fetchCars();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al subir el archivo.");
+          showToast(
+            errorMessage || "Error al subir el archivo.",
+            "error",
+            2000,
+            "top-center"
+          );
         },
       });
     } catch (error) {
@@ -96,7 +102,7 @@ const CarData = ({ driverId }) => {
           fetchCars();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al eliminar el Documento.");
+          showToast(errorMessage || "Error al eliminar el Documento.", "error");
         },
       });
     } catch (error) {

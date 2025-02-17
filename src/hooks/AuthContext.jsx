@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { apiPost } from "../services/apiService";
-import { toast } from "react-toastify";
+import { useToastHook } from "./useToastHook";
 
 // Crear el contexto
 const AuthContext = createContext();
@@ -10,10 +10,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToastHook();
 
   // Verificar el estado de autenticación al cargar la página
   useEffect(() => {
-    console.log("Verificando autenticación...");
+    // console.log("Verificando autenticación...");
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
     const storedExpiresAt = localStorage.getItem("expires_at");
@@ -66,6 +67,8 @@ export const AuthProvider = ({ children }) => {
       // Actualizar el estado
       setUser(user);
       setToken(token);
+
+      showToast("Sesión iniciada correctamente", "success", 1000, "top-center");
     } catch (error) {
       throw error;
     }
@@ -83,25 +86,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("token");
       localStorage.removeItem("expires_in");
       localStorage.removeItem("expires_at");
-
-      // Mostrar notificación de cierre de sesión exitoso
-      toast.success("Sesión cerrada correctamente", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      showToast("Sesión cerrada correctamente", "success", 1000, "top-center");
     } catch (error) {
-      toast.error("Error al cerrar sesión", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      showToast("Error al cerrar sesión", "error", 1000, "top-center");
       throw error;
     }
   };

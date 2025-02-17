@@ -41,10 +41,9 @@ const Login = () => {
       {isLoading && <Loading />}
       {/* Lado izquierdo: Imagen de fondo (solo en desktop) */}
       <div
-        className="hidden lg:block flex-1 bg-cover bg-center"
+        className="hidden lg:block flex-1 bg-contain bg-gray-50 bg-no-repeat bg-center"
         style={{
-          backgroundImage:
-            "url('https://yt3.googleusercontent.com/ytc/AIdro_m2WKqg22Hy2dc6MKK27VFQsJWjetAwibJ54ZJqk5iCE0I=s900-c-k-c0x00ffffff-no-rj')",
+          backgroundImage: "url('/images/portada.jpg')",
         }}
       >
         {/* Puedes agregar un overlay oscuro para mejorar la legibilidad del texto (opcional) */}
@@ -91,6 +90,7 @@ const Login = () => {
                     message: "El Usuario no debe exceder los 50 caracteres",
                   },
                 })}
+                autoComplete="username"
               />
               {errors.username && (
                 <p className="text-red-500 text-sm">
@@ -126,6 +126,7 @@ const Login = () => {
                     message: "La Contraseña no debe exceder los 30 caracteres",
                   },
                 })}
+                autoComplete="current-password"
               />
             </div>
             <button
