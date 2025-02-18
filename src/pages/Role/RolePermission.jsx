@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut } from "../../services/apiService";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const RolePermission = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +10,7 @@ const RolePermission = ({ onClose, itemId }) => {
   const [permissions, setPermissions] = useState([]); // Lista de todos los permisos
   const [selectedPermissions, setSelectedPermissions] = useState([]); // Permisos seleccionados
   const [selectAll, setSelectAll] = useState(false); // Estado para seleccionar/deseleccionar todos
+  const { showToast } = useToastHook();
 
   // Cargar los datos a editar
   useEffect(() => {
@@ -26,7 +27,7 @@ const RolePermission = ({ onClose, itemId }) => {
         included: "permissions",
       });
 
-      console.log(roleResponse);
+      // console.log(roleResponse);
       const {
         data: roleData,
         message: roleMessage,
@@ -34,7 +35,7 @@ const RolePermission = ({ onClose, itemId }) => {
       } = roleResponse;
 
       if (!roleSuccess) {
-        toast.error(roleMessage || "No se pudieron cargar los datos del rol.");
+        showToast(roleMessage, "error");
         return;
       }
 
@@ -51,16 +52,14 @@ const RolePermission = ({ onClose, itemId }) => {
       } = permissionsResponse;
 
       if (!permissionsSuccess) {
-        toast.error(
-          permissionsMessage || "No se pudieron cargar los permisos."
-        );
+        showToast(permissionsMessage, "error");
         return;
       }
 
       // Guardar todos los permisos disponibles
       setPermissions(permissionsData);
     } catch (error) {
-      toast.error("Ocurrió un error al cargar los datos.");
+      showToast("Ocurrió un error al cargar los datos.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -99,12 +98,12 @@ const RolePermission = ({ onClose, itemId }) => {
       const { message, success } = response;
 
       if (success) {
-        toast.success("Permisos actualizados correctamente.");
+        showToast("Permisos actualizados correctamente.", "success");
       } else {
-        toast.error(message || "Error al actualizar los permisos.");
+        showToast(message, "error");
       }
     } catch (error) {
-      toast.error("Ocurrió un error al actualizar los permisos.");
+      showToast("Ocurrió un error al actualizar los permisos", "error");
     } finally {
       setIsLoading(false);
     }

@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import Loading from "../../components/Loading";
 import { FaCheck, FaList, FaSearch, FaEraser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { apiFetch, apiPost } from "../../services/apiService";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const RegisterDriver = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -41,7 +42,7 @@ const RegisterDriver = () => {
 
     // Validación del número de documento
     if (!documentNumber || documentNumber.length !== 8) {
-      toast.error("Por favor, ingrese el número de documento.");
+      showToast("Por favor, ingrese el número de documento.");
       return;
     }
 
@@ -53,7 +54,7 @@ const RegisterDriver = () => {
       );
 
       if (!status) {
-        toast.error(message);
+        showToast(message, "error");
         reset({
           document_type: "dni",
           document_number: "",
@@ -76,7 +77,7 @@ const RegisterDriver = () => {
       }
     } catch (error) {
       console.error("Error en la búsqueda:", error);
-      toast.error(error.message || "Error en la búsqueda.");
+      showToast("Hubo un problema al buscar el conductor.", "error");
     } finally {
       setIsSearching(false);
     }
@@ -89,10 +90,10 @@ const RegisterDriver = () => {
       const { data, message } = response;
 
       if (data) {
-        toast.success(message);
+        showToast(message || "Conductor registrado.", "success");
         navigate("/driver-data/" + data.id);
       } else {
-        toast.error(message);
+        showToast(message || "No se pudo registrar el conductor.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -371,7 +372,9 @@ const RegisterDriver = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold">Teléfono (Opcional)</label>
+                <label className="block text-sm font-semibold">
+                  Teléfono (Opcional)
+                </label>
                 <input
                   type="text"
                   name="phone_number"
@@ -407,7 +410,9 @@ const RegisterDriver = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold">Dirección (Opcional)</label>
+                <label className="block text-sm font-semibold">
+                  Dirección (Opcional)
+                </label>
                 <input
                   type="text"
                   name="address"

@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { FaSave } from "react-icons/fa";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { apiPost } from "../../services/apiService";
-import { toast } from "react-toastify";
+import { useToastHook } from "../../hooks/useToastHook";
 const RegisterPermit = ({ toggleForm, setIsLoading, cardId, fetchItems }) => {
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -30,9 +31,9 @@ const RegisterPermit = ({ toggleForm, setIsLoading, cardId, fetchItems }) => {
         toggleForm();
         reset();
         fetchItems();
-        toast.success(message);
+        showToast("Circulación registrado correctamente", "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

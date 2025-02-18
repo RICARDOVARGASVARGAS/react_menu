@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaSave, FaTrash, FaTimes } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut, apiDelete } from "../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const EditLicense = ({ onClose, licenseId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -39,7 +39,7 @@ const EditLicense = ({ onClose, licenseId }) => {
     if (data) {
       reset(data);
     } else {
-      toast.error(message || "No se pudieron cargar los datos.");
+      showToast(message || "No se pudieron cargar los datos.", "error");
     }
     setIsLoading(false);
   };
@@ -52,10 +52,10 @@ const EditLicense = ({ onClose, licenseId }) => {
       const { data: updatedData, message } = response;
 
       if (updatedData) {
-        toast.success(message || "Licencia actualizada.");
+        showToast(message || "Licencia actualizada.", "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo actualizar la Licencia.");
+        showToast(message || "No se pudo actualizar la Licencia.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -71,10 +71,10 @@ const EditLicense = ({ onClose, licenseId }) => {
       const response = await apiDelete(`deleteDriverLicense/${licenseId}`);
       const { data, message } = response;
       if (data) {
-        toast.success(message || "Licencia eliminada.");
+        showToast(message || "Licencia eliminada.", "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo eliminar la Licencia.");
+        showToast(message || "No se pudo eliminar la Licencia.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

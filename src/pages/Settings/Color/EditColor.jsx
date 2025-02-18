@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
@@ -8,10 +7,12 @@ import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import DeleteModal from "../../../components/elements/DeleteModal";
 import ProtectedComponent from "../../../components/ProtectedComponent";
+import { useToastHook } from "../../../hooks/useToastHook";
 
 const EditColor = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -36,7 +37,7 @@ const EditColor = ({ onClose, itemId }) => {
       if (data) {
         reset(data);
       } else {
-        toast.error(message || "No se pudieron cargar los datos.");
+        showToast(message, "error");
       }
       setIsLoading(false);
     };
@@ -52,10 +53,10 @@ const EditColor = ({ onClose, itemId }) => {
       const { data: updatedData, message } = response;
 
       if (updatedData) {
-        toast.success(message || "Color actualizado.");
+        showToast(message, "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo actualizar el Color.");
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -71,10 +72,10 @@ const EditColor = ({ onClose, itemId }) => {
       const response = await apiDelete(`deleteColor/${itemId}`);
       const { data, message } = response;
       if (data) {
-        toast.success(message || "Color eliminado.");
+        showToast(message, "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo eliminar el Color.");
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

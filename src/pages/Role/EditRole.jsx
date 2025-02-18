@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaSave, FaTrash } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
@@ -7,10 +6,12 @@ import { apiGet, apiPut, apiDelete } from "../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import DeleteModal from "../../components/elements/DeleteModal";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const EditRole = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -37,7 +38,7 @@ const EditRole = ({ onClose, itemId }) => {
     if (data) {
       reset(data);
     } else {
-      toast.error(message || "No se pudieron cargar los datos.");
+      showToast(message || "No se pudieron cargar los datos.", "error");
     }
     setIsLoading(false);
   };
@@ -50,10 +51,10 @@ const EditRole = ({ onClose, itemId }) => {
       const { data: updatedData, message } = response;
 
       if (updatedData) {
-        toast.success(message || "Rol actualizado.");
+        showToast(message || "Rol actualizado.", "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo actualizar el Rol.");
+        showToast(message || "No se pudo actualizar el Rol.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -69,10 +70,10 @@ const EditRole = ({ onClose, itemId }) => {
       const response = await apiDelete(`role/deleteRole/${itemId}`);
       const { data, message, success } = response;
       if (success) {
-        toast.success(message || "Rol eliminado.", { autoClose: 1000, position: "top-center" });
+        showToast(message || "Rol eliminado.", "success");
         onClose();
       } else {
-        toast.error(message || "No se pudo eliminar el Rol.");
+        showToast(message || "No se pudo eliminar el Rol.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

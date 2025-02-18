@@ -9,7 +9,6 @@ import {
   FaFilePdf,
 } from "react-icons/fa";
 import Loading from "../../components/Loading";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 import { apiDelete, apiFetch, apiGet, apiPut } from "../../services/apiService";
@@ -18,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
 import DeleteModal from "../../components/elements/DeleteModal";
 import { useNavigate } from "react-router-dom";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const EditDriver = ({ driverId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +25,7 @@ const EditDriver = ({ driverId }) => {
   const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -67,7 +68,7 @@ const EditDriver = ({ driverId }) => {
       // console.log(data);
       reset(data);
     } else {
-      toast.error(message || "No se pudieron cargar los datos.");
+      showToast(message || "No se pudieron cargar los datos.", "error");
     }
 
     setIsLoading(false);
@@ -114,7 +115,7 @@ const EditDriver = ({ driverId }) => {
       }
     } catch (error) {
       console.error("Error en la búsqueda:", error);
-      toast.error(error.message || "Error en la búsqueda.");
+      showToast(error.message || "Error en la búsqueda.", "error");
     } finally {
       setIsSearching(false);
     }
@@ -131,9 +132,9 @@ const EditDriver = ({ driverId }) => {
 
       if (data) {
         reset(data);
-        toast.success(message);
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);

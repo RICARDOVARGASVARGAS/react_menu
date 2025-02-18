@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import {
   FaPlus,
@@ -13,6 +12,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { apiDelete, apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
 import RegisterPermit from "./RegisterPermit";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const ListPermits = ({ onClose, carId }) => {
   const [permits, setPermits] = useState([]);
@@ -20,6 +20,7 @@ const ListPermits = ({ onClose, carId }) => {
   const [showForm, setShowForm] = useState(false);
   const { uploadFile, isLoading: isFileUploading } = useFileUploader();
   const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
+  const { showToast } = useToastHook();
 
   // Obtener la lista de seguros
   const fetchItems = async () => {
@@ -51,7 +52,7 @@ const ListPermits = ({ onClose, carId }) => {
           fetchItems();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al subir el archivo.");
+          showToast(errorMessage || "Error al subir el archivo.", "error");
         },
       });
     } catch (error) {
@@ -70,7 +71,7 @@ const ListPermits = ({ onClose, carId }) => {
           fetchItems();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al eliminar el Elemento.");
+          showToast(errorMessage || "Error al eliminar el Elemento.", "error");
         },
       });
     } catch (error) {
@@ -84,13 +85,13 @@ const ListPermits = ({ onClose, carId }) => {
       const response = await apiDelete(`deletePermit/${item.id}`);
       const { data, message } = response;
       if (data) {
-        toast.success(message || "Elemento eliminado.");
+        showToast(message || "Elemento eliminado.", "success");
         fetchItems();
       } else {
-        toast.error(message || "No se pudo eliminar el Elemento.");
+        showToast(message || "No se pudo eliminar el Elemento.", "error");
       }
     } catch (error) {
-      toast.error("No se pudo eliminar el Elemento.");
+      showToast("No se pudo eliminar el Elemento.", "error");
       console.log(error);
     } finally {
       setIsLoading(false);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaPlus, FaEdit, FaFilePdf, FaTrash, FaUpload } from "react-icons/fa";
 import RegisterLicense from "./RegisterLicense";
 import EditLicense from "./EditLicense";
 import { apiGet } from "../../services/apiService";
 import { useFileUploader, useFileDelete } from "../../hooks/useFileHook";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const ListLicenses = ({ driverId }) => {
   const [licenses, setLicenses] = useState([]);
@@ -15,6 +15,7 @@ const ListLicenses = ({ driverId }) => {
   const [selectedLicenseId, setSelectedLicenseId] = useState(null);
   const { uploadFile, isLoading: isFileUploading } = useFileUploader();
   const { deleteFile, isLoading: isFileDeleting } = useFileDelete();
+  const { showToast } = useToastHook();
 
   useEffect(() => {
     fetchLicenses();
@@ -36,10 +37,10 @@ const ListLicenses = ({ driverId }) => {
         setLicenses(data);
       } else {
         setLicenses([]);
-        toast.info("El conductor no tiene licencias registradas.");
+        showToast("El conductor no tiene licencias registradas.", "info");
       }
     } catch (error) {
-      toast.error("Error al cargar los licencias.");
+      showToast("Error al cargar los licencias.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +68,7 @@ const ListLicenses = ({ driverId }) => {
           fetchLicenses();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al subir el archivo.");
+          showToast(errorMessage || "Error al subir el archivo.", "error");
         },
       });
     } catch (error) {
@@ -86,7 +87,7 @@ const ListLicenses = ({ driverId }) => {
           fetchLicenses();
         },
         onError: (errorMessage) => {
-          toast.error(errorMessage || "Error al eliminar la licencia.");
+          showToast(errorMessage || "Error al eliminar la licencia.", "error");
         },
       });
     } catch (error) {

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { FaSave } from "react-icons/fa";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { apiPost } from "../../services/apiService";
-import { toast } from "react-toastify";
+import { useToastHook } from "../../hooks/useToastHook";
 const RegisterInsurance = ({
   toggleForm,
   setIsLoading,
@@ -26,6 +26,8 @@ const RegisterInsurance = ({
     },
   });
 
+  const { showToast } = useToastHook();
+
   const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
     try {
@@ -36,9 +38,9 @@ const RegisterInsurance = ({
         toggleForm();
         reset();
         fetchItems();
-        toast.success(message);
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
