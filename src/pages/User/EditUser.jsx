@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import {
   FaCheck,
@@ -15,10 +14,12 @@ import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 import DeleteModal from "../../components/elements/DeleteModal";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const EditUser = ({ onClose, userId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -44,7 +45,7 @@ const EditUser = ({ onClose, userId }) => {
 
     // Validación del número de documento
     if (!documentNumber || documentNumber.length !== 8) {
-      toast.error("Por favor, ingrese el número de documento.");
+      showToast("Por favor, ingrese el número de documento.", "error");
       return;
     }
 
@@ -56,7 +57,7 @@ const EditUser = ({ onClose, userId }) => {
       );
 
       if (!status) {
-        toast.error(message);
+        showToast(message, "error");
         reset({
           name: "",
           first_name: "",
@@ -71,7 +72,7 @@ const EditUser = ({ onClose, userId }) => {
       }
     } catch (error) {
       console.error("Error en la búsqueda:", error);
-      toast.error(error.message || "Error en la búsqueda.");
+      showToast(error.message, "error");
     } finally {
       setIsSearching(false);
     }
@@ -90,7 +91,7 @@ const EditUser = ({ onClose, userId }) => {
     if (success) {
       reset(data);
     } else {
-      toast.error(message || "No se pudieron cargar los datos.");
+      showToast(message, "error");
     }
 
     setIsLoading(false);
@@ -107,9 +108,9 @@ const EditUser = ({ onClose, userId }) => {
 
       if (success) {
         reset(data);
-        toast.success(message, { autoClose: 1000, position: "top-center" });
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -125,16 +126,10 @@ const EditUser = ({ onClose, userId }) => {
       const response = await apiDelete(`user/deleteUser/${userId}`);
       const { data, message, success } = response;
       if (success) {
-        toast.success(message || "Usuario eliminado.", {
-          autoClose: 1000,
-          position: "top-center",
-        });
+        showToast(message, "success");
         onClose();
       } else {
-        toast.error("No se pudo eliminar el Usuario.", {
-          autoClose: 1000,
-          position: "top-center",
-        });
+        showToast("No se pudo eliminar el Usuario.", "error");
       }
     } catch (error) {
       console.log(error);

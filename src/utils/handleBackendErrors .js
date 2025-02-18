@@ -1,9 +1,10 @@
-import { toast } from "react-toastify";
+import { useToastHook } from "../hooks/useToastHook";
 
 export const handleBackendErrors = (error, setError) => {
+  const { showToast } = useToastHook();
   const { message, errors: backendErrors } = error;
   // Mostrar mensaje general
-  if (message) toast.error(message);
+  if (message) showToast(message, "error");
 
   // Mapear errores del backend al formulario
   if (backendErrors) {

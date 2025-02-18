@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { FaCheck, FaEraser, FaList, FaSave, FaSearch } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
@@ -7,9 +6,11 @@ import { apiPost, apiFetch } from "../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const RegisterUser = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -35,7 +36,7 @@ const RegisterUser = ({ onClose }) => {
 
     // Validación del número de documento
     if (!documentNumber || documentNumber.length !== 8) {
-      toast.error("Por favor, ingrese el número de documento.");
+      showToast("Por favor, ingrese el número de documento.", "error");
       return;
     }
 
@@ -47,7 +48,7 @@ const RegisterUser = ({ onClose }) => {
       );
 
       if (!status) {
-        toast.error(message);
+        showToast(message, "error");
         reset({
           name: "",
           first_name: "",
@@ -62,7 +63,7 @@ const RegisterUser = ({ onClose }) => {
       }
     } catch (error) {
       console.error("Error en la búsqueda:", error);
-      toast.error(error.message || "Error en la búsqueda.");
+      showToast(error.message || "Error en la búsqueda.", "error");
     } finally {
       setIsSearching(false);
     }
@@ -76,9 +77,9 @@ const RegisterUser = ({ onClose }) => {
 
       if (data) {
         onClose();
-        toast.success(message, { autoClose: 1000, position: "top-center" });
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
@@ -332,14 +333,16 @@ const RegisterUser = ({ onClose }) => {
               <button
                 type="button"
                 className="bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-700"
-                onClick={() => reset({
-                  document: "",
-                  name: "",
-                  first_name: "",
-                  last_name: "",
-                  email: "",
-                  phone_number: "",
-                })}
+                onClick={() =>
+                  reset({
+                    document: "",
+                    name: "",
+                    first_name: "",
+                    last_name: "",
+                    email: "",
+                    phone_number: "",
+                  })
+                }
               >
                 <FaEraser />
                 Limpiar

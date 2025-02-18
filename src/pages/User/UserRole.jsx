@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut } from "../../services/apiService";
+import { useToastHook } from "../../hooks/useToastHook";
 
 const UserRole = ({ onClose, itemId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +10,7 @@ const UserRole = ({ onClose, itemId }) => {
   const [roles, setRoles] = useState([]); // Lista de todos los roles
   const [selectedRoles, setSelectedRoles] = useState([]); // Roles seleccionados
   const [selectAll, setSelectAll] = useState(false); // Estado para seleccionar/deseleccionar todos
+  const { showToast } = useToastHook();
 
   // Cargar los datos a editar
   useEffect(() => {
@@ -32,9 +33,7 @@ const UserRole = ({ onClose, itemId }) => {
       } = userResponse;
 
       if (!userSuccess) {
-        toast.error(
-          userMessage || "No se pudieron cargar los datos del usuario."
-        );
+        showToast(userMessage, "error");
         return;
       }
 
@@ -56,16 +55,14 @@ const UserRole = ({ onClose, itemId }) => {
       } = rolesResponse;
 
       if (!rolesSuccess) {
-        toast.error(
-          rolesMessage || "No se pudieron cargar los datos de los roles."
-        );
+        showToast(rolesMessage, "error");
         return;
       }
 
       // Guardar todos los permisos disponibles
       setRoles(rolesData);
     } catch (error) {
-      toast.error("Ocurrió un error al cargar los datos.");
+      showToast(error, "error");
     } finally {
       setIsLoading(false);
     }
@@ -104,12 +101,12 @@ const UserRole = ({ onClose, itemId }) => {
       const { message, success } = response;
 
       if (success) {
-        toast.success("Roles actualizados correctamente.");
+        showToast("Roles actualizados correctamente.", "success");
       } else {
-        toast.error(message || "Error al actualizar los roles.");
+        showToast(message, "error");
       }
     } catch (error) {
-      toast.error("Ocurrió un error al actualizar los roles.");
+      showToast(error, "error");
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +126,7 @@ const UserRole = ({ onClose, itemId }) => {
 
         {/* Título */}
         <h2 className="text-sm md:text-xl font-bold mb-6 text-center text-gray-800">
-          Editar Roles:{" "} <br />
+          Editar Roles: <br />
           <span className="text-blue-500">
             {data?.name + " " + data?.first_name + " " + data?.last_name}
           </span>

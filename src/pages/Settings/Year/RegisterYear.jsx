@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
 import { FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import { useForm } from "react-hook-form";
+import { useToastHook } from "../../../hooks/useToastHook";
 
 const RegisterYear = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToastHook();
   const {
     register,
     handleSubmit,
@@ -30,9 +31,9 @@ const RegisterYear = ({ onClose }) => {
 
       if (data) {
         onClose();
-        toast.success(message);
+        showToast(message, "success");
       } else {
-        toast.error(message);
+        showToast(message, "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
