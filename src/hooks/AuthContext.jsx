@@ -76,21 +76,30 @@ export const AuthProvider = ({ children }) => {
 
   // Función para cerrar sesión
   const logout = async () => {
-    try {
-      await apiPost("auth/logout"); // Opcional: Si el backend necesita procesar el logout
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("expires_in");
+    localStorage.removeItem("expires_at");
+    setUser(null);
+    setToken(null);
 
-      // Limpiar el estado y localStorage
-      setUser(null);
-      setToken(null);
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("expires_in");
-      localStorage.removeItem("expires_at");
-      showToast("Sesión cerrada correctamente", "success", 1000, "top-center");
-    } catch (error) {
-      showToast("Error al cerrar sesión", "error", 1000, "top-center");
-      throw error;
-    }
+    showToast("Sesión cerrada", "success", 1000, "top-center");
+
+    // try {
+    //   await apiPost("auth/logout"); // Opcional: Si el backend necesita procesar el logout
+
+    //   // Limpiar el estado y localStorage
+    //   setUser(null);
+    //   setToken(null);
+    //   localStorage.removeItem("user");
+    //   localStorage.removeItem("token");
+    //   localStorage.removeItem("expires_in");
+    //   localStorage.removeItem("expires_at");
+    //   showToast("Sesión cerrada correctamente", "success", 1000, "top-center");
+    // } catch (error) {
+    //   showToast("Error al cerrar sesión", "error", 1000, "top-center");
+    //   throw error;
+    // }
   };
 
   return (

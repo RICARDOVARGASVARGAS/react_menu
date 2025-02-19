@@ -89,6 +89,7 @@ const EditUser = ({ onClose, userId }) => {
     const { data, message, success } = await apiGet(`user/getUser/${userId}`);
 
     if (success) {
+      console.log(data);
       reset(data);
     } else {
       showToast(message, "error");
@@ -158,6 +159,31 @@ const EditUser = ({ onClose, userId }) => {
           className="bg-white shadow-md rounded-lg p-6 space-y-4 mx-auto w-full"
         >
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <div className="sm:col-span-2 lg:col-span-1">
+              <label className="block mb-2 text-gray-700 font-medium">
+                Estado
+              </label>
+              <select
+                name="is_active"
+                className={`border ${
+                  errors.is_active ? "border-red-500" : "border-gray-300"
+                } rounded px-4 py-2 w-full`}
+                {...register("is_active", {
+                  required: {
+                    value: true,
+                    message: "El estado es requerido",
+                  },
+                })}
+              >
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+              </select>
+              {errors.is_active && (
+                <p className="text-red-500 text-sm">
+                  {errors.is_active.message}
+                </p>
+              )}
+            </div>
             <div>
               <label className="block mb-2 text-gray-700 font-medium">
                 N° Documento

@@ -24,6 +24,7 @@ import { Navigate } from "react-router-dom";
 import ListRoles from "./pages/Role/ListRoles";
 import ListUsers from "./pages/User/ListUsers";
 import NoPermissionsPage from "./pages/NoPermissionsPage";
+import Profile from "./pages/User/Profile";
 
 const App = () => {
   return (
@@ -48,6 +49,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             ></Route>

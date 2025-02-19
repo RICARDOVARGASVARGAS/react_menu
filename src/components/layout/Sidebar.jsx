@@ -16,6 +16,7 @@ import {
   FaUsers,
   FaPalette,
   FaUserTag,
+  FaUser,
 } from "react-icons/fa";
 import { useAuth } from "../../hooks/AuthContext";
 import ProtectedComponent from "../../components/ProtectedComponent";
@@ -276,6 +277,22 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
               )}
             </li>
           </ProtectedComponent>
+
+          {/* Perfil */}
+          <li>
+            <Link
+              to="/profile"
+              onClick={() => setIsSidebarOpen(false)}
+              className={`flex items-center py-3 px-6 transition-all duration-200 ${
+                location.pathname === "/profile"
+                  ? "bg-blue-700 text-white shadow-lg"
+                  : "hover:bg-blue-700 hover:shadow-lg"
+              }`}
+            >
+              <FaUser className="text-lg" />
+              <span className="ml-3 text-sm font-medium">Mi Perfil</span>
+            </Link>
+          </li>
         </ul>
       </nav>
 
