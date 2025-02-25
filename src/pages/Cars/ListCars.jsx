@@ -3,7 +3,14 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
-import { FaSearch, FaEraser, FaEye } from "react-icons/fa";
+import {
+  FaSearch,
+  FaEraser,
+  FaEye,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import { apiGet } from "../../services/apiService";
 import { useAuth } from "../../hooks/AuthContext";
 import ProtectedComponent from "../../components/ProtectedComponent";
@@ -26,7 +33,8 @@ const ListCars = () => {
       perPage: itemsPerPage,
       sort: "desc",
       search: searchQuery,
-      included: "brand,typeCar,group,year,color,example",
+      included:
+        "brand,typeCar,group,year,color,example,latestInspection,latestInsurance,latestPermit,driver.latestLicense",
     });
     setData(data);
     setTotalPages(meta.last_page);
@@ -60,9 +68,52 @@ const ListCars = () => {
     }
   };
 
-  const actions = [];
+  const getStatusDisplay = (car) => {
+    const inspectionStatus = car.latest_inspection?.status;
+    const insuranceStatus = car.latest_insurance?.status;
+    const permitStatus = car.latest_permit?.status;
+    const licenseStatus = car.driver?.latest_license?.status;
 
-  // Visualizar Detalle (permiso único)
+    const allActive =
+      inspectionStatus &&
+      insuranceStatus &&
+      permitStatus &&
+      licenseStatus;
+
+    if (allActive) {
+      return (
+        <div className="flex items-center gap-2 text-green-600">
+          <FaCheckCircle />
+          <span>ACTIVO</span>
+        </div>
+      );
+    }
+
+    const inactiveFields = [];
+    if (!inspectionStatus) inactiveFields.push("Revisión");
+    if (!insuranceStatus) inactiveFields.push("SOAT");
+    if (!permitStatus) inactiveFields.push("Circulación");
+    if (!licenseStatus) inactiveFields.push("Licencia");
+
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2 text-red-600">
+          <FaExclamationTriangle />
+          <span>INACTIVO</span>
+        </div>
+        <div className="text-sm text-gray-700">
+          {inactiveFields.map((field, index) => (
+            <div key={index} className="flex items-center gap-1">
+              <FaTimesCircle className="text-red-500" />
+              <span>{field}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const actions = [];
   if (user?.permissions?.includes("car.show")) {
     actions.push({
       label: <FaEye />,
@@ -77,10 +128,9 @@ const ListCars = () => {
         <main className="p-1">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-blue-900">
-              Lista de Vehiculos
+              Lista de Vehículos
             </h1>
           </div>
-
           <div className="flex gap-4 mb-4">
             <input
               type="text"
@@ -103,7 +153,6 @@ const ListCars = () => {
               <FaEraser />
             </button>
           </div>
-
           {isLoading ? (
             <Loading />
           ) : (
@@ -118,6 +167,7 @@ const ListCars = () => {
                     "Año",
                     "Color",
                     "Asociación",
+                    "Estado",
                     "Operaciones",
                   ]}
                   data={data.map((car, index) => ({
@@ -128,6 +178,7 @@ const ListCars = () => {
                     year: car.year?.name,
                     color: car.color?.name,
                     group: car.group?.name,
+                    status: getStatusDisplay(car),
                   }))}
                   actions={actions}
                 />
