@@ -32,7 +32,7 @@ const ListLicenses = ({ driverId }) => {
     setIsLoading(true);
     try {
       const { data, success } = await apiGet(`getDriverLicenses/${driverId}`);
-
+      // console.log(data);
       if (success) {
         setLicenses(data);
       } else {
@@ -151,7 +151,7 @@ const ListLicenses = ({ driverId }) => {
                     </div>
                   </td>
                   <td className="border px-2 py-1 text-center">
-                    {license.status === "active" ? (
+                    {license.status ? (
                       <span className="px-2 py-1 rounded-full text-white font-semibold bg-green-500">
                         Activo
                       </span>

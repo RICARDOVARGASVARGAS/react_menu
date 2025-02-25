@@ -29,6 +29,7 @@ const DetailCar = () => {
         "driver,driver.latestLicense,brand,typeCar,group,year,color,example,latestInspection,latestInsurance,latestPermit",
     });
     setCarData(data);
+    // console.log(data);
     setIsLoading(false);
   };
 
@@ -52,10 +53,10 @@ const DetailCar = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden md:inline">Volver</span>
           </button>
-          {carData.driver?.latest_license?.is_valid &&
-            carData.latest_permit?.is_valid &&
-            carData.latest_insurance?.is_valid &&
-            carData.latest_inspection?.is_valid && (
+          {carData.driver?.latest_license?.status &&
+            carData.latest_permit?.status &&
+            carData.latest_insurance?.status &&
+            carData.latest_inspection?.status && (
               <button
                 onClick={() => window.open(`/card-permit/${carId}`, "_blank")}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
@@ -219,13 +220,13 @@ const DetailCar = () => {
                 <div
                   className="w-6 h-6 rounded-full border"
                   style={{
-                    backgroundColor: carData.driver?.latest_license?.is_valid
+                    backgroundColor: carData.driver?.latest_license?.status
                       ? "green"
                       : "red",
                   }}
                 />
                 <p className="font-semibold uppercase">
-                  {carData.driver?.latest_license?.is_valid
+                  {carData.driver?.latest_license?.status
                     ? "Activo"
                     : "Inactivo"}
                 </p>
@@ -316,12 +317,12 @@ const DetailCar = () => {
                   <p className="text-lg font-semibold text-gray-800">SOAT</p>
                   <div
                     className={`px-2 py-1 text-sm font-medium rounded uppercase ${
-                      carData.latest_insurance?.is_valid
+                      carData.latest_insurance?.status
                         ? "bg-green-100 text-green-600"
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {carData.latest_insurance?.is_valid ? "Activo" : "Inactivo"}
+                    {carData.latest_insurance?.status ? "Activo" : "Inactivo"}
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 text-sm">
@@ -353,12 +354,12 @@ const DetailCar = () => {
                   </p>
                   <div
                     className={`px-2 py-1 text-sm font-medium rounded uppercase ${
-                      carData.latest_inspection?.is_valid
+                      carData.latest_inspection?.status
                         ? "bg-green-100 text-green-600"
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {carData.latest_inspection?.is_valid
+                    {carData.latest_inspection?.status
                       ? "Activo"
                       : "Inactivo"}
                   </div>
@@ -386,12 +387,12 @@ const DetailCar = () => {
                   </p>
                   <div
                     className={`px-2 py-1 text-sm font-medium rounded uppercase ${
-                      carData.latest_permit?.is_valid
+                      carData.latest_permit?.status
                         ? "bg-green-100 text-green-600"
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {carData.latest_permit?.is_valid ? "Activo" : "Inactivo"}
+                    {carData.latest_permit?.status ? "Activo" : "Inactivo"}
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 text-sm">

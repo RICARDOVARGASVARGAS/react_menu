@@ -213,7 +213,7 @@ const CarData = ({ driverId }) => {
                         <strong>F.Expiración: </strong> <br />
                         {car.latest_insurance?.expiration_date || "N/A"}
                       </span>
-                      {car.latest_insurance?.is_valid ? (
+                      {car.latest_insurance?.status ? (
                         <div className="flex items-center space-x-1 text-green-500">
                           <FaCheckCircle className="text-xl" />
                           <span className="font-semibold">Vigente</span>
@@ -254,7 +254,7 @@ const CarData = ({ driverId }) => {
                         <strong>F.Expiración: </strong> <br />
                         {car.latest_permit?.expiration_date || "N/A"}
                       </span>
-                      {car.latest_permit?.is_valid ? (
+                      {car.latest_permit?.status ? (
                         <div className="flex items-center space-x-1 text-green-500">
                           <FaCheckCircle className="text-xl" />
                           <span className="font-semibold">Vigente</span>
@@ -295,7 +295,7 @@ const CarData = ({ driverId }) => {
                         <strong>F.Expiración: </strong> <br />
                         {car.latest_inspection?.expiration_date || "N/A"}
                       </span>
-                      {car.latest_inspection?.is_valid ? (
+                      {car.latest_inspection?.status ? (
                         <div className="flex items-center space-x-1 text-green-500">
                           <FaCheckCircle className="text-xl" />
                           <span className="font-semibold">Vigente</span>
