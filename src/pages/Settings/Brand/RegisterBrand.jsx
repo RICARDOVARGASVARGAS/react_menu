@@ -6,6 +6,11 @@ import { apiPost } from "../../../services/apiService";
 import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import { useToastHook } from "../../../hooks/useToastHook";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { brandSchema } from "../../../validations";
+import Error from "../../../components/ui/Error";
+import { Label } from "../../../components/ui/Label";
+import { Input } from "../../../components/ui/Input";
 
 const RegisterBrand = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +23,7 @@ const RegisterBrand = ({ onClose }) => {
     reset,
     watch,
   } = useForm({
+    resolver: zodResolver(brandSchema), // Envuelve brandSchema con zodResolver
     defaultValues: {
       name: "",
     },
@@ -58,33 +64,15 @@ const RegisterBrand = ({ onClose }) => {
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-semibold">Nombre</label>
-            <input
+            <Label>Nombre</Label>
+            <Input
               type="text"
               name="name"
               autoComplete="off"
-              className={`mt-1 p-2 w-full border rounded ${
-                errors.name ? "border-red-500" : ""
-              }`}
-              {...register("name", {
-                required: {
-                  value: true,
-                  message: "El Nombre es requerido",
-                },
-                minLength: {
-                  value: 3,
-                  message: "El Nombre debe tener al menos 3 caracteres",
-                },
-                maxLength: {
-                  value: 50,
-                  message: "El Nombre no debe exceder los 50 caracteres",
-                },
-              })}
+              hasError={!!errors.name}
+              {...register("name")}
             />
-
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
+            {errors.name && <Error message={errors.name?.message} />}
           </div>
         </div>
 
