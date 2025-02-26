@@ -5,16 +5,19 @@ import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import { useToastHook } from "../../../hooks/useToastHook";
-import { brandSchema } from "../../../validations";
 import { Label, Input, Error, Button } from "../../../components/ui";
 import { useCustomForm } from "../../../hooks/useCustomForm";
+import { brandSchema } from "../../../validations";
 
 const RegisterBrand = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastHook();
-  const { register, handleSubmit, errors, reset, setError } = useCustomForm(brandSchema, {
-    name: "",
-  });
+  const { register, handleSubmit, errors, reset, setError } = useCustomForm(
+    brandSchema,
+    {
+      name: "",
+    }
+  );
 
   const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
