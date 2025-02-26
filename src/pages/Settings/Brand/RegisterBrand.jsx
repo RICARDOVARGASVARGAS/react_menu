@@ -1,32 +1,19 @@
 import React, { useState } from "react";
 import Loading from "../../../components/Loading";
-import { FaSave } from "react-icons/fa";
+import { FaEraser, FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../../services/apiService";
-import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../../utils/handleBackendErrors ";
 import { useToastHook } from "../../../hooks/useToastHook";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { brandSchema } from "../../../validations";
-import Error from "../../../components/ui/Error";
-import { Label } from "../../../components/ui/Label";
-import { Input } from "../../../components/ui/Input";
+import { Label, Input, Error, Button } from "../../../components/ui";
+import { useCustomForm } from "../../../hooks/useCustomForm";
 
 const RegisterBrand = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastHook();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    reset,
-    watch,
-  } = useForm({
-    resolver: zodResolver(brandSchema), // Envuelve brandSchema con zodResolver
-    defaultValues: {
-      name: "",
-    },
+  const { register, handleSubmit, errors, reset, setError } = useCustomForm(brandSchema, {
+    name: "",
   });
 
   const onSubmit = handleSubmit(async (formData) => {
@@ -77,22 +64,18 @@ const RegisterBrand = ({ onClose }) => {
         </div>
 
         <div className="flex justify-end mt-6 gap-4">
-          <button
+          <Button
+            color="gray"
             type="button"
             onClick={() => reset()}
-            className="bg-gray-600 text-white py-2 px-6 rounded"
+            disabled={isLoading}
           >
-            Limpiar
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
-          >
+            <FaEraser /> Limpiar
+          </Button>
+          <Button color="blue" type="submit" disabled={isLoading}>
             <FaSave /> Guardar
-          </button>
+          </Button>
         </div>
-
-        {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
     </div>
   );
