@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 import Loading from "../../components/Loading";
-import { FaSave } from "react-icons/fa";
+import { FaEraser, FaSave } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiPost } from "../../services/apiService";
-import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { useToastHook } from "../../hooks/useToastHook";
+import { useCustomForm } from "../../hooks/useCustomForm";
+import { roleSchema } from "../../validations";
+import { Button, Error, Input, Label } from "../../components/ui";
 
 const RegisterRole = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastHook();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    reset,
-    watch,
-  } = useForm({
-    defaultValues: {
+  const { register, handleSubmit, errors, reset, setError } = useCustomForm(
+    roleSchema,
+    {
       name: "",
-    },
-  });
+    }
+  );
 
   const onSubmit = handleSubmit(async (formData) => {
     setIsLoading(true);
@@ -58,50 +54,30 @@ const RegisterRole = ({ onClose }) => {
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-semibold">Nombre</label>
-            <input
+            <Label>Nombre</Label>
+            <Input
               type="text"
               name="name"
               autoComplete="off"
-              className={`mt-1 p-2 w-full border rounded ${
-                errors.name ? "border-red-500" : ""
-              }`}
-              {...register("name", {
-                required: {
-                  value: true,
-                  message: "El Nombre es requerido",
-                },
-                minLength: {
-                  value: 3,
-                  message: "El Nombre debe tener al menos 3 caracteres",
-                },
-                maxLength: {
-                  value: 30,
-                  message: "El Nombre no debe exceder los 30 caracteres",
-                },
-              })}
+              hasError={!!errors.name}
+              {...register("name")}
             />
-
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
+            {errors.name && <Error message={errors.name?.message} />}
           </div>
         </div>
 
         <div className="flex justify-end mt-6 gap-4">
-          <button
+          <Button
+            color="gray"
             type="button"
             onClick={() => reset()}
-            className="bg-gray-600 text-white py-2 px-6 rounded"
+            disabled={isLoading}
           >
-            Limpiar
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 px-6 rounded flex items-center gap-2"
-          >
+            <FaEraser /> Limpiar
+          </Button>
+          <Button color="blue" type="submit" disabled={isLoading}>
             <FaSave /> Guardar
-          </button>
+          </Button>
         </div>
 
         {/* {JSON.stringify(watch(), null, 2)} */}

@@ -297,7 +297,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
       </nav>
 
       {/* Botón de Cerrar Sesión */}
-      <div className="absolute bottom-0 w-full border-t border-blue-700">
+      <div className="relative bottom-0 w-full border-t border-blue-700">
         <button
           onClick={handleLogout}
           className="flex items-center w-full py-4 px-6 text-left hover:bg-blue-700 transition-all duration-200"
