@@ -15,6 +15,7 @@ import {
   FileCheck,
   ArrowLeft,
 } from "lucide-react";
+import ProtectedComponent from "../../components/ProtectedComponent";
 
 const DetailCar = () => {
   const [carData, setCarData] = useState(null);
@@ -53,18 +54,22 @@ const DetailCar = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden md:inline">Volver</span>
           </button>
-          {carData.driver?.latest_license?.status &&
-            carData.latest_permit?.status &&
-            carData.latest_insurance?.status &&
-            carData.latest_inspection?.status && (
-              <button
-                onClick={() => window.open(`/card-permit/${carId}`, "_blank")}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
-              >
-                <FileCheck className="w-4 h-4" />
-                <span className="hidden md:inline">TARJETA DE CIRCULACIÓN</span>
-              </button>
-            )}
+          <ProtectedComponent requiredPermissions={"car.cardPermit"}>
+            {carData.driver?.latest_license?.status &&
+              carData.latest_permit?.status &&
+              carData.latest_insurance?.status &&
+              carData.latest_inspection?.status && (
+                <button
+                  onClick={() => window.open(`/card-permit/${carId}`, "_blank")}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                >
+                  <FileCheck className="w-4 h-4" />
+                  <span className="hidden md:inline">
+                    TARJETA DE CIRCULACIÓN
+                  </span>
+                </button>
+              )}
+          </ProtectedComponent>
         </div>
 
         {/* Personal Information Card */}
@@ -359,9 +364,7 @@ const DetailCar = () => {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {carData.latest_inspection?.status
-                      ? "Activo"
-                      : "Inactivo"}
+                    {carData.latest_inspection?.status ? "Activo" : "Inactivo"}
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 text-sm">

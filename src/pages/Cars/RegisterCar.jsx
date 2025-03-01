@@ -70,6 +70,10 @@ const RegisterCar = ({ onClose, driverId }) => {
             perPage: "all",
             sort: "asc",
           });
+          // Ordenar los años de mayor a menor si la clave es 'years'
+          if (key === "years" && data) {
+            data.sort((a, b) => b.name - a.name);
+          }
           updateOptions(key, data || []);
         })
       );

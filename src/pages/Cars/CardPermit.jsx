@@ -27,10 +27,10 @@ const CardPermit = () => {
 
   if (carData) {
     if (
-      !carData?.driver?.latest_license?.is_valid ||
-      !carData?.latest_permit?.is_valid ||
-      !carData?.latest_insurance?.is_valid ||
-      !carData?.latest_inspection?.is_valid
+      !carData?.driver?.latest_license?.status ||
+      !carData?.latest_permit?.status ||
+      !carData?.latest_insurance?.status ||
+      !carData?.latest_inspection?.status
     ) {
       return <div className="p-4">FALTA REGULARIZAR DOCUMENTOS</div>;
     }
@@ -72,6 +72,10 @@ const CardPermit = () => {
         {/* Front Side */}
         <div
           className="w-[8.56cm] h-[5.4cm] flex items-center justify-center p-0.5"
+          // style={{
+          //   backgroundImage: "url('/images/card1.png')",
+          //   backgroundSize: "content",
+          // }}
           style={{
             background:
               "linear-gradient(135deg, #00bfff 33%, #ff8c00 33%, #ff8c00 66%, #008000 66%)",

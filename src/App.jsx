@@ -42,6 +42,14 @@ const App = () => {
               </PublicRoute>
             }
           />
+          <Route
+            path="/card-permit/:carId"
+            element={
+              <ProtectedRoute requiredPermissions={["car.cardPermit"]}>
+                <CardPermit />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/" element={<MainLayout />}>
             {/* Rutas protegidas */}
             <Route
@@ -109,14 +117,14 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/card-permit/:carId"
               element={
                 <ProtectedRoute requiredPermissions={["car.cardPermit"]}>
                   <CardPermit />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             <Route
               path="/settings/list-brands"
               element={
