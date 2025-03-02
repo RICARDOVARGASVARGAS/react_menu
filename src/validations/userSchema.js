@@ -27,4 +27,7 @@ export const userSchema = z.object({
     .string()
     .min(9, "El telefono debe tener al menos 8 caracteres")
     .max(20, "El telefono no debe exceder los 20 caracteres"),
+  is_active: z
+    .union([z.literal("0"), z.literal("1")]) // Acepta "0" o "1"
+    .default("1"), // Asigna "1" por defecto si no se proporciona un valor
 });

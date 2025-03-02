@@ -10,33 +10,20 @@ import {
 } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import { apiGet, apiPut, apiFetch, apiDelete } from "../../services/apiService";
-import { useForm } from "react-hook-form";
 import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 import DeleteModal from "../../components/elements/DeleteModal";
 import { useToastHook } from "../../hooks/useToastHook";
+import { userSchema } from "../../validations/userSchema";
+import { useCustomForm } from "../../hooks/useCustomForm";
+import { Button, Error, Input, Label } from "../../components/ui";
 
 const EditUser = ({ onClose, userId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { showToast } = useToastHook();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    reset,
-    watch,
-  } = useForm({
-    defaultValues: {
-      document: "",
-      name: "",
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone_number: "",
-    },
-  });
+  const { register, handleSubmit, errors, reset, setError, watch } =
+    useCustomForm(userSchema, {});
 
   const [isSearching, setIsSearching] = useState(false);
 
@@ -89,7 +76,7 @@ const EditUser = ({ onClose, userId }) => {
     const { data, message, success } = await apiGet(`user/getUser/${userId}`);
 
     if (success) {
-      console.log(data);
+      // console.log(data);
       reset(data);
     } else {
       showToast(message, "error");
@@ -179,249 +166,111 @@ const EditUser = ({ onClose, userId }) => {
                 <option value="0">Inactivo</option>
               </select>
               {errors.is_active && (
-                <p className="text-red-500 text-sm">
-                  {errors.is_active.message}
-                </p>
+                <Error message={errors.is_active?.message} />
               )}
             </div>
             <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                N° Documento
-              </label>
+              <Label> N° Documento</Label>
               <div className="flex items-center gap-2">
-                <input
+                <Input
                   type="text"
                   name="document"
                   autoComplete="off"
-                  className={`border ${
-                    errors.document ? "border-red-500" : "border-gray-300"
-                  } rounded px-4 py-2 w-full`}
-                  placeholder="Ingrese el número de documento"
-                  {...register("document", {
-                    required: {
-                      value: true,
-                      message: "El Número de Documento es requerido",
-                    },
-                    minLength: {
-                      value: 8,
-                      message:
-                        "El Número de Documento debe tener al menos 8 caracteres",
-                    },
-                    maxLength: {
-                      value: 8,
-                      message:
-                        "El Número de Documento debe tener como mucho 8 caracteres",
-                    },
-                  })}
+                  hasError={!!errors.document}
+                  {...register("document")}
                 />
-                <button
+                {errors.document && (
+                  <Error message={errors.document?.message} />
+                )}
+                <Button
                   type="button"
-                  className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
                   onClick={handleSearch}
                   disabled={isSearching}
+                  color="green"
                 >
-                  {isSearching ? <Loading size="small" /> : <FaSearch />}
-                  Buscar
-                </button>
+                  <FaSearch /> Buscar
+                </Button>
               </div>
-              {errors.document && (
-                <p className="text-red-500 text-sm">
-                  {errors.document.message}
-                </p>
-              )}
             </div>
-
             <div>
-              <label className="block text-sm font-semibold">Nombres</label>
-              <input
+              <Label>Nombres</Label>
+              <Input
                 type="text"
                 name="name"
                 autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.name ? "border-red-500" : ""
-                }`}
-                {...register("name", {
-                  required: {
-                    value: true,
-                    message: "El Nombre es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "El Nombre debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "El Nombre no debe exceder los 20 caracteres",
-                  },
-                })}
+                hasError={!!errors.name}
+                {...register("name")}
               />
-
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
+              {errors.name && <Error message={errors.name?.message} />}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold">
-                Apellido Paterno
-              </label>
-              <input
+              <Label>Apellido Paterno</Label>
+              <Input
                 type="text"
                 name="first_name"
                 autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.first_name ? "border-red-500" : ""
-                }`}
-                {...register("first_name", {
-                  required: {
-                    value: true,
-                    message: "El Apellido Paterno es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message:
-                      "El Apellido Paterno debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message:
-                      "El Apellido Paterno no debe exceder los 20 caracteres",
-                  },
-                })}
+                hasError={!!errors.first_name}
+                {...register("first_name")}
               />
-
               {errors.first_name && (
-                <p className="text-red-500 text-sm">
-                  {errors.first_name.message}
-                </p>
+                <Error message={errors.first_name?.message} />
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold">
-                Apellido Materno
-              </label>
-              <input
+              <Label>Apellido Materno</Label>
+              <Input
                 type="text"
                 name="last_name"
                 autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.last_name ? "border-red-500" : ""
-                }`}
-                {...register("last_name", {
-                  required: {
-                    value: true,
-                    message: "El Apellido Materno es requerido",
-                  },
-                  minLength: {
-                    value: 3,
-                    message:
-                      "El Apellido Materno debe tener al menos 3 caracteres",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message:
-                      "El Apellido Materno no debe exceder los 20 caracteres",
-                  },
-                })}
+                hasError={!!errors.last_name}
+                {...register("last_name")}
               />
-
               {errors.last_name && (
-                <p className="text-red-500 text-sm">
-                  {errors.last_name.message}
-                </p>
+                <Error message={errors.last_name?.message} />
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold">
-                Correo Electrónico
-              </label>
-              <input
-                type="text"
+              <Label>Correo Electrónico</Label>
+              <Input
+                type="email"
                 name="email"
                 autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.email ? "border-red-500" : ""
-                }`}
-                {...register("email", {
-                  required: {
-                    value: true,
-                    message: "El Correo Electrónico es requerido",
-                  },
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "El Correo Electrónico no es válido",
-                  },
-                })}
+                hasError={!!errors.email}
+                {...register("email")}
               />
-
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )}
+              {errors.email && <Error message={errors.email?.message} />}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold">
-                Teléfono (Opcional)
-              </label>
-              <input
+              <Label> Teléfono (Opcional)</Label>
+              <Input
                 type="text"
                 name="phone_number"
                 autoComplete="off"
-                className={`mt-1 p-2 w-full border rounded ${
-                  errors.phone_number ? "border-red-500" : ""
-                }`}
-                {...register("phone_number", {
-                  required: {
-                    value: false,
-                    message: "El Teléfono es requerido",
-                  },
-                  minLength: {
-                    value: 9,
-                    message: "El Teléfono debe tener al menos 9 caracteres",
-                  },
-                  maxLength: {
-                    value: 12,
-                    message: "El Teléfono no debe exceder los 12 caracteres",
-                  },
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: "El Teléfono debe ser numérico",
-                  },
-                })}
+                hasError={!!errors.phone_number}
+                {...register("phone_number")}
               />
-
               {errors.phone_number && (
-                <p className="text-red-500 text-sm">
-                  {errors.phone_number.message}
-                </p>
+                <Error message={errors.phone_number?.message} />
               )}
             </div>
           </div>
 
-          <div className="flex justify-between gap-4 mt-6 overflow-x-auto">
-            {isLoading ? (
-              <Loading />
-            ) : (
-              <>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
-                >
-                  <FaCheck />
-                  Actualizar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteModal(true)}
-                  className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded flex items-center gap-2"
-                >
-                  <FaTrash />
-                  Eliminar
-                </button>
-              </>
-            )}
+          <div className="flex justify-end mt-6 gap-4">
+            <Button color="blue" type="submit" disabled={isLoading}>
+              <FaSave /> Actualizar
+            </Button>
+            <Button
+              color="red"
+              type="button"
+              onClick={() => setShowDeleteModal(true)}
+              disabled={isLoading}
+            >
+              <FaEraser /> Eliminar
+            </Button>
           </div>
         </form>
         {showDeleteModal && (

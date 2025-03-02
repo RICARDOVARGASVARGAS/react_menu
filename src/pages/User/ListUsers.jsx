@@ -141,11 +141,19 @@ const ListUsers = () => {
           ) : (
             <>
               <Table
-                headers={["N°", "Nombre", "Operaciones"]}
+                headers={[
+                  "N°",
+                  "Documento",
+                  "Nombre",
+                  "Estado",
+                  "Operaciones",
+                ]}
                 data={data.map((item, index) => ({
                   id: item.id,
+                  document: item.document,
                   name:
                     item.name + " " + item.first_name + " " + item.last_name,
+                  is_active: item.is_active ? "Activo" : "Inactivo",
                 }))}
                 actions={actions}
               />

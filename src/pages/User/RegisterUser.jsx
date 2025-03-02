@@ -13,17 +13,15 @@ import { Button, Error, Input, Label } from "../../components/ui";
 const RegisterUser = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastHook();
-  const { register, handleSubmit, errors, reset, setError, watch } = useCustomForm(
-    userSchema,
-    {
+  const { register, handleSubmit, errors, reset, setError, watch } =
+    useCustomForm(userSchema, {
       document: "",
       name: "",
       first_name: "",
       last_name: "",
       email: "",
       phone_number: "",
-    }
-  );
+    });
 
   const [isSearching, setIsSearching] = useState(false);
 
@@ -103,48 +101,25 @@ const RegisterUser = ({ onClose }) => {
       >
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div>
-            <label className="block mb-2 text-gray-700 font-medium">
-              N° Documento
-            </label>
+            <Label> N° Documento</Label>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="text"
                 name="document"
                 autoComplete="off"
-                className={`border ${
-                  errors.document ? "border-red-500" : "border-gray-300"
-                } rounded px-4 py-2 w-full`}
-                placeholder="Ingrese el número de documento"
-                {...register("document", {
-                  required: {
-                    value: true,
-                    message: "El Número de Documento es requerido",
-                  },
-                  minLength: {
-                    value: 8,
-                    message:
-                      "El Número de Documento debe tener al menos 8 caracteres",
-                  },
-                  maxLength: {
-                    value: 8,
-                    message:
-                      "El Número de Documento debe tener como mucho 8 caracteres",
-                  },
-                })}
+                hasError={!!errors.document}
+                {...register("document")}
               />
-              <button
+              {errors.document && <Error message={errors.document?.message} />}
+              <Button
                 type="button"
-                className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
                 onClick={handleSearch}
                 disabled={isSearching}
+                color="green"
               >
-                {isSearching ? <Loading size="small" /> : <FaSearch />}
-                Buscar
-              </button>
+                <FaSearch /> Buscar
+              </Button>
             </div>
-            {errors.document && (
-              <p className="text-red-500 text-sm">{errors.document.message}</p>
-            )}
           </div>
           <div>
             <Label>Nombres</Label>
