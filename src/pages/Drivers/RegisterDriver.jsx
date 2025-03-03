@@ -14,14 +14,14 @@ import { handleBackendErrors } from "../../utils/handleBackendErrors ";
 import { API_DATA_PEOPLE_URL } from "../../config/enviroments";
 import { useToastHook } from "../../hooks/useToastHook";
 import { useCustomForm } from "../../hooks/useCustomForm";
-import { driverSchema } from "../../validations/driverSchema";
 import { Button, Error, Input, Label } from "../../components/ui";
+import { driverSchemaRegister } from "../../validations/driverSchema";
 
 const RegisterDriver = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToastHook();
   const { register, handleSubmit, errors, reset, setError, watch } =
-    useCustomForm(driverSchema, {
+    useCustomForm(driverSchemaRegister, {
       document_type: "dni",
       document_number: "",
       name: "",
@@ -284,7 +284,7 @@ const RegisterDriver = () => {
                 onClick={() => navigate("/list-drivers")}
                 disabled={isLoading}
               >
-                <FaTable /> Limpiar
+                <FaTable /> Lista
               </Button>
               <Button
                 color="gray"
