@@ -79,8 +79,6 @@ const RegisterRole = ({ onClose }) => {
             <FaSave /> Guardar
           </Button>
         </div>
-
-        {/* {JSON.stringify(watch(), null, 2)} */}
       </form>
     </div>
   );

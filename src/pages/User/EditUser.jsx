@@ -179,9 +179,7 @@ const EditUser = ({ onClose, userId }) => {
                   hasError={!!errors.document}
                   {...register("document")}
                 />
-                {errors.document && (
-                  <Error message={errors.document?.message} />
-                )}
+
                 <Button
                   type="button"
                   onClick={handleSearch}
@@ -191,6 +189,7 @@ const EditUser = ({ onClose, userId }) => {
                   <FaSearch /> Buscar
                 </Button>
               </div>
+              {errors.document && <Error message={errors.document?.message} />}
             </div>
             <div>
               <Label>Nombres</Label>

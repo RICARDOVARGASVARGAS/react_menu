@@ -110,7 +110,7 @@ const RegisterUser = ({ onClose }) => {
                 hasError={!!errors.document}
                 {...register("document")}
               />
-              {errors.document && <Error message={errors.document?.message} />}
+
               <Button
                 type="button"
                 onClick={handleSearch}
@@ -120,6 +120,7 @@ const RegisterUser = ({ onClose }) => {
                 <FaSearch /> Buscar
               </Button>
             </div>
+            {errors.document && <Error message={errors.document?.message} />}
           </div>
           <div>
             <Label>Nombres</Label>
