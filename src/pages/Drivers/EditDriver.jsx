@@ -234,10 +234,10 @@ const EditDriver = ({ driverId }) => {
       const response = await apiDelete(`deleteDriver/${driverId}`);
       const { message, success } = response;
       if (success) {
-        toast.success(message || "Conductor eliminado.");
+        showToast(message || "Conductor eliminado.", "success");
         navigate("/list-drivers");
       } else {
-        toast.error(message || "No se pudo eliminar el Conductor.");
+        showToast(message || "No se pudo eliminar el Conductor.", "error");
       }
     } catch (error) {
       handleBackendErrors(error, setError);
