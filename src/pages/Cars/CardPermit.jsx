@@ -43,6 +43,31 @@ const CardPermit = () => {
 
   return (
     <>
+      <style>
+        {`
+   @media print {
+     @page {
+       margin-top: 0.5cm;
+       margin-bottom: 0.5cm;
+       margin-left: 1cm;
+       margin-right: 1cm;
+     }
+
+     body {
+       margin: 0;
+       padding: 0;
+     }
+
+     .flex.items-center.justify-center {
+       page-break-inside: avoid;
+     }
+
+     .print-button {
+       display: none;
+     }
+   }
+ `}
+      </style>
       <div className="flex items-center justify-center my-3">
         {/* Front Side */}
         <div
@@ -316,16 +341,16 @@ const CardPermit = () => {
               </div>
 
               {/* Right: Placeholder for vertical image */}
-              <div className="w-[1.5cm] h-full flex flex-col justify-center items-center mt-6 space-y-6">
+              <div className="w-[1.5cm] h-full flex flex-col justify-center items-center">
                 <img
                   src="/images/firma.png"
                   alt="Firma"
-                  className="w-40 h-auto -rotate-90"
+                  className="w-auto h-24 -rotate-90 absolute top-12"
                 />
                 <img
                   src="/images/qr.png"
                   alt="Qr"
-                  className="w-10 h-auto rotate-0"
+                  className="w-10 h-auto rotate-0 absolute bottom-8"
                 />
               </div>
             </div>
@@ -344,6 +369,13 @@ const CardPermit = () => {
           </div>
         </div>
       </div>
+      {/* Botón flotante para imprimir */}
+      <button
+        onClick={handlePrint}
+        className="print-button fixed bottom-5 right-5 bg-blue-600 text-white rounded-full shadow-lg p-3 hover:bg-blue-700 transition duration-300 ease-in-out text-sm hidden lg:block"
+      >
+        Imprimir
+      </button>
     </>
   );
 };
