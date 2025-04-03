@@ -345,7 +345,7 @@ const CardPermit = () => {
                 <img
                   src="/images/firma.png"
                   alt="Firma"
-                  className="w-auto h-24 -rotate-90 absolute top-12"
+                  className="w-auto h-28 -rotate-90 absolute top-10"
                 />
                 <img
                   src="/images/qr.png"
