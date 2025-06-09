@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
+import axios from "axios";
 import {
   FaSearch,
   FaEraser,
@@ -10,6 +11,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaExclamationTriangle,
+  FaDownload,
 } from "react-icons/fa";
 import { apiGet } from "../../services/apiService";
 import { useAuth } from "../../hooks/AuthContext";
@@ -68,6 +70,166 @@ const ListCars = () => {
     }
   };
 
+  // Consumir API para descargar reporte
+  // const fetchDataToReport = async () => {
+  //   setIsLoading(true);
+
+  //   try {
+  //     const { data } = await apiGet("getCars", {
+  //       page: 1,
+  //       perPage: "all",
+  //       sort: "desc",
+  //       included:
+  //         "brand,typeCar,group,year,color,example,latestInspection,latestInsurance,latestPermit,driver.latestLicense",
+  //     });
+
+  //     const transformedData = data.map((item) => {
+  //       const statusMessages = [];
+
+  //       if (!item.latest_inspection?.status) {
+  //         statusMessages.push("• FALTA REVISIÓN TÉCNICA");
+  //       }
+  //       if (!item.latest_insurance?.status) {
+  //         statusMessages.push("• FALTA SOAT");
+  //       }
+  //       if (!item.latest_permit?.status) {
+  //         statusMessages.push("• FALTA CIRCULACIÓN");
+  //       }
+  //       if (!item.driver?.latest_license?.status) {
+  //         statusMessages.push("• FALTA LICENCIA");
+  //       }
+
+  //       const status =
+  //         statusMessages.length > 0 ? statusMessages.join("\n") : "✔️ ACTIVO";
+
+  //       return {
+  //         id: item.id,
+  //         type: item.driver?.document_type?.toUpperCase() ?? "",
+  //         document: item.driver?.document_number ?? "",
+  //         driver: `${item.driver?.name ?? ""} ${
+  //           item.driver?.first_name ?? ""
+  //         } ${item.driver?.last_name ?? ""}`,
+  //         date_born: item.driver?.birth_date ?? "",
+  //         phone: item.driver?.phone_number ?? "",
+  //         plate: item.plate ?? "",
+  //         brand: item.brand?.name ?? "",
+  //         model: item.example?.name ?? "",
+  //         year: item.year_id ?? "",
+  //         color: item.color?.name ?? "",
+  //         group: item.group?.name ?? "",
+  //         status: status,
+  //       };
+  //     });
+
+  //     // Enviar al backend
+  //     const response = await apiPost(
+  //       "http://localhost:3000/api/reports/download",
+  //       transformedData,
+  //       {
+  //         responseType: "blob", // para descargar
+  //       }
+  //     );
+
+  //     // Descargar el archivo
+  //     const blob = new Blob([response], {
+  //       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //     });
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", "ReporteVehiculos.xlsx");
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+  //   } catch (error) {
+  //     console.error("Error al generar el reporte:", error);
+  //   }
+
+  //   setIsLoading(false);
+  // };
+
+  const downloadReport = async () => {
+    try {
+      setIsLoading(true);
+
+      const { data } = await apiGet("getCars", {
+        page: 1,
+        perPage: "all",
+        sort: "desc",
+        included:
+          "brand,typeCar,group,year,color,example,latestInspection,latestInsurance,latestPermit,driver.latestLicense",
+      });
+
+      const transformedData = data.map((item) => {
+        const statusMessages = [];
+
+        if (!item.latest_inspection?.status) {
+          statusMessages.push("• FALTA REVISIÓN TÉCNICA");
+        }
+        if (!item.latest_insurance?.status) {
+          statusMessages.push("• FALTA SOAT");
+        }
+        if (!item.latest_permit?.status) {
+          statusMessages.push("• FALTA CIRCULACIÓN");
+        }
+        if (!item.driver?.latest_license?.status) {
+          statusMessages.push("• FALTA LICENCIA");
+        }
+
+        const status =
+          statusMessages.length > 0 ? statusMessages.join("\n") : "✅ ACTIVO";
+
+        return {
+          id: item.id,
+          type: item.driver?.document_type?.toUpperCase() ?? "",
+          document: item.driver?.document_number ?? "",
+          driver: `${item.driver?.name ?? ""} ${
+            item.driver?.first_name ?? ""
+          } ${item.driver?.last_name ?? ""}`,
+          date_born: item.driver?.birth_date ?? "",
+          phone: item.driver?.phone_number ?? "",
+          plate: item.plate ?? "",
+          brand: item.brand?.name ?? "",
+          model: item.example?.name ?? "",
+          year: item.year_id ?? "",
+          color: item.color?.name ?? "",
+          group: item.group?.name ?? "",
+          status,
+        };
+      });
+
+      console.log(transformedData);
+
+      // Enviar al backend y recibir el archivo
+      const response = await axios.post(
+        "http://localhost:3000/api/reports/download",
+        transformedData,
+        {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "ReporteVehiculos.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error al generar el reporte:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getStatusDisplay = (car) => {
     const inspectionStatus = car.latest_inspection?.status;
     const insuranceStatus = car.latest_insurance?.status;
@@ -75,10 +237,7 @@ const ListCars = () => {
     const licenseStatus = car.driver?.latest_license?.status;
 
     const allActive =
-      inspectionStatus &&
-      insuranceStatus &&
-      permitStatus &&
-      licenseStatus;
+      inspectionStatus && insuranceStatus && permitStatus && licenseStatus;
 
     if (allActive) {
       return (
@@ -145,6 +304,12 @@ const ListCars = () => {
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               <FaSearch />
+            </button>
+            <button
+              onClick={downloadReport}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            >
+              <FaDownload />
             </button>
             <button
               onClick={handleClear}
